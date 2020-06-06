@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - ./tmp/mysql:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+       MYSQL_DATABASE: ${DB_NAME}
+       MYSQL_USER: ${DB_USER}
+       MYSQL_PASSWORD: ${DB_PASSWORD}
+
+   wordpress:
+     image: wordpress:5.4.1-php7.3-apache
+     depends_on:
+       - db
+     build: .
+     ports:
+       - "8001:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: ${DB_USER}
+       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+     volumes:
+       - ./dist/themes:/var/www/html/wp-content/themes
+       - ./dist/plugins:/var/www/html/wp-content/plugins
+       - ./tmp/uploads:/var/www/html/wp-content/uploads

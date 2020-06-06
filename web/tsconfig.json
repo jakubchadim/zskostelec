@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "strict": true,
+        "alwaysStrict": true,
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "allowSyntheticDefaultImports": true,
+        "module": "commonjs",
+        "target": "esnext",
+        "jsx": "react",
+        "lib": ["dom", "es2015", "es2017", "es2019"]
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}

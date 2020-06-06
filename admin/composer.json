@@ -1,0 +1,32 @@
+{
+    "name": "zskostelec/admin",
+    "authors": [
+        {
+            "name": "Jakub Chadim",
+            "email": "ja@jakubchadim.cz"
+        }
+    ],
+    "require": {
+        "advanced-custom-fields/advanced-custom-fields-pro": "*",
+        "airesvsg/acf-to-rest-api": "^3.2",
+        "nekojira/wp-api-menus": "^1.3"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "advanced-custom-fields/advanced-custom-fields-pro",
+                "version": "5.7.7",
+                "type": "library",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download"
+                },
+                "require": {
+                    "philippbaschke/acf-pro-installer": "^1.0",
+                    "composer/installers": "^1.0"
+                }
+            }
+        }
+    ]
+}

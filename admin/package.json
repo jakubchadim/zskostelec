@@ -1,0 +1,28 @@
+{
+  "name": "zskostelec-admin",
+  "version": "0.0.1",
+  "author": "jakubchadim",
+  "description": "ZŠ Kostelec presentational website on WP",
+  "private": false,
+  "scripts": {
+    "wp-up": "docker-compose up -d",
+    "wp-down": "docker-compose down",
+    "wp-delete": "docker-compose down --volumes",
+    "wp-reset": "docker-compose restart wordpress",
+    "dev": "npm run wp-up && npm run watch",
+    "build": "bash ./build.sh",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "theme/**/*",
+        "vendor/**/*"
+      ],
+      "extensions": "php,json,js,html,css,png"
+    }
+  },
+  "devDependencies": {
+    "npm-watch": "^0.4.0"
+  }
+}

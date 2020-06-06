@@ -1,0 +1,461 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "adf2a6d033f6dc2f32a25f6f8fb9db4b",
+    "packages": [
+        {
+            "name": "advanced-custom-fields/advanced-custom-fields-pro",
+            "version": "5.7.7",
+            "dist": {
+                "type": "zip",
+                "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&t=5.7.7"
+            },
+            "require": {
+                "composer/installers": "^1.0",
+                "philippbaschke/acf-pro-installer": "^1.0"
+            },
+            "type": "library"
+        },
+        {
+            "name": "airesvsg/acf-to-rest-api",
+            "version": "3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/airesvsg/acf-to-rest-api.git",
+                "reference": "d2123ba84d62c46402d8f274d2bb2d62695366fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/airesvsg/acf-to-rest-api/zipball/d2123ba84d62c46402d8f274d2bb2d62695366fd",
+                "reference": "d2123ba84d62c46402d8f274d2bb2d62695366fd",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "php": ">=5.3.2"
+            },
+            "type": "wordpress-plugin",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Aires Gonçalves",
+                    "email": "airesvsg@gmail.com",
+                    "homepage": "http://airesgoncalves.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Exposes Advanced Custom Fields Endpoints in the WordPress REST API",
+            "homepage": "https://github.com/airesvsg/acf-to-rest-api",
+            "keywords": [
+                "acf",
+                "fields",
+                "json",
+                "rest-api",
+                "wordpres-plugin",
+                "wordpress",
+                "wp",
+                "wp-api"
+            ],
+            "time": "2020-02-11T01:59:45+00:00"
+        },
+        {
+            "name": "composer/installers",
+            "version": "v1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/installers.git",
+                "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/installers/zipball/b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
+                "reference": "b93bcf0fa1fccb0b7d176b0967d969691cd74cca",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0"
+            },
+            "replace": {
+                "roundcube/plugin-installer": "*",
+                "shama/baton": "*"
+            },
+            "require-dev": {
+                "composer/composer": "1.6.* || 2.0.*@dev",
+                "composer/semver": "1.0.* || 2.0.*@dev",
+                "phpunit/phpunit": "^4.8.36",
+                "sebastian/comparator": "^1.2.4",
+                "symfony/process": "^2.3"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Composer\\Installers\\Plugin",
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Installers\\": "src/Composer/Installers"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Robinson Young",
+                    "email": "kyle@dontkry.com",
+                    "homepage": "https://github.com/shama"
+                }
+            ],
+            "description": "A multi-framework Composer library installer",
+            "homepage": "https://composer.github.io/installers/",
+            "keywords": [
+                "Craft",
+                "Dolibarr",
+                "Eliasis",
+                "Hurad",
+                "ImageCMS",
+                "Kanboard",
+                "Lan Management System",
+                "MODX Evo",
+                "MantisBT",
+                "Mautic",
+                "Maya",
+                "OXID",
+                "Plentymarkets",
+                "Porto",
+                "RadPHP",
+                "SMF",
+                "Thelia",
+                "Whmcs",
+                "WolfCMS",
+                "agl",
+                "aimeos",
+                "annotatecms",
+                "attogram",
+                "bitrix",
+                "cakephp",
+                "chef",
+                "cockpit",
+                "codeigniter",
+                "concrete5",
+                "croogo",
+                "dokuwiki",
+                "drupal",
+                "eZ Platform",
+                "elgg",
+                "expressionengine",
+                "fuelphp",
+                "grav",
+                "installer",
+                "itop",
+                "joomla",
+                "known",
+                "kohana",
+                "laravel",
+                "lavalite",
+                "lithium",
+                "magento",
+                "majima",
+                "mako",
+                "mediawiki",
+                "modulework",
+                "modx",
+                "moodle",
+                "osclass",
+                "phpbb",
+                "piwik",
+                "ppi",
+                "puppet",
+                "pxcms",
+                "reindex",
+                "roundcube",
+                "shopware",
+                "silverstripe",
+                "sydes",
+                "sylius",
+                "symfony",
+                "typo3",
+                "wordpress",
+                "yawik",
+                "zend",
+                "zikula"
+            ],
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-04-07T06:57:05+00:00"
+        },
+        {
+            "name": "nekojira/wp-api-menus",
+            "version": "1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/unfulvio/wp-api-menus.git",
+                "reference": "88fc518d66a531916cf141ec45f1e58bc4ec3ae7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/unfulvio/wp-api-menus/zipball/88fc518d66a531916cf141ec45f1e58bc4ec3ae7",
+                "reference": "88fc518d66a531916cf141ec45f1e58bc4ec3ae7",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0",
+                "php": ">=5.3.2"
+            },
+            "type": "wordpress-plugin",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPLv2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Fulvio Notarstefano",
+                    "email": "fulvio.notarstefano@gmail.com",
+                    "homepage": "https://github.com/unfulvio",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Extends WordPress WP API with menu routes.",
+            "homepage": "https://github.com/unfulvio/wp-api-menus",
+            "keywords": [
+                "api",
+                "json",
+                "wordpress",
+                "wp",
+                "wp-api",
+                "wp-rest-api"
+            ],
+            "time": "2016-10-03T15:55:23+00:00"
+        },
+        {
+            "name": "philippbaschke/acf-pro-installer",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PhilippBaschke/acf-pro-installer.git",
+                "reference": "f18e537183958159ef5f6cb1f5b684f59d55f3eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PhilippBaschke/acf-pro-installer/zipball/f18e537183958159ef5f6cb1f5b684f59d55f3eb",
+                "reference": "f18e537183958159ef5f6cb1f5b684f59d55f3eb",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0",
+                "php": ">=5.5",
+                "vlucas/phpdotenv": "^2.2"
+            },
+            "require-dev": {
+                "composer/composer": "1.0.*",
+                "phpunit/phpunit": "4.8.*",
+                "satooshi/php-coveralls": "1.*",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "PhilippBaschke\\ACFProInstaller\\Plugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhilippBaschke\\ACFProInstaller\\": "src/ACFProInstaller"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Philipp Baschke",
+                    "email": "philipp@baschke.com"
+                }
+            ],
+            "description": "An install helper for Advanced Custom Fields PRO",
+            "keywords": [
+                "acf",
+                "composer",
+                "env",
+                "plugin",
+                "pro",
+                "wordpress",
+                "wp"
+            ],
+            "time": "2016-07-20T10:19:36+00:00"
+        },
+        {
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.17.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "2edd75b8b35d62fd3eeabba73b26b8f1f60ce13d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/2edd75b8b35d62fd3eeabba73b26b8f1f60ce13d",
+                "reference": "2edd75b8b35d62fd3eeabba73b26b8f1f60ce13d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.17-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-06-06T08:46:27+00:00"
+        },
+        {
+            "name": "vlucas/phpdotenv",
+            "version": "v2.6.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vlucas/phpdotenv.git",
+                "reference": "2e977311ffb17b2f82028a9c36824647789c6365"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/2e977311ffb17b2f82028a9c36824647789c6365",
+                "reference": "2e977311ffb17b2f82028a9c36824647789c6365",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.9 || ^7.0 || ^8.0",
+                "symfony/polyfill-ctype": "^1.16"
+            },
+            "require-dev": {
+                "ext-filter": "*",
+                "ext-pcre": "*",
+                "phpunit/phpunit": "^4.8.35 || ^5.7.27"
+            },
+            "suggest": {
+                "ext-filter": "Required to use the boolean validator.",
+                "ext-pcre": "Required to use most of the library."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dotenv\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Graham Campbell",
+                    "email": "graham@alt-three.com",
+                    "homepage": "https://gjcampbell.co.uk/"
+                },
+                {
+                    "name": "Vance Lucas",
+                    "email": "vance@vancelucas.com",
+                    "homepage": "https://vancelucas.com/"
+                }
+            ],
+            "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
+            "keywords": [
+                "dotenv",
+                "env",
+                "environment"
+            ],
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/vlucas/phpdotenv",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-06-02T14:06:52+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
+}
