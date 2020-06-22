@@ -1,6 +1,5 @@
-import { ID, Json, Nullable, Opaque, RawHTML } from '../../types'
-
-type BlockType = Opaque<'BlockType', string>
+import { ID, Json, Nullable, RawHTML } from '../../types'
+import { BlockType } from './constants'
 
 export type RawBlock = {
   blockId: ID
@@ -10,11 +9,11 @@ export type RawBlock = {
   attrs: Json
 }
 
-export type Block = {
+export type Block<Attrs = {}> = {
   id: ID
   type: Nullable<BlockType>
   content: Nullable<RawHTML>
-  attrs: any
+  attrs: Attrs
   blocks: Block[]
 }
 
@@ -31,4 +30,3 @@ export function parseBlocks (rawBlocks: RawBlock[], parentId: Nullable<ID> = nul
       }
     })
 }
-
