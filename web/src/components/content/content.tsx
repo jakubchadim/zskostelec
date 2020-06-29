@@ -23,18 +23,16 @@ const replaceMedia = (node: DomElement) => {
       return node
     }
 
-    return (
-      <ImagePost
-        src={attrs.src}
-        alt={attrs.alt}
-        width={attrs.width}
-      />
-    )
+    return <ImagePost src={attrs.src} alt={attrs.alt} width={attrs.width} />
   }
   if (node.name === 'a') {
     const attrs: LinkAttrs = node.attribs || {}
 
-    if (!attrs.href || attrs.href.startsWith('http') || attrs.target === '_blank') {
+    if (
+      !attrs.href ||
+      attrs.href.startsWith('http') ||
+      attrs.target === '_blank'
+    ) {
       return node
     }
 
@@ -48,16 +46,12 @@ const replaceMedia = (node: DomElement) => {
   return node
 }
 
-
-
 type ContentProps = {
   content?: Nullable<RawHTML>
 }
 
 const Content: React.FC<ContentProps> = ({ content }) => (
-  <>
-    {content && parse(content, {replace: replaceMedia})}
-  </>
+  <>{content && parse(content, { replace: replaceMedia })}</>
 )
 
 export default React.memo(Content)

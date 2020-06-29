@@ -31,8 +31,13 @@ export const query = graphql`
   }
 `
 
-const Page: React.FC<PageProps<WordpressPageData>> = ({ data: { wordpressPage } }) => {
-  const parsedBlocks = React.useMemo(() => parseBlocks(wordpressPage.blocks || []), [ wordpressPage.blocks ])
+const Page: React.FC<PageProps<WordpressPageData>> = ({
+  data: { wordpressPage }
+}) => {
+  const parsedBlocks = React.useMemo(
+    () => parseBlocks(wordpressPage.blocks || []),
+    [wordpressPage.blocks]
+  )
 
   return (
     <Layout>

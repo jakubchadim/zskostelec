@@ -10,15 +10,34 @@ type BreakpointMedia = {
   only: MediaString
 }
 
-function pxToEm (pxSize: number): number {
+function pxToEm(pxSize: number): number {
   return pxSize / 16
 }
 
-const customMediaQueryMin = (minWidth: number) => <MediaString> `@media only screen and (min-width: ${pxToEm(minWidth)}em)`;
-const customMediaQueryMax = (maxWidth: number) => <MediaString> `@media only screen and (max-width: ${pxToEm(maxWidth)}em)`;
-const customMediaQueryOnly = (minWidth: number, maxWidth: number) => <MediaString> `@media only screen and (min-width: ${pxToEm(minWidth)}em) and and (max-width: ${pxToEm(maxWidth)}em)`;
+function customMediaQueryMin(minWidth: number): MediaString {
+  return <MediaString>(
+    `@media only screen and (min-width: ${pxToEm(minWidth)}em)`
+  )
+}
 
-export function getBreakpoint(minWidth: number, maxWidth: number): BreakpointMedia {
+function customMediaQueryMax(maxWidth: number): MediaString {
+  return <MediaString>(
+    `@media only screen and (max-width: ${pxToEm(maxWidth)}em)`
+  )
+}
+
+function customMediaQueryOnly(minWidth: number, maxWidth: number): MediaString {
+  return <MediaString>(
+    `@media only screen and (min-width: ${pxToEm(
+      minWidth
+    )}em) and and (max-width: ${pxToEm(maxWidth)}em)`
+  )
+}
+
+export function getBreakpoint(
+  minWidth: number,
+  maxWidth: number
+): BreakpointMedia {
   return {
     up: customMediaQueryMin(minWidth),
     down: customMediaQueryMax(maxWidth),
@@ -28,6 +47,6 @@ export function getBreakpoint(minWidth: number, maxWidth: number): BreakpointMed
 
 type SpacingGetter = (steps: number) => string
 
-export function getSpacingGetter(size: number, unit: string = 'rem'): SpacingGetter {
+export function getSpacingGetter(size: number, unit = 'rem'): SpacingGetter {
   return (steps) => `${size * steps}${unit}`
 }

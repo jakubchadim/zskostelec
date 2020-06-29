@@ -1,5 +1,6 @@
 import { Link } from 'gatsby'
 import React from 'react'
+
 import { useNavMainQuery } from './main.query'
 
 const NavMain: React.FC = () => {
@@ -10,11 +11,7 @@ const NavMain: React.FC = () => {
       {wordpressWpApiMenusMenusItems.items.map((item, idx) => {
         if (item.url.startsWith('http') || item.target === '_blank') {
           return (
-            <a
-              key={idx}
-              href={item.url}
-              target={item.target}
-            >
+            <a key={idx} href={item.url} target={item.target}>
               {item.title}
             </a>
           )

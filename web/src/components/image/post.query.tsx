@@ -38,6 +38,6 @@ const query = graphql`
   }
 `
 
-export function useImagePostQuery (): ImagePostData {
+export function useImagePostQuery(): ImagePostData {
   return useStaticQuery(query)
 }

@@ -27,7 +27,7 @@ export const theme = {
     small: '0.3rem'
   },
   font: {
-    primary: '\'Roboto\', sans-serif'
+    primary: "'Roboto', sans-serif"
   },
   fontSize: {
     text1: '1rem',

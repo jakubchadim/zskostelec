@@ -9,7 +9,7 @@ export type RawBlock = {
   attrs: Json
 }
 
-export type Block<Attrs = {}> = {
+export type Block<Attrs = any> = {
   id: ID
   type: Nullable<BlockType>
   content: Nullable<RawHTML>
@@ -17,7 +17,10 @@ export type Block<Attrs = {}> = {
   blocks: Block[]
 }
 
-export function parseBlocks (rawBlocks: RawBlock[], parentId: Nullable<ID> = null): Block[] {
+export function parseBlocks(
+  rawBlocks: RawBlock[],
+  parentId: Nullable<ID> = null
+): Block[] {
   return rawBlocks
     .filter((rawBlock) => rawBlock.parentId === parentId)
     .map((rawBlock) => {

@@ -8,7 +8,3 @@ export enum Intent {
   WARNING = 'warning',
   DANGER = 'danger'
 }
-
-export type WithIntent<T extends object> = T & {
-  intent?: Intent
-}

@@ -7,7 +7,7 @@ type SEOProps = {
   description?: string
   lang?: string
   meta?: {
-    name: string,
+    name: string
     content: string
   }[]
 }
@@ -15,7 +15,10 @@ type SEOProps = {
 const SEO: React.FC<SEOProps> = ({ description, lang, meta, title }) => {
   const { site, wordpressSiteMetadata } = useSEOQuery()
 
-  const metaDescription = description || wordpressSiteMetadata.description || site.siteMetadata.description
+  const metaDescription =
+    description ||
+    wordpressSiteMetadata.description ||
+    site.siteMetadata.description
 
   return (
     <Helmet
@@ -23,27 +26,29 @@ const SEO: React.FC<SEOProps> = ({ description, lang, meta, title }) => {
         lang
       }}
       title={title}
-      titleTemplate={`%s | ${wordpressSiteMetadata.name || site.siteMetadata.title}`}
+      titleTemplate={`%s | ${
+        wordpressSiteMetadata.name || site.siteMetadata.title
+      }`}
       meta={[
         {
           name: 'description',
-          content: metaDescription,
+          content: metaDescription
         },
         {
           property: 'og:title',
-          content: title,
+          content: title
         },
         {
           property: 'og:description',
-          content: metaDescription,
+          content: metaDescription
         },
         {
           property: 'og:type',
-          content: 'website',
+          content: 'website'
         },
         {
           name: 'twitter:card',
-          content: 'summary',
+          content: 'summary'
         },
         // {
         //   name: 'twitter:creator',
@@ -51,11 +56,11 @@ const SEO: React.FC<SEOProps> = ({ description, lang, meta, title }) => {
         // },
         {
           name: 'twitter:title',
-          content: title,
+          content: title
         },
         {
           name: 'twitter:description',
-          content: metaDescription,
+          content: metaDescription
         },
         ...(meta || [])
       ]}

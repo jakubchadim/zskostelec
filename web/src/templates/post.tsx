@@ -36,7 +36,10 @@ export const query = graphql`
 type PostProps = PageProps<WordpressPostData>
 
 const Post: React.FC<PostProps> = ({ data: { wordpressPost } }) => {
-  const parsedBlocks = React.useMemo(() => parseBlocks(wordpressPost.blocks || []), [ wordpressPost.blocks ])
+  const parsedBlocks = React.useMemo(
+    () => parseBlocks(wordpressPost.blocks || []),
+    [wordpressPost.blocks]
+  )
 
   return (
     <Layout>

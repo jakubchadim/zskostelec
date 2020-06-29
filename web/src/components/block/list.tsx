@@ -5,7 +5,7 @@ import BlockCoreButton from './core/button'
 import { BlockFC } from './types'
 import { Block } from './utils'
 
-const componentByType: Partial<{[type in BlockType]: BlockFC}> = {
+const componentByType: Partial<{ [type in BlockType]: BlockFC }> = {
   [BlockType.CORE_BUTTON]: BlockCoreButton
 }
 
@@ -24,24 +24,13 @@ const BlockList: React.FC<BlockListProps> = ({ blocks }) => {
         const Block = block.type && componentByType[block.type]
 
         if (Block) {
-          return (
-            <Block
-              key={blockIdx}
-              block={block}
-            />
-          )
+          return <Block key={blockIdx} block={block} />
         }
 
-        return (
-          <Content
-            key={blockIdx}
-            content={block.content}
-          />
-        )
+        return <Content key={blockIdx} content={block.content} />
       })}
     </>
   )
-
 }
 
 export default BlockList

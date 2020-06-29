@@ -28,6 +28,6 @@ const query = graphql`
   }
 `
 
-export function useSEOQuery (): SEOData {
+export function useSEOQuery(): SEOData {
   return useStaticQuery(query)
 }

@@ -34,9 +34,15 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
-    "format": "prettier --parser typescript --trailing-comma es5 --no-semi --single-quote --write \"src/**/*.ts*\"",
+    "format": "prettier --write \"src/**/*.ts*\"",
     "generate": "graphql-codegen --config codegen.yml",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format & npm run lint"
+    }
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.15.4",
@@ -45,8 +51,17 @@
     "@graphql-codegen/typescript-operations": "^1.15.4",
     "@graphql-codegen/typescript-react-apollo": "1.15.4",
     "@types/styled-components": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.1",
+    "eslint-plugin-react-hooks": "^4.0.4",
     "gatsby-plugin-google-fonts": "^1.0.1",
     "gatsby-plugin-ts-config": "^0.2.3",
+    "husky": "^4.2.5",
     "prettier": "^2.0.5"
   }
 }

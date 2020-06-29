@@ -18,7 +18,7 @@ type NavMainData = {
 
 const query = graphql`
   query layoutQuery {
-    wordpressWpApiMenusMenusItems(slug: {eq: "top-menu"}) {
+    wordpressWpApiMenusMenusItems(slug: { eq: "top-menu" }) {
       items {
         title
         url
@@ -34,6 +34,6 @@ const query = graphql`
   }
 `
 
-export function useNavMainQuery (): NavMainData {
+export function useNavMainQuery(): NavMainData {
   return useStaticQuery(query)
 }
