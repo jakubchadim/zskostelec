@@ -1,6 +1,5 @@
 'use strict'
 
-import { createGlobalStyle } from 'styled-components'
 import { getBreakpoint, getSpacingGetter } from './utils'
 
 export const theme = {
@@ -11,7 +10,7 @@ export const theme = {
     lg: getBreakpoint(1311, 1599)
   },
   color: {
-    primary1: '#e3e0cf',
+    primary1: '#d42c73',
     primary2: '#c02c62',
     secondary1: '#c6d5cb',
     success1: '#4caf50',
@@ -68,27 +67,3 @@ export const theme = {
 }
 
 export type Theme = typeof theme
-
-export const GlobalStyle = createGlobalStyle`
-  * {
-    box-sizing: border-box;
-  }
-
-  html, body {
-    margin: 0;
-    height: 100%;
-    color: ${theme.color.black1};
-    background: ${theme.color.gray1};
-    font-family: ${theme.font.primary};
-    scroll-behavior: smooth;
-  }
-
-  html {
-    font-size: 10px;
-  }
-
-  body {
-    font-size: ${theme.fontSize.text4};
-    line-height: 1.4;
-  }
-`

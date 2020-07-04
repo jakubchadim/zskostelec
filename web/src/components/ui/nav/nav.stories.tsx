@@ -1,12 +1,6 @@
 import React from 'react'
-import styled from 'styled-components'
 import UiContainer from '../container/container'
 import UiNav from './nav'
-
-const PreviewBlock = styled.div`
-  height: 200px;
-  background: ${(p) => p.theme.color.gray4};
-`
 
 export default {
   title: 'Ui/Nav'
@@ -14,6 +8,35 @@ export default {
 
 export const Simple = () => (
   <UiNav>
-    <UiContainer>Menu</UiContainer>
+    <UiContainer>
+      <UiNav.Container>
+        <UiNav.List>
+          <UiNav.Item>Item 1</UiNav.Item>
+          <UiNav.Item>Item 2</UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Link href='#'>Item 3</UiNav.Link>
+          </UiNav.Item>
+        </UiNav.List>
+      </UiNav.Container>
+    </UiContainer>
+  </UiNav>
+)
+
+export const WithTextLogo = () => (
+  <UiNav>
+    <UiContainer>
+      <UiNav.Container>
+        <UiNav.TextLogo>
+          <a href='#'>Logo</a>
+        </UiNav.TextLogo>
+        <UiNav.List>
+          <UiNav.Item>Item 1</UiNav.Item>
+          <UiNav.Item>Item 2</UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Link href='#'>Item 3</UiNav.Link>
+          </UiNav.Item>
+        </UiNav.List>
+      </UiNav.Container>
+    </UiContainer>
   </UiNav>
 )

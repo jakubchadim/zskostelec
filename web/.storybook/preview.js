@@ -1,7 +1,6 @@
 import { addDecorator } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import ThemeDecorator from './themeDecorator'
-import GlobalStyleDecorator from './globalStyleDecorator'
 
 // Gatsby's Link overrides:
 // Gatsby Link calls the `enqueue` & `hovering` methods on the global variable ___loader.
@@ -20,4 +19,3 @@ window.___navigate = pathname => {
 }
 
 addDecorator(ThemeDecorator)
-addDecorator(GlobalStyleDecorator)
