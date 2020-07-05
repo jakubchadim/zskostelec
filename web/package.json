@@ -36,7 +36,7 @@
     "develop": "gatsby develop",
     "format": "prettier --write \"src/**/*.ts*\"",
     "generate": "graphql-codegen --config codegen.yml",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --ignore-pattern 'public/*' --quiet --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
@@ -70,6 +70,7 @@
     "gatsby-plugin-google-fonts": "^1.0.1",
     "gatsby-plugin-ts-config": "^0.2.3",
     "husky": "^4.2.5",
+    "lorem-ipsum": "^2.0.3",
     "prettier": "^2.0.5"
   }
 }
