@@ -1,6 +1,6 @@
 {
   "name": "zskostelec-web",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "jakubchadim",
   "description": "ZŠ Kostelec presentational website on WP",
   "dependencies": {
@@ -40,7 +40,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "deploy": "gatsby build && bash ghpages.publish.sh"
+    "deploy": "gatsby build --prefix-paths && bash ghpages.publish.sh"
   },
   "husky": {
     "hooks": {

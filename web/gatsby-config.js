@@ -3,6 +3,7 @@ require('dotenv').config()
 const ADMIN_URL = `${process.env.ADMIN_PROTOCOL}://${process.env.ADMIN_URL}`
 
 module.exports = {
+  pathPrefix: `/zskostelec`,
   siteMetadata: {
     title: `ZŠ Kostelec nad Orlicí`,
     description: 'School web',
