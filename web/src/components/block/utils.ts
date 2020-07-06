@@ -1,20 +1,10 @@
-import { ID, Json, Nullable, RawHTML } from '../../types'
-import { BlockType } from './constants'
+import { ID, Nullable } from '../../types'
+import { Block, RawBlock } from './types'
 
-export type RawBlock = {
-  blockId: ID
-  parentId: Nullable<ID>
-  type: Nullable<BlockType>
-  content: Nullable<RawHTML>
-  attrs: Json
-}
+export function parseBlockAttrs(rawAttrs: string): any {
+  const attrs = JSON.parse(rawAttrs)
 
-export type Block<Attrs = any> = {
-  id: ID
-  type: Nullable<BlockType>
-  content: Nullable<RawHTML>
-  attrs: Attrs
-  blocks: Block[]
+  return attrs
 }
 
 export function parseBlocks(
@@ -28,7 +18,7 @@ export function parseBlocks(
         id: rawBlock.blockId,
         type: rawBlock.type,
         content: rawBlock.content,
-        attrs: JSON.parse(rawBlock.attrs),
+        attrs: parseBlockAttrs(rawBlock.attrs),
         blocks: parseBlocks(rawBlocks, rawBlock.blockId)
       }
     })

@@ -1,22 +1,20 @@
 import React from 'react'
 import Content from '../content/content'
-import { BlockType } from './constants'
-import BlockCoreButton from './core/button'
-import { BlockFC } from './types'
-import { Block } from './utils'
-
-const componentByType: Partial<{ [type in BlockType]: BlockFC }> = {
-  [BlockType.CORE_BUTTON]: BlockCoreButton
-}
+import UiContainer from '../ui/container/container'
+import { componentByType } from './register'
+import { Block } from './types'
 
 type BlockListProps = {
   blocks?: Block[]
+  nested?: boolean
 }
 
-const BlockList: React.FC<BlockListProps> = ({ blocks }) => {
+const BlockList: React.FC<BlockListProps> = ({ blocks, nested }) => {
   if (!blocks || !blocks.length) {
     return null
   }
+
+  console.log(JSON.stringify(blocks))
 
   return (
     <>
@@ -27,7 +25,15 @@ const BlockList: React.FC<BlockListProps> = ({ blocks }) => {
           return <Block key={blockIdx} block={block} />
         }
 
-        return <Content key={blockIdx} content={block.content} />
+        if (nested) {
+          return <Content content={block.content} />
+        }
+
+        return (
+          <UiContainer key={blockIdx}>
+            <Content content={block.content} />
+          </UiContainer>
+        )
       })}
     </>
   )

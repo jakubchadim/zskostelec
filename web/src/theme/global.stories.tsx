@@ -1,16 +1,5 @@
 import React from 'react'
-import { LoremIpsum } from 'lorem-ipsum'
-
-const lorem = new LoremIpsum({
-  sentencesPerParagraph: {
-    max: 8,
-    min: 4
-  },
-  wordsPerSentence: {
-    max: 16,
-    min: 4
-  }
-})
+import { generateParagraph, generateWord } from '../utils/storiesUtils'
 
 export default {
   title: 'Global'
@@ -19,10 +8,10 @@ export default {
 export const Texts = () => (
   <>
     <h4>Regular text</h4>
-    <p>{lorem.generateSentences(5)}</p>
-    <p>{lorem.generateSentences(3)}</p>
+    <p>{generateParagraph()}</p>
+    <p>{generateParagraph()}</p>
     <h4>Link</h4>
-    <a href='#'>{lorem.generateWords(1)}</a>
+    <a href='#'>{generateWord(3)}</a>
   </>
 )
 
