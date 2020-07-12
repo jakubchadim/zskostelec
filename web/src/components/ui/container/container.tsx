@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 
 const UiContainer = styled.div<{ fluid?: boolean }>`

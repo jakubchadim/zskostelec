@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import { getColorFromPalette } from '../../block/color/utils'
 import { BlockColorPalette } from '../../block/color/color'

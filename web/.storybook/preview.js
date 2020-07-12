@@ -1,5 +1,6 @@
 import { addDecorator } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
+import { withKnobs } from '@storybook/addon-knobs'
 import ThemeDecorator from './themeDecorator'
 
 // Gatsby's Link overrides:
@@ -7,8 +8,8 @@ import ThemeDecorator from './themeDecorator'
 // This global object isn't set in storybook context, requiring you to override it to empty functions (no-op),
 // so Gatsby Link doesn't throw any errors.
 global.___loader = {
-  enqueue: () => {},
-  hovering: () => {},
+  enqueue: () => { },
+  hovering: () => { },
 }
 // __PATH_PREFIX__ is used inside gatsby-link an other various places. For storybook not to crash, you need to set it as well.
 global.__PATH_PREFIX__ = ''
@@ -19,3 +20,4 @@ window.___navigate = pathname => {
 }
 
 addDecorator(ThemeDecorator)
+addDecorator(withKnobs)

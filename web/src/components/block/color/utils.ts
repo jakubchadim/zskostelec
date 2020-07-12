@@ -3,24 +3,28 @@ import { BlockColor } from './color'
 
 export function getColorFromPalette(
   color: BlockColor | undefined,
-  theme: Theme
+  theme: Theme,
+  dark?: boolean,
+  init = 'initial'
 ): string {
+  const { color: c } = theme
+
   switch (color) {
     case BlockColor.PRIMARY:
-      return theme.color.primary1
+      return dark ? c.primary2 : c.primary1
     case BlockColor.SECONDARY:
-      return theme.color.secondary1
+      return dark ? c.secondary2 : c.secondary1
     case BlockColor.WHITE:
-      return theme.color.white1
+      return dark ? c.gray1 : c.white1
     case BlockColor.LIGHT_GRAY:
-      return theme.color.gray1
+      return dark ? c.gray2 : c.gray1
     case BlockColor.MEDIUM_GRAY:
-      return theme.color.gray3
+      return dark ? c.gray4 : c.gray3
     case BlockColor.DARK_GRAY:
-      return theme.color.gray5
+      return dark ? c.gray6 : c.gray5
     case BlockColor.BLACK:
-      return theme.color.black1
+      return dark ? c.black2 : c.black1
   }
 
-  return 'initial'
+  return init
 }

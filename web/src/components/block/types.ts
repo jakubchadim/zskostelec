@@ -20,8 +20,9 @@ export type Block<Attrs = any> = {
 
 type BlockCoreButtonProps<Attrs> = {
   block: Block<Attrs>
+  nested?: boolean
 }
 
 export type BlockFC<Attrs = any> = React.FC<BlockCoreButtonProps<Attrs>>
 
-export type NormalizeFunc = (rawBlock: RawBlock) => RawBlock
+export type NormalizeFunc = (rawBlock: RawBlock) => RawBlock | null

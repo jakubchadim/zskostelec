@@ -13,7 +13,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
     sourceType: "module", // Allows for the use of imports
-    project: './tsconfig.json',
+    project: `${__dirname}/tsconfig.json`,
     ecmaFeatures: {
       jsx: true // Allows for the parsing of JSX
     }
@@ -31,10 +31,12 @@ module.exports = {
     }
   },
   rules: {
+    "prettier/prettier": "error",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "react/prop-types": 0,
     "import/newline-after-import": "error",
-    "import/order": "error"
+    "import/order": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   },
 }

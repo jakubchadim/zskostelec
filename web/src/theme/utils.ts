@@ -45,8 +45,34 @@ export function getBreakpoint(
   }
 }
 
-type SpacingGetter = (steps: number) => string
+type SpacingGetterSimple = (spacing: number) => string
+type SpacingGetterSides = (
+  topAndBottom: number,
+  leftAndRight?: number
+) => string
+type SpacingGetterSidesAndBottom = (
+  top: number,
+  leftAndRight?: number,
+  bottom?: number
+) => string
+type SpacingGetterFull = (
+  top: number,
+  right?: number,
+  bottom?: number,
+  left?: number
+) => string
+type SpacingGetter =
+  | SpacingGetterSimple
+  | SpacingGetterSides
+  | SpacingGetterSidesAndBottom
+  | SpacingGetterFull
 
 export function getSpacingGetter(size: number, unit = 'rem'): SpacingGetter {
-  return (steps) => `${size * steps}${unit}`
+  return (...steps: (number | undefined)[]) =>
+    steps
+      .map((step) => {
+        return step !== undefined && `${size * step}${unit}`
+      })
+      .filter((s) => s)
+      .join(' ')
 }

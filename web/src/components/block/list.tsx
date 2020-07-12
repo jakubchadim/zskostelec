@@ -22,7 +22,7 @@ const BlockList: React.FC<BlockListProps> = ({ blocks, nested }) => {
         const Block = block.type && componentByType[block.type]
 
         if (Block) {
-          return <Block key={blockIdx} block={block} />
+          return <Block key={blockIdx} block={block} nested={nested} />
         }
 
         if (nested) {
