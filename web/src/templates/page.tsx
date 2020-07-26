@@ -1,7 +1,7 @@
 import { graphql, PageProps } from 'gatsby'
 import React from 'react'
 import BlockList from '../components/block/list'
-import { parseBlocks, RawBlock } from '../components/block/utils'
+import { parseBlocks, TransformedBlock } from '../components/block/utils'
 import Content from '../components/content/content'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'

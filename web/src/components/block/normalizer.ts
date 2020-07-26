@@ -1,6 +1,8 @@
+import { v4 } from 'uuid'
+import { ID, Json, Nullable, RawHTML } from '../../types'
 import { BlockType } from './constants'
 import { blockCoreGroupNormalize } from './core/group/group.normalize'
-import { NormalizeFunc, RawBlock } from './types'
+import { NormalizeFunc, RawBlock, TransformedBlock } from './types'
 import { blockCoreButtonNormalize } from './core/button/button.normalize'
 
 const normalizeByType: Partial<{ [type in BlockType]: NormalizeFunc }> = {
@@ -13,7 +15,33 @@ type Entity = {
   __type: string
 }
 
-function normalizeBlocks(rawBlocks?: RawBlock[]) {
+export function transformBlocks(blocks: RawBlock[], parentId: Nullable<ID>): TransformedBlock[] {
+  const transformedBlocks: TransformedBlock[] = []
+
+  blocks.forEach((block) => {
+    const blockResult: TransformedBlock = {
+      blockId: <ID>v4(),
+      parentId,
+      type: block.blockName,
+      attrs: <Json>JSON.stringify(block.attrs),
+      content: <Nullable<RawHTML>>(block.innerHTML || '').replace(/(\r\n|\n|\r)/gm, '').trim()
+    }
+
+    if (block.innerBlocks && block.innerBlocks.length > 0) {
+      transformedBlocks.push(
+        ...transformBlocks(block.innerBlocks, blockResult.blockId)
+      )
+    }
+
+    if (blockResult.type != null || blockResult.content !== '') {
+      transformedBlocks.push(blockResult)
+    }
+  })
+
+  return transformedBlocks
+}
+
+function normalizeBlocks(rawBlocks?: TransformedBlock[]) {
   return (rawBlocks || [])
     .map((rawBlock) => {
       const normalize = rawBlock.type && normalizeByType[rawBlock.type]
@@ -31,7 +59,7 @@ function normalizer({ entities }: { entities: Entity[] }) {
     ) {
       return {
         ...entity,
-        blocks: normalizeBlocks(entity.blocks)
+        blocks: normalizeBlocks(transformBlocks(entity.blocks, null))
       }
     }
 

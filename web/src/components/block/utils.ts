@@ -1,5 +1,5 @@
 import { ID, Nullable } from '../../types'
-import { Block, RawBlock } from './types'
+import { Block, TransformedBlock } from './types'
 
 export function parseBlockAttrs(rawAttrs: string): any {
   const attrs = JSON.parse(rawAttrs)
@@ -8,7 +8,7 @@ export function parseBlockAttrs(rawAttrs: string): any {
 }
 
 export function parseBlocks(
-  rawBlocks: RawBlock[],
+  rawBlocks: TransformedBlock[],
   parentId: Nullable<ID> = null
 ): Block[] {
   return rawBlocks

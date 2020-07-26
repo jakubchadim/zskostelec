@@ -3,6 +3,14 @@ import { ID, Json, Nullable, RawHTML } from '../../types'
 import { BlockType } from './constants'
 
 export type RawBlock = {
+  blockName: BlockType
+  innerBlocks: RawBlock[]
+  innerHTML: Nullable<RawHTML>
+  innerContent: [Nullable<RawHTML>]
+  attrs: any[]
+}
+
+export type TransformedBlock = {
   blockId: ID
   parentId: Nullable<ID>
   type: Nullable<BlockType>
@@ -25,4 +33,4 @@ type BlockCoreButtonProps<Attrs> = {
 
 export type BlockFC<Attrs = any> = React.FC<BlockCoreButtonProps<Attrs>>
 
-export type NormalizeFunc = (rawBlock: RawBlock) => RawBlock | null
+export type NormalizeFunc = (rawBlock: TransformedBlock) => TransformedBlock | null
