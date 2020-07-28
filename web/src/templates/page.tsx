@@ -4,6 +4,7 @@ import BlockList from '../components/block/list'
 import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
+import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
 import { RawHTML } from '../types'
@@ -43,7 +44,9 @@ const Page: React.FC<PageProps<WordpressPageData>> = ({
   return (
     <Layout>
       <SEO title={wordpressPage.title} />
-      <h1>{wordpressPage.title}</h1>
+      <UiContainer>
+        <h1>{wordpressPage.title}</h1>
+      </UiContainer>
       {parsedBlocks.length ? (
         <BlockList blocks={parsedBlocks} />
       ) : (

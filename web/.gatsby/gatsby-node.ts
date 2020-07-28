@@ -65,11 +65,17 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
   const pageTemplate = slash(path.resolve('./src/templates/page.tsx'))
   const postTemplate = slash(path.resolve('./src/templates/post.tsx'))
 
+  const templateByType = {
+    'page-home': slash(path.resolve('./src/templates/home.tsx'))
+  }
+
   // Create page for each WordPress page
   allPages.data.allWordpressPage.edges.forEach(({node: page}) => {
+    const template = templateByType[page.template.replace('.php', '')] || pageTemplate
+
     createPage({
       path: page.link,
-      component: pageTemplate,
+      component: template,
       context: {
         id: page.id
       }

@@ -4,6 +4,7 @@ import BlockList from '../components/block/list'
 import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
+import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
 import { DateString, RawHTML } from '../types'
@@ -45,7 +46,9 @@ const Post: React.FC<PostProps> = ({ data: { wordpressPost } }) => {
   return (
     <Layout>
       <SEO title={wordpressPost.title} />
-      <h1>{wordpressPost.title}</h1>
+      <UiContainer>
+        <h1>{wordpressPost.title}</h1>
+      </UiContainer>
       {parsedBlocks.length ? (
         <BlockList blocks={parsedBlocks} />
       ) : (

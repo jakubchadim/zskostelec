@@ -21,23 +21,6 @@ function renderMenuItem (item: NavItem): React.ReactNode {
   return (
     <NavLink to={item.url || '/'}>{item.title}</NavLink>
   )
-
-  return (
-    <>
-      {externalLink ? (
-        <UiNav.Link href={item.url} target={item.target}>
-          {item.title}
-        </UiNav.Link>
-      ) : (
-        <NavLink to={item.url || '/'}>{item.title}</NavLink>
-      )}
-      {item.items.length && (
-        <UiNav.Submenu>
-          {}
-        </UiNav.Submenu>
-      )}
-    </>
-  )
 }
 
 function renderSubmenuItems(items: NavItem[]): React.ReactNode {
@@ -71,14 +54,15 @@ const NavMain: React.FC = () => {
           </UiNav.TextLogo>
           <UiNav.List>
             {nav.items.map((item, idx) => (
-                <UiNav.Item key={idx}>
-                  {renderMenuItem(item)}
+              <UiNav.Item key={idx}>
+                {renderMenuItem(item)}
+                {item.items.length > 0 && (
                   <UiNav.Submenu last={nav.items.length === idx + 1}>
                     {renderSubmenuItems(item.items)}
                   </UiNav.Submenu>
-                </UiNav.Item>
-              )
-            )}
+                )}
+              </UiNav.Item>
+            ))}
           </UiNav.List>
         </UiNav.Container>
       </UiContainer>
