@@ -1,5 +1,7 @@
-import normalizer from '../src/components/block/normalizer'
+import blockNormalizer from '../src/components/block/normalizer'
+import navNormalizer from '../src/components/nav/normalizer'
 import { config } from 'dotenv'
+import { composeNormalizers } from '../src/utils/normalizer'
 
 config()
 
@@ -53,7 +55,10 @@ module.exports = {
           sourceUrl: ADMIN_URL,
           replacementUrl: ''
         },
-        normalizer: normalizer
+        normalizer: composeNormalizers(
+          blockNormalizer,
+          navNormalizer
+        )
       }
     },
     {

@@ -1,5 +1,6 @@
 import { v4 } from 'uuid'
 import { ID, Json, Nullable, RawHTML } from '../../types'
+import { NormalizerFc } from '../../utils/normalizer'
 import { BlockType } from './constants'
 import { blockCoreGroupNormalize } from './core/group/group.normalize'
 import { NormalizeFunc, RawBlock, TransformedBlock } from './types'
@@ -10,7 +11,7 @@ const normalizeByType: Partial<{ [type in BlockType]: NormalizeFunc }> = {
   [BlockType.CORE_BUTTON]: blockCoreButtonNormalize
 }
 
-type Entity = {
+type InputEntity = {
   blocks: RawBlock[]
   __type: string
 }
@@ -51,7 +52,7 @@ function normalizeBlocks(rawBlocks?: TransformedBlock[]) {
     .filter((rawBlock) => rawBlock != null)
 }
 
-function normalizer({ entities }: { entities: Entity[] }) {
+const normalizer: NormalizerFc<InputEntity> = ({ entities }) => {
   return entities.map((entity) => {
     if (
       entity.__type === 'wordpress__POST' ||

@@ -1,7 +1,8 @@
 import { graphql, PageProps } from 'gatsby'
 import React from 'react'
 import BlockList from '../components/block/list'
-import { parseBlocks, TransformedBlock } from '../components/block/utils'
+import { TransformedBlock } from '../components/block/types'
+import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
@@ -11,7 +12,7 @@ type WordpressPageData = {
   wordpressPage: {
     title: string
     content: RawHTML
-    blocks: RawBlock[]
+    blocks: TransformedBlock[]
   }
 }
 

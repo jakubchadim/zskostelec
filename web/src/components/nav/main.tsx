@@ -2,13 +2,65 @@ import { Link } from 'gatsby'
 import React from 'react'
 import UiNav from '../ui/nav/nav'
 import UiContainer from '../ui/container/container'
-import { useNavMainQuery } from './main.query'
+import { NavItem, useNavMainQuery } from './main.query'
 import { isExternalLink } from './utils'
 
 const NavLink = UiNav.Link.withComponent(Link)
 
+function renderMenuItem (item: NavItem): React.ReactNode {
+  const externalLink = isExternalLink(item.url, item.target)
+
+  if (externalLink) {
+    return (
+      <UiNav.Link href={item.url} target={item.target}>
+        {item.title}
+      </UiNav.Link>
+    )
+  }
+
+  return (
+    <NavLink to={item.url || '/'}>{item.title}</NavLink>
+  )
+
+  return (
+    <>
+      {externalLink ? (
+        <UiNav.Link href={item.url} target={item.target}>
+          {item.title}
+        </UiNav.Link>
+      ) : (
+        <NavLink to={item.url || '/'}>{item.title}</NavLink>
+      )}
+      {item.items.length && (
+        <UiNav.Submenu>
+          {}
+        </UiNav.Submenu>
+      )}
+    </>
+  )
+}
+
+function renderSubmenuItems(items: NavItem[]): React.ReactNode {
+  if (!items.length) {
+    return null
+  }
+
+  return (
+    <>
+      {items.map((item, idx) => (
+        <React.Fragment key={`${item.slug}/${idx}`}>
+          <UiNav.Item important={!!item.items.length}>
+            {renderMenuItem(item)}
+          </UiNav.Item>
+          {renderSubmenuItems(item.items)}
+        </React.Fragment>
+      ))}
+    </>
+  )
+}
+
 const NavMain: React.FC = () => {
-  const { wordpressWpApiMenusMenusItems } = useNavMainQuery()
+  const nav = useNavMainQuery()
 
   return (
     <UiNav>
@@ -18,21 +70,15 @@ const NavMain: React.FC = () => {
             <Link to='/'>ZŠ Kostelec</Link>
           </UiNav.TextLogo>
           <UiNav.List>
-            {wordpressWpApiMenusMenusItems.items.map((item, idx) => {
-              const externalLink = isExternalLink(item.url, item.target)
-
-              return (
+            {nav.items.map((item, idx) => (
                 <UiNav.Item key={idx}>
-                  {externalLink ? (
-                    <UiNav.Link href={item.url} target={item.target}>
-                      {item.title}
-                    </UiNav.Link>
-                  ) : (
-                    <NavLink to={item.url || '/'}>{item.title}</NavLink>
-                  )}
+                  {renderMenuItem(item)}
+                  <UiNav.Submenu last={nav.items.length === idx + 1}>
+                    {renderSubmenuItems(item.items)}
+                  </UiNav.Submenu>
                 </UiNav.Item>
               )
-            })}
+            )}
           </UiNav.List>
         </UiNav.Container>
       </UiContainer>

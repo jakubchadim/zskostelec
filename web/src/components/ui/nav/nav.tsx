@@ -36,10 +36,14 @@ const Submenu = styled.ul<{ last?: boolean }>`
   margin-top: 0.5rem;
 `
 
-const Item = styled.li`
+const Item = styled.li<{important?: boolean}>`
   position: relative;
   cursor: default;
   padding: ${(p) => p.theme.spacing(1, 4)};
+  font-weight: ${p => p.important ? '300' : 'inherit'};
+  color: ${p => p.important ? p.theme.color.primary1 : 'inherit'};
+  text-transform: ${p => p.important ? 'uppercase' : 'inherit'};
+  font-size: ${p => p.important ? '.8em' : '1em'};
 
   &:hover {
     & > ${Submenu} {
