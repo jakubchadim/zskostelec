@@ -1,9 +1,11 @@
+import { select } from '@storybook/addon-knobs'
 import React from 'react'
+import styled from 'styled-components'
 import { ID, RawHTML } from '../../../../types'
 import { BlockColor } from '../../color/color'
 import { BlockType } from '../../constants'
 import { Block } from '../../types'
-import BlockCoreGroup, { BlockCoreGroupAttrs } from './group'
+import BlockCoreGroup from './group'
 
 const baseBlock: Block = {
   id: 'id' as ID,
@@ -21,13 +23,9 @@ const baseBlock: Block = {
   ]
 }
 
-const themedBlock: Block<BlockCoreGroupAttrs> = {
-  ...baseBlock,
-  attrs: {
-    backgroundColor: BlockColor.SECONDARY,
-    textColor: BlockColor.BLACK
-  }
-}
+const Offset = styled.div`
+  height: 5rem;
+`
 
 export default {
   title: 'Block/Core/Group'
@@ -35,4 +33,24 @@ export default {
 
 export const Default = () => <BlockCoreGroup block={baseBlock} />
 
-export const Themed = () => <BlockCoreGroup block={themedBlock} />
+export const Themed = () => (
+  <>
+    <Offset />
+    <BlockCoreGroup block={{
+      ...baseBlock,
+      attrs: {
+        backgroundColor: select('Background color', BlockColor, BlockColor.SECONDARY),
+        textColor: select('Text color', BlockColor, BlockColor.BLACK)
+      }
+    }} />
+    <Offset />
+    <h4>Nested block</h4>
+    <BlockCoreGroup nested block={{
+      ...baseBlock,
+      attrs: {
+        backgroundColor: select('Background color', BlockColor, BlockColor.SECONDARY),
+        textColor: select('Text color', BlockColor, BlockColor.BLACK)
+      }
+    }} />
+  </>
+)
