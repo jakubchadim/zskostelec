@@ -10,6 +10,10 @@ const NavLink = UiNav.Link.withComponent(Link)
 function renderMenuItem (item: NavItem): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
 
+  if (!item.url) {
+    return item.title
+  }
+
   if (externalLink) {
     return (
       <UiNav.Link href={item.url} target={item.target}>

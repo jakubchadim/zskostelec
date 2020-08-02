@@ -84,6 +84,7 @@
     "lorem-ipsum": "^2.0.3",
     "prettier": "^2.0.5",
     "react-test-renderer": "^16.13.1",
+    "typescript": "^3.9.7",
     "uuid": "^8.2.0"
   }
 }

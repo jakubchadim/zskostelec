@@ -5,6 +5,9 @@ const UiNav = styled.nav`
   border-bottom: 0.1rem solid ${(p) => p.theme.color.gray2};
   background: ${(p) => p.theme.color.white1};
   color: ${(p) => p.theme.color.gray7};
+  position: sticky;
+  top: 0;
+  z-index: 100;
 `
 
 const Container = styled.div`

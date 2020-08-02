@@ -1,6 +1,8 @@
 'use strict'
 
 import { createGlobalStyle } from 'styled-components'
+import { BlockColor } from '../components/block/color/color'
+import { getColorFromPalette } from '../components/block/color/utils'
 
 export const GlobalStyle = createGlobalStyle`
   * {
@@ -35,8 +37,9 @@ export const GlobalStyle = createGlobalStyle`
   
   h1, h2, h3, h4, h5, h6 {
     margin: 0 0 ${(p) => p.theme.spacing(1)};
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1.1;
+    font-family: ${(p) => p.theme.font.secondary};
   }
   
   h1 {
@@ -61,5 +64,29 @@ export const GlobalStyle = createGlobalStyle`
 
   h6 {
     font-size: 1.2rem
+  }
+  
+  .has-inline-color {
+    &.has-primary-color {
+      color: ${p => getColorFromPalette(BlockColor.PRIMARY, p.theme)};
+    }
+    &.has-secondary-color {
+      color: ${p => getColorFromPalette(BlockColor.SECONDARY, p.theme)};
+    }
+    &.has-white-color {
+      color: ${p => getColorFromPalette(BlockColor.WHITE, p.theme)};
+    }
+    &.has-black-color {
+      color: ${p => getColorFromPalette(BlockColor.BLACK, p.theme)};
+    }
+    &.has-dark-gray-color {
+      color: ${p => getColorFromPalette(BlockColor.DARK_GRAY, p.theme)};
+    }
+    &.has-medium-gray-color {
+      color: ${p => getColorFromPalette(BlockColor.MEDIUM_GRAY, p.theme)};
+    }
+    &.has-light-gray-color {
+      color: ${p => getColorFromPalette(BlockColor.LIGHT_GRAY, p.theme)};
+    }
   }
 `

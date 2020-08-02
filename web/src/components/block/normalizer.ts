@@ -42,8 +42,8 @@ export function transformBlocks(blocks: RawBlock[], parentId: Nullable<ID>): Tra
   return transformedBlocks
 }
 
-function normalizeBlocks(rawBlocks?: TransformedBlock[]) {
-  return (rawBlocks || [])
+function normalizeBlocks(rawBlocks?: TransformedBlock[]): TransformedBlock[] {
+  return <TransformedBlock[]>(rawBlocks || [])
     .map((rawBlock) => {
       const normalize = rawBlock.type && normalizeByType[rawBlock.type]
 
