@@ -33,4 +33,6 @@ type BlockCoreButtonProps<Attrs> = {
 
 export type BlockFC<Attrs = any> = React.FC<BlockCoreButtonProps<Attrs>>
 
-export type NormalizeFunc = (rawBlock: TransformedBlock) => TransformedBlock | null
+export type NormalizeFunc = (
+  rawBlock: TransformedBlock
+) => TransformedBlock | null

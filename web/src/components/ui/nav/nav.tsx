@@ -1,13 +1,19 @@
 import styled from 'styled-components'
 import { createUiComponent } from '../utils'
 
-const UiNav = styled.nav`
-  border-bottom: 0.1rem solid ${(p) => p.theme.color.gray2};
-  background: ${(p) => p.theme.color.white1};
-  color: ${(p) => p.theme.color.gray7};
+const UiNav = styled.nav<{ transparent?: boolean }>`
+  border-bottom: 0.1rem solid
+    ${(p) => (p.transparent ? 'transparent' : p.theme.color.gray2)};
+  background: ${(p) => (p.transparent ? 'transparent' : p.theme.color.white1)};
+  color: ${(p) => (p.transparent ? p.theme.color.white1 : p.theme.color.gray7)};
   position: sticky;
   top: 0;
   z-index: 100;
+
+  a:hover {
+    color: ${(p) => (p.transparent ? 'inherit' : p.theme.color.primary1)};
+    text-decoration: ${(p) => (p.transparent ? 'underline' : 'none')};
+  }
 `
 
 const Container = styled.div`
@@ -22,9 +28,10 @@ const Link = styled.a`
 
 const Submenu = styled.ul<{ last?: boolean }>`
   list-style: none;
-  padding: ${(p) => p.theme.spacing(3, 2)};
+  padding: ${(p) => p.theme.spacing(3, 2, 3, 1.5)};
   white-space: nowrap;
   background: ${(p) => p.theme.color.white1};
+  color: ${(p) => p.theme.color.gray7};
   position: absolute;
   top: 100%;
   left: ${(p) => (p.last ? 'inherit' : '50%')};
@@ -37,16 +44,21 @@ const Submenu = styled.ul<{ last?: boolean }>`
   user-select: none;
   visibility: hidden;
   margin-top: 0.5rem;
+
+  a:hover {
+    color: ${(p) => p.theme.color.primary1};
+    text-decoration: none;
+  }
 `
 
-const Item = styled.li<{important?: boolean}>`
+const Item = styled.li<{ important?: boolean }>`
   position: relative;
   cursor: default;
   padding: ${(p) => p.theme.spacing(1, 4)};
-  font-weight: ${p => p.important ? '300' : 'inherit'};
-  color: ${p => p.important ? p.theme.color.primary1 : 'inherit'};
-  text-transform: ${p => p.important ? 'uppercase' : 'inherit'};
-  font-size: ${p => p.important ? '.8em' : '1em'};
+  font-weight: ${(p) => (p.important ? '300' : 'inherit')};
+  color: ${(p) => (p.important ? p.theme.color.primary1 : 'inherit')};
+  text-transform: ${(p) => (p.important ? 'uppercase' : 'inherit')};
+  font-size: ${(p) => (p.important ? '.8em' : '1em')};
 
   &:hover {
     & > ${Submenu} {
@@ -68,9 +80,9 @@ const List = styled.ul`
   } */
 `
 
-const TextLogo = styled.h1`
+const TextLogo = styled.h1<{ inverted?: boolean }>`
   font-size: 2.4rem;
-  color: ${(p) => p.theme.color.primary1};
+  color: ${(p) => (p.inverted ? p.theme.color.white1 : p.theme.color.primary1)};
   margin: 0;
 
   a {

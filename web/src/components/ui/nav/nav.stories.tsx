@@ -1,6 +1,12 @@
 import React from 'react'
+import styled from 'styled-components'
 import UiContainer from '../container/container'
 import UiNav from './nav'
+
+const ColoredBg = styled.div`
+  height: 25rem;
+  background: ${(p) => p.theme.color.primary1};
+`
 
 export default {
   title: 'Ui/Nav'
@@ -89,4 +95,34 @@ export const WithSubmenuForLastItem = () => (
       </UiNav.Container>
     </UiContainer>
   </UiNav>
+)
+
+export const Transparent = () => (
+  <ColoredBg>
+    <UiNav transparent>
+      <UiContainer>
+        <UiNav.Container>
+          <UiNav.TextLogo inverted>
+            <a href='#'>Logo</a>
+          </UiNav.TextLogo>
+          <UiNav.List>
+            <UiNav.Item>Item 1</UiNav.Item>
+            <UiNav.Item>
+              Item 2
+              <UiNav.Submenu>
+                <UiNav.Item>
+                  <UiNav.Link href='#'>Submenu item 1</UiNav.Link>
+                </UiNav.Item>
+                <UiNav.Item>Submenu item 2</UiNav.Item>
+                <UiNav.Item>Submenu item 3</UiNav.Item>
+              </UiNav.Submenu>
+            </UiNav.Item>
+            <UiNav.Item>
+              <UiNav.Link href='#'>Item 3</UiNav.Link>
+            </UiNav.Item>
+          </UiNav.List>
+        </UiNav.Container>
+      </UiContainer>
+    </UiNav>
+  </ColoredBg>
 )

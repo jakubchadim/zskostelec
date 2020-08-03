@@ -10,20 +10,22 @@ type InputEntity = {
   __type: string
 }
 
-function transformNavItems (items: NavItem[]): NavItem[] {
-  return _flatten(items.map((item) => {
-    if (item.wordpress_children?.length) {
-      return transformNavItems([
-        {
-          ...item,
-          wordpress_children: null
-        },
-        ...item.wordpress_children
-      ])
-    }
+function transformNavItems(items: NavItem[]): NavItem[] {
+  return _flatten(
+    items.map((item) => {
+      if (item.wordpress_children?.length) {
+        return transformNavItems([
+          {
+            ...item,
+            wordpress_children: null
+          },
+          ...item.wordpress_children
+        ])
+      }
 
-    return item
-  }))
+      return item
+    })
+  )
 }
 
 const normalizer: NormalizerFc<InputEntity> = ({ entities }) => {

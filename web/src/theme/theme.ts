@@ -37,7 +37,7 @@ export const theme = {
   },
   font: {
     primary: "'Roboto', sans-serif",
-    secondary: "bookman, serif;"
+    secondary: 'bookman, serif;'
   },
   fontSize: {
     text1: '1rem',

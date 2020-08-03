@@ -36,21 +36,34 @@ export const Default = () => <BlockCoreGroup block={baseBlock} />
 export const Themed = () => (
   <>
     <Offset />
-    <BlockCoreGroup block={{
-      ...baseBlock,
-      attrs: {
-        backgroundColor: select('Background color', BlockColor, BlockColor.SECONDARY),
-        textColor: select('Text color', BlockColor, BlockColor.BLACK)
-      }
-    }} />
+    <BlockCoreGroup
+      block={{
+        ...baseBlock,
+        attrs: {
+          backgroundColor: select(
+            'Background color',
+            BlockColor,
+            BlockColor.SECONDARY
+          ),
+          textColor: select('Text color', BlockColor, BlockColor.BLACK)
+        }
+      }}
+    />
     <Offset />
     <h4>Nested block</h4>
-    <BlockCoreGroup nested block={{
-      ...baseBlock,
-      attrs: {
-        backgroundColor: select('Background color', BlockColor, BlockColor.SECONDARY),
-        textColor: select('Text color', BlockColor, BlockColor.BLACK)
-      }
-    }} />
+    <BlockCoreGroup
+      nested
+      block={{
+        ...baseBlock,
+        attrs: {
+          backgroundColor: select(
+            'Background color',
+            BlockColor,
+            BlockColor.SECONDARY
+          ),
+          textColor: select('Text color', BlockColor, BlockColor.BLACK)
+        }
+      }}
+    />
   </>
 )

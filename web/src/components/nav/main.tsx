@@ -7,7 +7,7 @@ import { isExternalLink } from './utils'
 
 const NavLink = UiNav.Link.withComponent(Link)
 
-function renderMenuItem (item: NavItem): React.ReactNode {
+function renderMenuItem(item: NavItem): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
 
   if (!item.url) {
@@ -22,9 +22,7 @@ function renderMenuItem (item: NavItem): React.ReactNode {
     )
   }
 
-  return (
-    <NavLink to={item.url || '/'}>{item.title}</NavLink>
-  )
+  return <NavLink to={item.url || '/'}>{item.title}</NavLink>
 }
 
 function renderSubmenuItems(items: NavItem[]): React.ReactNode {
@@ -46,14 +44,18 @@ function renderSubmenuItems(items: NavItem[]): React.ReactNode {
   )
 }
 
-const NavMain: React.FC = () => {
+type NavMainProps = {
+  transparent?: boolean
+}
+
+const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
   const nav = useNavMainQuery()
 
   return (
-    <UiNav>
+    <UiNav transparent={transparent}>
       <UiContainer>
         <UiNav.Container>
-          <UiNav.TextLogo>
+          <UiNav.TextLogo inverted={transparent}>
             <Link to='/'>ZŠ Kostelec</Link>
           </UiNav.TextLogo>
           <UiNav.List>

@@ -68,25 +68,25 @@ export const GlobalStyle = createGlobalStyle`
   
   .has-inline-color {
     &.has-primary-color {
-      color: ${p => getColorFromPalette(BlockColor.PRIMARY, p.theme)};
+      color: ${(p) => getColorFromPalette(BlockColor.PRIMARY, p.theme)};
     }
     &.has-secondary-color {
-      color: ${p => getColorFromPalette(BlockColor.SECONDARY, p.theme)};
+      color: ${(p) => getColorFromPalette(BlockColor.SECONDARY, p.theme)};
     }
     &.has-white-color {
-      color: ${p => getColorFromPalette(BlockColor.WHITE, p.theme)};
+      color: ${(p) => getColorFromPalette(BlockColor.WHITE, p.theme)};
     }
     &.has-black-color {
-      color: ${p => getColorFromPalette(BlockColor.BLACK, p.theme)};
+      color: ${(p) => getColorFromPalette(BlockColor.BLACK, p.theme)};
     }
     &.has-dark-gray-color {
-      color: ${p => getColorFromPalette(BlockColor.DARK_GRAY, p.theme)};
+      color: ${(p) => getColorFromPalette(BlockColor.DARK_GRAY, p.theme)};
     }
     &.has-medium-gray-color {
-      color: ${p => getColorFromPalette(BlockColor.MEDIUM_GRAY, p.theme)};
+      color: ${(p) => getColorFromPalette(BlockColor.MEDIUM_GRAY, p.theme)};
     }
     &.has-light-gray-color {
-      color: ${p => getColorFromPalette(BlockColor.LIGHT_GRAY, p.theme)};
+      color: ${(p) => getColorFromPalette(BlockColor.LIGHT_GRAY, p.theme)};
     }
   }
 `

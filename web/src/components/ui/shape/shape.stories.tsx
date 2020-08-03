@@ -6,7 +6,7 @@ import UiShape from './shape'
 
 const Block = styled.div`
   height: 10rem;
-  background: ${p => p.theme.color.gray5};
+  background: ${(p) => p.theme.color.gray5};
 `
 
 export default {

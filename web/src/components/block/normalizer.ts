@@ -16,7 +16,10 @@ type InputEntity = {
   __type: string
 }
 
-export function transformBlocks(blocks: RawBlock[], parentId: Nullable<ID>): TransformedBlock[] {
+export function transformBlocks(
+  blocks: RawBlock[],
+  parentId: Nullable<ID>
+): TransformedBlock[] {
   const transformedBlocks: TransformedBlock[] = []
 
   blocks.forEach((block) => {
@@ -25,7 +28,9 @@ export function transformBlocks(blocks: RawBlock[], parentId: Nullable<ID>): Tra
       parentId,
       type: block.blockName,
       attrs: <Json>JSON.stringify(block.attrs),
-      content: <Nullable<RawHTML>>(block.innerHTML || '').replace(/(\r\n|\n|\r)/gm, '').trim()
+      content: <Nullable<RawHTML>>(
+        (block.innerHTML || '').replace(/(\r\n|\n|\r)/gm, '').trim()
+      )
     }
 
     if (block.innerBlocks && block.innerBlocks.length > 0) {
