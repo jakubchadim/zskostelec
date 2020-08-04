@@ -1,7 +1,9 @@
 import { Link } from 'gatsby'
 import React from 'react'
+import { OpenInNew } from '@styled-icons/material/OpenInNew'
 import UiNav from '../ui/nav/nav'
 import UiContainer from '../ui/container/container'
+import UiIcon from '../ui/icon/icon'
 import { NavItem, useNavMainQuery } from './main.query'
 import { isExternalLink } from './utils'
 
@@ -11,13 +13,14 @@ function renderMenuItem(item: NavItem): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
 
   if (!item.url) {
-    return item.title
+    return <UiNav.Text>{item.title}</UiNav.Text>
   }
 
   if (externalLink) {
     return (
-      <UiNav.Link href={item.url} target={item.target}>
+      <UiNav.Link href={item.url} target={item.target} withIcon>
         {item.title}
+        <UiIcon icon={OpenInNew} />
       </UiNav.Link>
     )
   }

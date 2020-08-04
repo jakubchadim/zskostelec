@@ -1,4 +1,5 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+import UiIcon from '../icon/icon'
 import { createUiComponent } from '../utils'
 
 const UiNav = styled.nav<{ transparent?: boolean }>`
@@ -20,10 +21,6 @@ const Container = styled.div`
   height: 8rem;
   display: flex;
   align-items: center;
-`
-
-const Link = styled.a`
-  text-decoration: none;
 `
 
 const Submenu = styled.ul<{ last?: boolean }>`
@@ -54,7 +51,7 @@ const Submenu = styled.ul<{ last?: boolean }>`
 const Item = styled.li<{ important?: boolean }>`
   position: relative;
   cursor: default;
-  padding: ${(p) => p.theme.spacing(1, 4)};
+  padding: ${(p) => p.theme.spacing(0, 0.5)};
   font-weight: ${(p) => (p.important ? '300' : 'inherit')};
   color: ${(p) => (p.important ? p.theme.color.primary1 : 'inherit')};
   text-transform: ${(p) => (p.important ? 'uppercase' : 'inherit')};
@@ -67,6 +64,34 @@ const Item = styled.li<{ important?: boolean }>`
       margin-top: 0;
     }
   }
+`
+
+type MenuItemProps = {
+  withIcon?: boolean
+}
+
+const menuItemCss = css<MenuItemProps>`
+  position: relative;
+  padding: ${(p) =>
+    p.withIcon ? p.theme.spacing(1, 6, 1, 3.5) : p.theme.spacing(1, 3.5)};
+
+  ${UiIcon} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0.2rem;
+    opacity: 0.7;
+  }
+`
+
+const Text = styled.div<MenuItemProps>`
+  ${menuItemCss};
+`
+
+const Link = styled.a<MenuItemProps>`
+  ${menuItemCss};
+  display: block;
+  text-decoration: none;
 `
 
 const List = styled.ul`
@@ -95,6 +120,7 @@ export default createUiComponent(UiNav, {
   List,
   Item,
   Link,
+  Text,
   TextLogo,
   Submenu
 })

@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { OpenInNew } from '@styled-icons/material/OpenInNew'
 import UiContainer from '../container/container'
+import UiIcon from '../icon/icon'
 import UiNav from './nav'
 
 const ColoredBg = styled.div`
@@ -17,8 +19,12 @@ export const Simple = () => (
     <UiContainer>
       <UiNav.Container>
         <UiNav.List>
-          <UiNav.Item>Item 1</UiNav.Item>
-          <UiNav.Item>Item 2</UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Text>Item 1</UiNav.Text>
+          </UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Text>Item 2</UiNav.Text>
+          </UiNav.Item>
           <UiNav.Item>
             <UiNav.Link href='#'>Item 3</UiNav.Link>
           </UiNav.Item>
@@ -36,8 +42,12 @@ export const WithTextLogo = () => (
           <a href='#'>Logo</a>
         </UiNav.TextLogo>
         <UiNav.List>
-          <UiNav.Item>Item 1</UiNav.Item>
-          <UiNav.Item>Item 2</UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Text>Item 1</UiNav.Text>
+          </UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Text>Item 2</UiNav.Text>
+          </UiNav.Item>
           <UiNav.Item>
             <UiNav.Link href='#'>Item 3</UiNav.Link>
           </UiNav.Item>
@@ -55,13 +65,24 @@ export const WithSubmenu = () => (
           <a href='#'>Logo</a>
         </UiNav.TextLogo>
         <UiNav.List>
-          <UiNav.Item>Item 1</UiNav.Item>
           <UiNav.Item>
-            Item 2
+            <UiNav.Text>Item 1</UiNav.Text>
+          </UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Text>Item 2</UiNav.Text>
             <UiNav.Submenu>
-              <UiNav.Item>Submenu item 1</UiNav.Item>
-              <UiNav.Item>Submenu item 2</UiNav.Item>
-              <UiNav.Item>Submenu item 3</UiNav.Item>
+              <UiNav.Item>
+                <UiNav.Text withIcon>
+                  Submenu item 1
+                  <UiIcon icon={OpenInNew} />
+                </UiNav.Text>
+              </UiNav.Item>
+              <UiNav.Item>
+                <UiNav.Text>Submenu item 2</UiNav.Text>
+              </UiNav.Item>
+              <UiNav.Item>
+                <UiNav.Text>Submenu item 3</UiNav.Text>
+              </UiNav.Item>
             </UiNav.Submenu>
           </UiNav.Item>
           <UiNav.Item>
@@ -81,14 +102,24 @@ export const WithSubmenuForLastItem = () => (
           <a href='#'>Logo</a>
         </UiNav.TextLogo>
         <UiNav.List>
-          <UiNav.Item>Item 1</UiNav.Item>
-          <UiNav.Item>Item 2</UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Text>Item 1</UiNav.Text>
+          </UiNav.Item>
+          <UiNav.Item>
+            <UiNav.Text>Item 2</UiNav.Text>
+          </UiNav.Item>
           <UiNav.Item>
             <UiNav.Link href='#'>Item 3</UiNav.Link>
             <UiNav.Submenu last>
-              <UiNav.Item>Submenu item 1</UiNav.Item>
-              <UiNav.Item>Submenu item 2</UiNav.Item>
-              <UiNav.Item>Submenu item 3</UiNav.Item>
+              <UiNav.Item>
+                <UiNav.Text>Submenu item 1</UiNav.Text>
+              </UiNav.Item>
+              <UiNav.Item>
+                <UiNav.Text>Submenu item 2</UiNav.Text>
+              </UiNav.Item>
+              <UiNav.Item>
+                <UiNav.Text>Submenu item 3</UiNav.Text>
+              </UiNav.Item>
             </UiNav.Submenu>
           </UiNav.Item>
         </UiNav.List>
@@ -106,15 +137,21 @@ export const Transparent = () => (
             <a href='#'>Logo</a>
           </UiNav.TextLogo>
           <UiNav.List>
-            <UiNav.Item>Item 1</UiNav.Item>
             <UiNav.Item>
-              Item 2
+              <UiNav.Text>Item 1</UiNav.Text>
+            </UiNav.Item>
+            <UiNav.Item>
+              <UiNav.Text>Item 2</UiNav.Text>
               <UiNav.Submenu>
                 <UiNav.Item>
                   <UiNav.Link href='#'>Submenu item 1</UiNav.Link>
                 </UiNav.Item>
-                <UiNav.Item>Submenu item 2</UiNav.Item>
-                <UiNav.Item>Submenu item 3</UiNav.Item>
+                <UiNav.Item>
+                  <UiNav.Text>Submenu item 2</UiNav.Text>
+                </UiNav.Item>
+                <UiNav.Item>
+                  <UiNav.Text>Submenu item 3</UiNav.Text>
+                </UiNav.Item>
               </UiNav.Submenu>
             </UiNav.Item>
             <UiNav.Item>
