@@ -1,12 +1,13 @@
 import { graphql, PageProps } from 'gatsby'
 import React from 'react'
-import BlockList from '../components/block/list'
+import BlockContent from '../components/block/content'
 import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
 import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
+import UiSection from '../components/ui/section/section'
 import { RawHTML } from '../types'
 
 type WordpressPageData = {
@@ -41,16 +42,22 @@ const Page: React.FC<PageProps<WordpressPageData>> = ({
     [wordpressPage.blocks]
   )
 
+  const title = (
+    <UiContainer>
+      <h1>{wordpressPage.title}</h1>
+    </UiContainer>
+  )
+
   return (
     <Layout>
       <SEO title={wordpressPage.title} />
-      <UiContainer>
-        <h1>{wordpressPage.title}</h1>
-      </UiContainer>
       {parsedBlocks.length ? (
-        <BlockList blocks={parsedBlocks} />
+        <BlockContent blocks={parsedBlocks} title={title} />
       ) : (
-        <Content content={wordpressPage.content} />
+        <UiSection>
+          {title}
+          <Content content={wordpressPage.content} />
+        </UiSection>
       )}
     </Layout>
   )

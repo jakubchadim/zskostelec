@@ -9,7 +9,8 @@ const UiShapeWrapper = styled.div<{ color?: BlockColor }>`
   margin-top: -2.2rem;
   position: relative;
   z-index: 5;
-  color: ${(p) => getColorFromPalette(p.color, p.theme)};
+  color: ${(p) =>
+    getColorFromPalette(p.color, p.theme, false, p.theme.color.gray1)};
 `
 
 const UiShapeSvg = styled.svg`

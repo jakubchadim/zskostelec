@@ -1,5 +1,6 @@
 import React from 'react'
 import { ID, Json, Nullable, RawHTML } from '../../types'
+import { BlockColorPalette } from './color/color'
 import { BlockType } from './constants'
 
 export type RawBlock = {
@@ -23,6 +24,10 @@ export type Block<Attrs = any> = {
   type: Nullable<BlockType>
   content: Nullable<RawHTML>
   attrs: Attrs
+  blocks: Block[]
+}
+
+export type BlockSection = BlockColorPalette & {
   blocks: Block[]
 }
 

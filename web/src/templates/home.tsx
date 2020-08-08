@@ -27,12 +27,12 @@ const MainHeadingInfo = styled.div`
 
 const Grid = styled.div`
   display: flex;
-  margin: ${p => p.theme.spacing(-2, -2, 0)};
+  margin: ${(p) => p.theme.spacing(-2, -2, 0)};
 `
 
 const GridItem = styled.div`
   width: 33.3%;
-  padding: ${p => p.theme.spacing(2, 2, 0)};
+  padding: ${(p) => p.theme.spacing(2, 2, 0)};
 `
 
 const HeaderBoxesGrid = styled(Grid)`
@@ -42,15 +42,15 @@ const HeaderBoxesGrid = styled(Grid)`
 `
 
 const Box = styled.div`
-  background: ${p => p.theme.color.white1};
-  box-shadow: ${p => p.theme.shadow.lift};
-  border-radius: ${p => p.theme.radius.medium};
-  padding: ${p => p.theme.spacing(5, 6, 3)};
+  background: ${(p) => p.theme.color.white1};
+  box-shadow: ${(p) => p.theme.shadow.lift};
+  border-radius: ${(p) => p.theme.radius.medium};
+  padding: ${(p) => p.theme.spacing(5, 6, 3)};
   min-height: 15rem;
 `
 
 const BoxTitle = styled.div`
-  margin-bottom: ${p => p.theme.spacing(4)};
+  margin-bottom: ${(p) => p.theme.spacing(4)};
 `
 
 const Home: React.FC = () => {
@@ -61,8 +61,15 @@ const Home: React.FC = () => {
         <UiContainer>
           <MainHeadingInfo>
             <h1>Přijatí žáci</h1>
-            <h3 style={{margin: '2rem 0 1rem'}}>Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.</h3>
-            <UiButton type={BlockCoreButtonType.OUTLINE} textColor={BlockColor.WHITE}>Zjistit více</UiButton>
+            <h3 style={{ margin: '2rem 0 1rem' }}>
+              Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.
+            </h3>
+            <UiButton
+              type={BlockCoreButtonType.OUTLINE}
+              textColor={BlockColor.WHITE}
+            >
+              Zjistit více
+            </UiButton>
           </MainHeadingInfo>
         </UiContainer>
       </MainHeading>
@@ -72,34 +79,58 @@ const Home: React.FC = () => {
           <GridItem>
             <Box>
               <BoxTitle>
-                <h2>Jsem <b>žák</b></h2>
+                <h2>
+                  Jsem <b>žák</b>
+                </h2>
                 <h4>a chci...</h4>
               </BoxTitle>
-              <p><a href="#">Zkontrolovat známky</a></p>
-              <p><a href="#">Prohlédnout rozvrh hodin</a></p>
-              <p><a href="#">Přečíst si Guťák</a></p>
+              <p>
+                <a href='#'>Zkontrolovat známky</a>
+              </p>
+              <p>
+                <a href='#'>Prohlédnout rozvrh hodin</a>
+              </p>
+              <p>
+                <a href='#'>Přečíst si Guťák</a>
+              </p>
             </Box>
           </GridItem>
           <GridItem>
             <Box>
               <BoxTitle>
-                <h2>Jsem <b>rodič</b></h2>
+                <h2>
+                  Jsem <b>rodič</b>
+                </h2>
                 <h4>a chci...</h4>
               </BoxTitle>
-              <p><a href="#">Zkontrolovat známky</a></p>
-              <p><a href="#">Prohlédnout úspěchy dítěte</a></p>
-              <p><a href="#">Informace o klubu rodičů</a></p>
+              <p>
+                <a href='#'>Zkontrolovat známky</a>
+              </p>
+              <p>
+                <a href='#'>Prohlédnout úspěchy dítěte</a>
+              </p>
+              <p>
+                <a href='#'>Informace o klubu rodičů</a>
+              </p>
             </Box>
           </GridItem>
           <GridItem>
             <Box>
               <BoxTitle>
-                <h2>Jsem <b>učitel</b></h2>
+                <h2>
+                  Jsem <b>učitel</b>
+                </h2>
                 <h4>a chci...</h4>
               </BoxTitle>
-              <p><a href="#">Zapsat známky</a></p>
-              <p><a href="#">Najít dokumenty</a></p>
-              <p><a href="#">Něco...</a></p>
+              <p>
+                <a href='#'>Zapsat známky</a>
+              </p>
+              <p>
+                <a href='#'>Najít dokumenty</a>
+              </p>
+              <p>
+                <a href='#'>Něco...</a>
+              </p>
             </Box>
           </GridItem>
         </HeaderBoxesGrid>

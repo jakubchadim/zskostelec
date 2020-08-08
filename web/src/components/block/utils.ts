@@ -1,5 +1,6 @@
 import { ID, Nullable } from '../../types'
-import { Block, TransformedBlock } from './types'
+import { BlockColorPalette } from './color/color'
+import { Block, BlockSection, TransformedBlock } from './types'
 
 export function parseBlockAttrs(rawAttrs: string): any {
   const attrs = JSON.parse(rawAttrs)
@@ -22,4 +23,30 @@ export function parseBlocks(
         blocks: parseBlocks(rawBlocks, rawBlock.blockId)
       }
     })
+}
+
+export function getBlockSections(
+  blocks: Block<BlockColorPalette>[]
+): BlockSection[] {
+  const sections: BlockSection[] = []
+  let lastSection: BlockSection
+
+  blocks.forEach((block) => {
+    if (
+      !lastSection ||
+      lastSection.backgroundColor !== block.attrs.backgroundColor
+    ) {
+      lastSection = {
+        backgroundColor: block.attrs.backgroundColor,
+        textColor: block.attrs.textColor,
+        blocks: []
+      }
+
+      sections.push(lastSection)
+    }
+
+    lastSection.blocks.push(block)
+  })
+
+  return sections
 }
