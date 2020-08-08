@@ -37,7 +37,7 @@ export const GlobalStyle = createGlobalStyle`
   
   h1, h2, h3, h4, h5, h6 {
     margin: 0 0 ${(p) => p.theme.spacing(1)};
-    font-weight: 700;
+    font-weight: 300;
     line-height: 1.1;
     font-family: ${(p) => p.theme.font.secondary};
   }
