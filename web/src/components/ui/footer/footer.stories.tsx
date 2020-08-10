@@ -8,10 +8,10 @@ const Offset = styled.div`
 `
 
 export default {
-  title: 'Ui/Footer'
+  title: 'Ui'
 }
 
-export const Simple = () => (
+export const Footer = () => (
   <Offset>
     <UiFooter>
       <UiContainer>

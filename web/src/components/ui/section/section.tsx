@@ -25,7 +25,6 @@ const UiSection = styled(Section)`
   padding: ${(p) => p.theme.spacing(12, 0)};
   background: ${(p) => getColorFromPalette(p.backgroundColor, p.theme)};
   color: ${(p) => getColorFromPalette(p.textColor, p.theme)};
-  overflow: hidden;
 `
 
 export default createUiComponent(UiSection, {})

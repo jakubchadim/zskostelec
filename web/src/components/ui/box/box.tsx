@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { BlockColorPalette } from '../../block/color/color'
 import { getColorFromPalette } from '../../block/color/utils'
 import { createUiComponent } from '../utils'

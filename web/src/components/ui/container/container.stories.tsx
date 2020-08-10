@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { boolean } from '@storybook/addon-knobs'
 import UiContainer from './container'
 
 const PreviewBlock = styled.div`
@@ -8,17 +9,11 @@ const PreviewBlock = styled.div`
 `
 
 export default {
-  title: 'Ui/Container'
+  title: 'Ui'
 }
 
-export const Regular = () => (
-  <UiContainer>
-    <PreviewBlock />
-  </UiContainer>
-)
-
-export const Fluid = () => (
-  <UiContainer fluid>
+export const Container = () => (
+  <UiContainer fluid={boolean('Fluid', false)}>
     <PreviewBlock />
   </UiContainer>
 )

@@ -4,10 +4,10 @@ import UiButton from './button'
 import UiButtonGroup, { UiButtonGroupAlign } from './group'
 
 export default {
-  title: 'Ui/Button/Group'
+  title: 'Ui'
 }
 
-export const Default = () => (
+export const ButtonGroup = () => (
   <UiButtonGroup align={select('Align', UiButtonGroupAlign, undefined)}>
     <UiButton>First button</UiButton>
     <UiButton>Second button</UiButton>

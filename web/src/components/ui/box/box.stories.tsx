@@ -13,6 +13,8 @@ export default {
   title: 'Ui'
 }
 
+const firstParagraph = generateParagraph()
+
 export const Box = () => (
   <Offset>
     <UiBox
@@ -24,7 +26,7 @@ export const Box = () => (
         <h4>subtitle</h4>
       </UiBox.Header>
       <UiBox.Content>
-        <p>{generateParagraph()}</p>
+        <p>{firstParagraph}</p>
       </UiBox.Content>
     </UiBox>
   </Offset>

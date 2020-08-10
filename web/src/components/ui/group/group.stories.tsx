@@ -5,20 +5,13 @@ import { BlockColor } from '../../block/color/color'
 import UiGroup from './group'
 
 export default {
-  title: 'Ui/Group'
+  title: 'Ui'
 }
 
 const firstParagraph = generateParagraph()
 const secondParagraph = generateParagraph()
 
-export const Simple = () => (
-  <UiGroup>
-    <p>{firstParagraph}</p>
-    <p>{secondParagraph}</p>
-  </UiGroup>
-)
-
-export const Themed = () => (
+export const Group = () => (
   <UiGroup
     backgroundColor={select('Background color', BlockColor, BlockColor.PRIMARY)}
     textColor={select('Text color', BlockColor, BlockColor.WHITE)}
