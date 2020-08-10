@@ -7,7 +7,9 @@ import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
 import UiShape from '../components/ui/shape/shape'
 import UiButton from '../components/ui/button/button'
-import UiIcon from '../components/ui/icon/icon'
+import UiGrid from '../components/ui/grid/grid'
+import UiSection from '../components/ui/section/section'
+import UiBox from '../components/ui/box/box'
 
 const MainHeading = styled.section`
   padding: 15.1rem 0 14rem;
@@ -25,32 +27,10 @@ const MainHeadingInfo = styled.div`
   margin: 0 0 0 auto;
 `
 
-const Grid = styled.div`
-  display: flex;
-  margin: ${(p) => p.theme.spacing(-2, -2, 0)};
-`
-
-const GridItem = styled.div`
-  width: 33.3%;
-  padding: ${(p) => p.theme.spacing(2, 2, 0)};
-`
-
-const HeaderBoxesGrid = styled(Grid)`
-  margin-top: -6rem;
+const HeaderBoxes = styled.div`
+  margin-top: -12rem;
   position: relative;
   z-index: 10;
-`
-
-const Box = styled.div`
-  background: ${(p) => p.theme.color.white1};
-  box-shadow: ${(p) => p.theme.shadow.lift};
-  border-radius: ${(p) => p.theme.radius.medium};
-  padding: ${(p) => p.theme.spacing(5, 6, 3)};
-  min-height: 15rem;
-`
-
-const BoxTitle = styled.div`
-  margin-bottom: ${(p) => p.theme.spacing(4)};
 `
 
 const Home: React.FC = () => {
@@ -73,68 +53,77 @@ const Home: React.FC = () => {
           </MainHeadingInfo>
         </UiContainer>
       </MainHeading>
-      <UiShape color={BlockColor.LIGHT_GRAY} />
-      <UiContainer>
-        <HeaderBoxesGrid>
-          <GridItem>
-            <Box>
-              <BoxTitle>
-                <h2>
-                  Jsem <b>žák</b>
-                </h2>
-                <h4>a chci...</h4>
-              </BoxTitle>
-              <p>
-                <a href='#'>Zkontrolovat známky</a>
-              </p>
-              <p>
-                <a href='#'>Prohlédnout rozvrh hodin</a>
-              </p>
-              <p>
-                <a href='#'>Přečíst si Guťák</a>
-              </p>
-            </Box>
-          </GridItem>
-          <GridItem>
-            <Box>
-              <BoxTitle>
-                <h2>
-                  Jsem <b>rodič</b>
-                </h2>
-                <h4>a chci...</h4>
-              </BoxTitle>
-              <p>
-                <a href='#'>Zkontrolovat známky</a>
-              </p>
-              <p>
-                <a href='#'>Prohlédnout úspěchy dítěte</a>
-              </p>
-              <p>
-                <a href='#'>Informace o klubu rodičů</a>
-              </p>
-            </Box>
-          </GridItem>
-          <GridItem>
-            <Box>
-              <BoxTitle>
-                <h2>
-                  Jsem <b>učitel</b>
-                </h2>
-                <h4>a chci...</h4>
-              </BoxTitle>
-              <p>
-                <a href='#'>Zapsat známky</a>
-              </p>
-              <p>
-                <a href='#'>Najít dokumenty</a>
-              </p>
-              <p>
-                <a href='#'>Něco...</a>
-              </p>
-            </Box>
-          </GridItem>
-        </HeaderBoxesGrid>
-      </UiContainer>
+      <UiSection backgroundColor={BlockColor.LIGHT_GRAY}>
+        <UiContainer>
+          <HeaderBoxes>
+            <UiGrid>
+              <UiGrid.Item md={4}>
+                <UiBox>
+                  <UiBox.Header>
+                    <h2>
+                      Jsem <b>žák</b>
+                    </h2>
+                    <h4>a chci...</h4>
+                  </UiBox.Header>
+                  <UiBox.Content>
+                    <p>
+                      <a href='#'>Zkontrolovat známky</a>
+                    </p>
+                    <p>
+                      <a href='#'>Prohlédnout rozvrh hodin</a>
+                    </p>
+                    <p>
+                      <a href='#'>Přečíst si Guťák</a>
+                    </p>
+                  </UiBox.Content>
+                </UiBox>
+              </UiGrid.Item>
+              <UiGrid.Item md={4}>
+                <UiBox>
+                  <UiBox.Header>
+                    <h2>
+                      Jsem <b>rodič</b>
+                    </h2>
+                    <h4>a chci...</h4>
+                  </UiBox.Header>
+                  <UiBox.Content>
+                    <p>
+                      <a href='#'>Zkontrolovat známky</a>
+                    </p>
+                    <p>
+                      <a href='#'>Prohlédnout úspěchy dítěte</a>
+                    </p>
+                    <p>
+                      <a href='#'>Informace o klubu rodičů</a>
+                    </p>
+                  </UiBox.Content>
+                </UiBox>
+              </UiGrid.Item>
+              <UiGrid.Item md={4}>
+                <UiBox>
+                  <UiBox.Header>
+                    <h2>
+                      Jsem <b>učitel</b>
+                    </h2>
+                    <h4>a chci...</h4>
+                  </UiBox.Header>
+                  <UiBox.Content>
+                    <p>
+                      <a href='#'>Zapsat známky</a>
+                    </p>
+                    <p>
+                      <a href='#'>Najít dokumenty</a>
+                    </p>
+                    <p>
+                      <a href='#'>Něco...</a>
+                    </p>
+                  </UiBox.Content>
+                </UiBox>
+              </UiGrid.Item>
+            </UiGrid>
+          </HeaderBoxes>
+        </UiContainer>
+      </UiSection>
     </Layout>
   )
 }
