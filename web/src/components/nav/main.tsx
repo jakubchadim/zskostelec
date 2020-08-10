@@ -2,30 +2,33 @@ import { Link } from 'gatsby'
 import React from 'react'
 import { OpenInNew } from '@styled-icons/material/OpenInNew'
 import UiNavBar from '../ui/nav/bar'
+import UiNav from '../ui/nav/nav'
 import UiContainer from '../ui/container/container'
 import UiIcon from '../ui/icon/icon'
 import { NavItem, useNavMainQuery } from './main.query'
 import { isExternalLink } from './utils'
 
-const NavLink = UiNavBar.Link.withComponent(Link)
-
 function renderMenuItem(item: NavItem): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
 
   if (!item.url) {
-    return <UiNavBar.Text>{item.title}</UiNavBar.Text>
+    return <UiNav.Text>{item.title}</UiNav.Text>
   }
 
   if (externalLink) {
     return (
-      <UiNavBar.Link href={item.url} target={item.target} withIcon>
+      <UiNav.Link href={item.url} target={item.target} withIcon>
         {item.title}
         <UiIcon icon={OpenInNew} />
-      </UiNavBar.Link>
+      </UiNav.Link>
     )
   }
 
-  return <NavLink to={item.url || '/'}>{item.title}</NavLink>
+  return (
+    <UiNav.Link as={Link} to={item.url || '/'}>
+      {item.title}
+    </UiNav.Link>
+  )
 }
 
 function renderSubmenuItems(items: NavItem[]): React.ReactNode {
@@ -37,9 +40,9 @@ function renderSubmenuItems(items: NavItem[]): React.ReactNode {
     <>
       {items.map((item, idx) => (
         <React.Fragment key={`${item.slug}/${idx}`}>
-          <UiNavBar.Item important={!!item.items.length}>
+          <UiNav.Item important={!!item.items.length}>
             {renderMenuItem(item)}
-          </UiNavBar.Item>
+          </UiNav.Item>
           {renderSubmenuItems(item.items)}
         </React.Fragment>
       ))}
@@ -62,16 +65,20 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
             <Link to='/'>ZŠ Kostelec</Link>
           </UiNavBar.TextLogo>
           <UiNavBar.List>
-            {nav.items.map((item, idx) => (
-              <UiNavBar.Item key={idx}>
-                {renderMenuItem(item)}
-                {item.items.length > 0 && (
-                  <UiNavBar.Submenu last={nav.items.length === idx + 1}>
-                    {renderSubmenuItems(item.items)}
-                  </UiNavBar.Submenu>
-                )}
-              </UiNavBar.Item>
-            ))}
+            <UiNav transparent={transparent} inline simple>
+              {nav.items.map((item, idx) => (
+                <UiNav.Item key={idx}>
+                  {renderMenuItem(item)}
+                  {item.items.length > 0 && (
+                    <UiNav.Submenu last={nav.items.length === idx + 1}>
+                      <UiNav simple>
+                        {renderSubmenuItems(item.items)}
+                      </UiNav>
+                    </UiNav.Submenu>
+                  )}
+                </UiNav.Item>
+              ))}
+            </UiNav>
           </UiNavBar.List>
         </UiNavBar.Container>
       </UiContainer>

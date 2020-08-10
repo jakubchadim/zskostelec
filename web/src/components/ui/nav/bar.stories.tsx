@@ -5,6 +5,7 @@ import { OpenInNew } from '@styled-icons/material/OpenInNew'
 import UiContainer from '../container/container'
 import UiIcon from '../icon/icon'
 import UiNavBar from './bar'
+import UiNav from './nav'
 
 const ColoredBg = styled.div`
   height: 25rem;
@@ -27,43 +28,49 @@ export const Bar = () => {
               <a href='#'>Logo</a>
             </UiNavBar.TextLogo>
             <UiNavBar.List>
-              <UiNavBar.Item>
-                <UiNavBar.Text>Item 1</UiNavBar.Text>
-              </UiNavBar.Item>
-              <UiNavBar.Item>
-                <UiNavBar.Text>Item 2</UiNavBar.Text>
-                <UiNavBar.Submenu>
-                  <UiNavBar.Item>
-                    <UiNavBar.Link href='#' withIcon>
-                      Submenu item 1
-                      <UiIcon icon={OpenInNew} />
-                    </UiNavBar.Link>
-                  </UiNavBar.Item>
-                  <UiNavBar.Item>
-                    <UiNavBar.Text>Submenu item 2</UiNavBar.Text>
-                  </UiNavBar.Item>
-                  <UiNavBar.Item>
-                    <UiNavBar.Text>Submenu item 3</UiNavBar.Text>
-                  </UiNavBar.Item>
-                </UiNavBar.Submenu>
-              </UiNavBar.Item>
-              <UiNavBar.Item>
-                <UiNavBar.Link href='#'>Item 3</UiNavBar.Link>
-                <UiNavBar.Submenu last>
-                  <UiNavBar.Item>
-                    <UiNavBar.Text withIcon>
-                      Submenu item 1
-                      <UiIcon icon={OpenInNew} />
-                    </UiNavBar.Text>
-                  </UiNavBar.Item>
-                  <UiNavBar.Item>
-                    <UiNavBar.Text>Submenu item 2</UiNavBar.Text>
-                  </UiNavBar.Item>
-                  <UiNavBar.Item>
-                    <UiNavBar.Text>Submenu item 3</UiNavBar.Text>
-                  </UiNavBar.Item>
-                </UiNavBar.Submenu>
-              </UiNavBar.Item>
+              <UiNav transparent={transparent} inline simple>
+                <UiNav.Item>
+                  <UiNav.Text>Item 1</UiNav.Text>
+                </UiNav.Item>
+                <UiNav.Item>
+                  <UiNav.Text>Item 2</UiNav.Text>
+                  <UiNav.Submenu>
+                    <UiNav simple>
+                      <UiNav.Item>
+                        <UiNav.Link href='#' withIcon>
+                          Submenu item 1
+                          <UiIcon icon={OpenInNew} />
+                        </UiNav.Link>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Text>Submenu item 2</UiNav.Text>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Text>Submenu item 3</UiNav.Text>
+                      </UiNav.Item>
+                    </UiNav>
+                  </UiNav.Submenu>
+                </UiNav.Item>
+                <UiNav.Item>
+                  <UiNav.Link href='#'>Item 3</UiNav.Link>
+                  <UiNav.Submenu last>
+                    <UiNav simple>
+                      <UiNav.Item>
+                        <UiNav.Text withIcon>
+                          Submenu item 1
+                          <UiIcon icon={OpenInNew} />
+                        </UiNav.Text>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Text>Submenu item 2</UiNav.Text>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Text>Submenu item 3</UiNav.Text>
+                      </UiNav.Item>
+                    </UiNav>
+                  </UiNav.Submenu>
+                </UiNav.Item>
+              </UiNav>
             </UiNavBar.List>
           </UiNavBar.Container>
         </UiContainer>

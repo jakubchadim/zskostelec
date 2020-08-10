@@ -5,7 +5,7 @@ import { BlockCoreButtonType } from '../components/block/core/button/constants'
 import SEO from '../components/seo/seo'
 import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
-import UiShape from '../components/ui/shape/shape'
+import UiNav from '../components/ui/nav/nav'
 import UiButton from '../components/ui/button/button'
 import UiGrid from '../components/ui/grid/grid'
 import UiSection from '../components/ui/section/section'
@@ -41,7 +41,7 @@ const Home: React.FC = () => {
         <UiContainer>
           <MainHeadingInfo>
             <h1>Přijatí žáci</h1>
-            <h3 style={{ margin: '2rem 0 1rem' }}>
+            <h3>
               Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.
             </h3>
             <UiButton
@@ -66,15 +66,23 @@ const Home: React.FC = () => {
                     <h4>a chci...</h4>
                   </UiBox.Header>
                   <UiBox.Content>
-                    <p>
-                      <a href='#'>Zkontrolovat známky</a>
-                    </p>
-                    <p>
-                      <a href='#'>Prohlédnout rozvrh hodin</a>
-                    </p>
-                    <p>
-                      <a href='#'>Přečíst si Guťák</a>
-                    </p>
+                    <UiNav>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Zkontrolovat známky
+                        </UiNav.Link>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Prohlédnout rozvrh hodin
+                        </UiNav.Link>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Přečíst si Guťák
+                        </UiNav.Link>
+                      </UiNav.Item>
+                    </UiNav>
                   </UiBox.Content>
                 </UiBox>
               </UiGrid.Item>
@@ -87,15 +95,23 @@ const Home: React.FC = () => {
                     <h4>a chci...</h4>
                   </UiBox.Header>
                   <UiBox.Content>
-                    <p>
-                      <a href='#'>Zkontrolovat známky</a>
-                    </p>
-                    <p>
-                      <a href='#'>Prohlédnout úspěchy dítěte</a>
-                    </p>
-                    <p>
-                      <a href='#'>Informace o klubu rodičů</a>
-                    </p>
+                    <UiNav>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Zkontrolovat známky
+                        </UiNav.Link>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Prohlédnout úspěchy dítěte
+                        </UiNav.Link>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Informace o klubu rodičů
+                        </UiNav.Link>
+                      </UiNav.Item>
+                    </UiNav>
                   </UiBox.Content>
                 </UiBox>
               </UiGrid.Item>
@@ -108,15 +124,23 @@ const Home: React.FC = () => {
                     <h4>a chci...</h4>
                   </UiBox.Header>
                   <UiBox.Content>
-                    <p>
-                      <a href='#'>Zapsat známky</a>
-                    </p>
-                    <p>
-                      <a href='#'>Najít dokumenty</a>
-                    </p>
-                    <p>
-                      <a href='#'>Něco...</a>
-                    </p>
+                    <UiNav>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Zapsat známky
+                        </UiNav.Link>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Najít dokumenty
+                        </UiNav.Link>
+                      </UiNav.Item>
+                      <UiNav.Item>
+                        <UiNav.Link href='#'>
+                          Něco...
+                        </UiNav.Link>
+                      </UiNav.Item>
+                    </UiNav>
                   </UiBox.Content>
                 </UiBox>
               </UiGrid.Item>
