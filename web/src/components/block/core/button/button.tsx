@@ -24,7 +24,7 @@ const BlockCoreButton: BlockFC<BlockCoreButtonAttrs> = ({
     return (
       <UiButton
         as={'a'}
-        type={attrs.type}
+        themeType={attrs.type}
         href={attrs.href}
         target={attrs.target}
         rel={attrs.rel}
@@ -39,7 +39,7 @@ const BlockCoreButton: BlockFC<BlockCoreButtonAttrs> = ({
   return (
     <UiButton
       as={Link}
-      type={attrs.type}
+      themeType={attrs.type}
       to={attrs.href}
       target={attrs.target}
       backgroundColor={attrs.backgroundColor}

@@ -1,22 +1,8 @@
+import { generateBlock } from '../../utils/test'
 import { BlockColor, BlockColorPalette } from './color/color'
 import { BlockType } from './constants'
 import { Block } from './types'
 import { getBlockSections } from './utils'
-
-function generateBlock<Attrs extends any>(
-  type: BlockType,
-  attrs: Attrs,
-  content: string | null = null,
-  blocks: Block[] = []
-): Block {
-  return <Block>{
-    id: 'foo',
-    attrs,
-    type,
-    content,
-    blocks
-  }
-}
 
 describe('Block', () => {
   describe('utils', () => {

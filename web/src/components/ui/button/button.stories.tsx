@@ -13,7 +13,7 @@ export const Default = () => (
     <h4>Fill</h4>
     <UiButton>Default button</UiButton>
     <h4>Outline</h4>
-    <UiButton type={BlockCoreButtonType.OUTLINE}>Default button</UiButton>
+    <UiButton themeType={BlockCoreButtonType.OUTLINE}>Default button</UiButton>
   </div>
 )
 
@@ -32,7 +32,7 @@ export const Themed = () => (
     </UiButton>
     <h4>Outline</h4>
     <UiButton
-      type={BlockCoreButtonType.OUTLINE}
+      themeType={BlockCoreButtonType.OUTLINE}
       backgroundColor={select(
         'Background color',
         BlockColor,

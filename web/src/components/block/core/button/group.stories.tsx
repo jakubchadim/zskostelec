@@ -1,38 +1,28 @@
+import { select } from '@storybook/addon-knobs'
 import React from 'react'
-import { ID, RawHTML } from '../../../../types'
-import { BlockColor } from '../../color/color'
+import { generateBlock } from '../../../../utils/test'
+import { UiButtonGroupAlign } from '../../../ui/button/group'
 import { BlockType } from '../../constants'
-import { Block } from '../../types'
-import BlockCoreGroup from './button'
-
-const baseBlock: Block = {
-  id: 'id' as ID,
-  type: BlockType.CORE_GROUP,
-  content: null,
-  attrs: {},
-  blocks: [
-    {
-      id: 'id' as ID,
-      type: null,
-      content: '<p>Test string</p>' as RawHTML,
-      attrs: {},
-      blocks: []
-    }
-  ]
-}
-
-const themedBlock: Block<BlockCoreGroupAttrs> = {
-  ...baseBlock,
-  attrs: {
-    backgroundColor: BlockColor.SECONDARY,
-    textColor: BlockColor.BLACK
-  }
-}
+import BlockCoreButtonGroup from './group'
 
 export default {
-  title: 'Block/Core/Group'
+  title: 'Block/Core'
 }
 
-export const Default = () => <BlockCoreGroup block={baseBlock} />
-
-export const Themed = () => <BlockCoreGroup block={themedBlock} />
+export const ButtonGroup = () => (
+  <>
+    <BlockCoreButtonGroup
+      block={generateBlock(
+        BlockType.CORE_BUTTONS,
+        {
+          align: select('Align', UiButtonGroupAlign, UiButtonGroupAlign.CENTER)
+        },
+        null,
+        [
+          generateBlock(BlockType.CORE_BUTTON, {}, 'First button'),
+          generateBlock(BlockType.CORE_BUTTON, {}, 'Second button')
+        ]
+      )}
+    />
+  </>
+)

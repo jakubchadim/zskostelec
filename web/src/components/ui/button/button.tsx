@@ -6,7 +6,7 @@ import { BlockColorPalette } from '../../block/color/color'
 import { BlockCoreButtonType } from '../../block/core/button/constants'
 
 type UiButtonProps = BlockColorPalette & {
-  type: BlockCoreButtonType
+  themeType?: BlockCoreButtonType
 }
 
 const UiButton = styled.button<UiButtonProps>`
@@ -21,11 +21,11 @@ const UiButton = styled.button<UiButtonProps>`
     getColorFromPalette(p.textColor, p.theme, false, p.theme.color.primary1)};
   display: inline-block;
   border: ${(p) =>
-    p.type === BlockCoreButtonType.OUTLINE
+    p.themeType === BlockCoreButtonType.OUTLINE
       ? `${p.theme.spacing(0.2)} solid`
       : 'none'};
   padding: ${(p) =>
-    p.type === BlockCoreButtonType.OUTLINE
+    p.themeType === BlockCoreButtonType.OUTLINE
       ? p.theme.spacing(1.8, 2.8)
       : p.theme.spacing(2, 3)};
   font-size: ${(p) => p.theme.fontSize.text4};

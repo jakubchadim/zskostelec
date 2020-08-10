@@ -65,7 +65,7 @@ const Home: React.FC = () => {
               Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.
             </h3>
             <UiButton
-              type={BlockCoreButtonType.OUTLINE}
+              themeType={BlockCoreButtonType.OUTLINE}
               textColor={BlockColor.WHITE}
             >
               Zjistit více

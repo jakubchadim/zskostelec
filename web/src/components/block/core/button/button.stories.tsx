@@ -1,38 +1,29 @@
+import { select } from '@storybook/addon-knobs'
 import React from 'react'
-import { ID, RawHTML } from '../../../../types'
+import { generateBlock } from '../../../../utils/test'
 import { BlockColor } from '../../color/color'
 import { BlockType } from '../../constants'
-import { Block } from '../../types'
-import BlockCoreGroup from './button'
-
-const baseBlock: Block = {
-  id: 'id' as ID,
-  type: BlockType.CORE_GROUP,
-  content: null,
-  attrs: {},
-  blocks: [
-    {
-      id: 'id' as ID,
-      type: null,
-      content: '<p>Test string</p>' as RawHTML,
-      attrs: {},
-      blocks: []
-    }
-  ]
-}
-
-const themedBlock: Block<BlockCoreGroupAttrs> = {
-  ...baseBlock,
-  attrs: {
-    backgroundColor: BlockColor.SECONDARY,
-    textColor: BlockColor.BLACK
-  }
-}
+import BlockCoreButton from './button'
+import { BlockCoreButtonType } from './constants'
 
 export default {
-  title: 'Block/Core/Group'
+  title: 'Block/Core'
 }
 
-export const Default = () => <BlockCoreGroup block={baseBlock} />
-
-export const Themed = () => <BlockCoreGroup block={themedBlock} />
+export const Button = () => (
+  <BlockCoreButton
+    block={generateBlock(
+      BlockType.CORE_BUTTON,
+      {
+        backgroundColor: select(
+          'Background color',
+          BlockColor,
+          BlockColor.PRIMARY
+        ),
+        textColor: select('Text color', BlockColor, BlockColor.WHITE),
+        type: select('Type', BlockCoreButtonType, BlockCoreButtonType.FILL)
+      },
+      'Button text'
+    )}
+  />
+)
