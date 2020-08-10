@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import UiIcon from '../icon/icon'
 import { createUiComponent } from '../utils'
 
-const UiNav = styled.nav<{ transparent?: boolean }>`
+const UiNavBar = styled.nav<{ transparent?: boolean }>`
   border-bottom: 0.1rem solid
     ${(p) => (p.transparent ? 'transparent' : p.theme.color.gray2)};
   background: ${(p) => (p.transparent ? 'transparent' : p.theme.color.white1)};
@@ -115,7 +115,7 @@ const TextLogo = styled.h1<{ inverted?: boolean }>`
   }
 `
 
-export default createUiComponent(UiNav, {
+export default createUiComponent(UiNavBar, {
   Container,
   List,
   Item,

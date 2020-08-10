@@ -1,27 +1,27 @@
 import { Link } from 'gatsby'
 import React from 'react'
 import { OpenInNew } from '@styled-icons/material/OpenInNew'
-import UiNav from '../ui/nav/nav'
+import UiNavBar from '../ui/nav/bar'
 import UiContainer from '../ui/container/container'
 import UiIcon from '../ui/icon/icon'
 import { NavItem, useNavMainQuery } from './main.query'
 import { isExternalLink } from './utils'
 
-const NavLink = UiNav.Link.withComponent(Link)
+const NavLink = UiNavBar.Link.withComponent(Link)
 
 function renderMenuItem(item: NavItem): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
 
   if (!item.url) {
-    return <UiNav.Text>{item.title}</UiNav.Text>
+    return <UiNavBar.Text>{item.title}</UiNavBar.Text>
   }
 
   if (externalLink) {
     return (
-      <UiNav.Link href={item.url} target={item.target} withIcon>
+      <UiNavBar.Link href={item.url} target={item.target} withIcon>
         {item.title}
         <UiIcon icon={OpenInNew} />
-      </UiNav.Link>
+      </UiNavBar.Link>
     )
   }
 
@@ -37,9 +37,9 @@ function renderSubmenuItems(items: NavItem[]): React.ReactNode {
     <>
       {items.map((item, idx) => (
         <React.Fragment key={`${item.slug}/${idx}`}>
-          <UiNav.Item important={!!item.items.length}>
+          <UiNavBar.Item important={!!item.items.length}>
             {renderMenuItem(item)}
-          </UiNav.Item>
+          </UiNavBar.Item>
           {renderSubmenuItems(item.items)}
         </React.Fragment>
       ))}
@@ -55,27 +55,27 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
   const nav = useNavMainQuery()
 
   return (
-    <UiNav transparent={transparent}>
+    <UiNavBar transparent={transparent}>
       <UiContainer>
-        <UiNav.Container>
-          <UiNav.TextLogo inverted={transparent}>
+        <UiNavBar.Container>
+          <UiNavBar.TextLogo inverted={transparent}>
             <Link to='/'>ZŠ Kostelec</Link>
-          </UiNav.TextLogo>
-          <UiNav.List>
+          </UiNavBar.TextLogo>
+          <UiNavBar.List>
             {nav.items.map((item, idx) => (
-              <UiNav.Item key={idx}>
+              <UiNavBar.Item key={idx}>
                 {renderMenuItem(item)}
                 {item.items.length > 0 && (
-                  <UiNav.Submenu last={nav.items.length === idx + 1}>
+                  <UiNavBar.Submenu last={nav.items.length === idx + 1}>
                     {renderSubmenuItems(item.items)}
-                  </UiNav.Submenu>
+                  </UiNavBar.Submenu>
                 )}
-              </UiNav.Item>
+              </UiNavBar.Item>
             ))}
-          </UiNav.List>
-        </UiNav.Container>
+          </UiNavBar.List>
+        </UiNavBar.Container>
       </UiContainer>
-    </UiNav>
+    </UiNavBar>
   )
 }
 
