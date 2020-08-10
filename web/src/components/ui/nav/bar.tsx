@@ -9,6 +9,7 @@ const UiNavBar = styled.nav<{ transparent?: boolean }>`
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
 `
 
 const Container = styled.div`

@@ -1,6 +1,7 @@
 import { Link } from 'gatsby'
 import React from 'react'
 import { OpenInNew } from '@styled-icons/material/OpenInNew'
+import { NativeScrollEvent } from 'react-native'
 import UiNavBar from '../ui/nav/bar'
 import UiNav from '../ui/nav/nav'
 import UiContainer from '../ui/container/container'
@@ -54,18 +55,49 @@ type NavMainProps = {
   transparent?: boolean
 }
 
+function canBeTransparent (): boolean {
+  return window.scrollY <= 10
+}
+
 const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
   const nav = useNavMainQuery()
+  const [isTransparent, setIsTransparent] = React.useState(transparent || false)
+
+  React.useEffect(() => {
+    if (!transparent) {
+      if (isTransparent) {
+        setIsTransparent(false)
+      }
+
+      return
+    }
+
+    if (canBeTransparent() !== isTransparent) {
+      setIsTransparent(true)
+
+      return
+    }
+
+    const scroll = () => {
+      if (canBeTransparent() !== isTransparent) {
+        setIsTransparent(canBeTransparent())
+      }
+    }
+
+    document.addEventListener('scroll', scroll)
+
+    return () => document.removeEventListener('scroll', scroll)
+  }, [ transparent, isTransparent ])
 
   return (
-    <UiNavBar transparent={transparent}>
+    <UiNavBar transparent={isTransparent}>
       <UiContainer>
         <UiNavBar.Container>
-          <UiNavBar.TextLogo inverted={transparent}>
+          <UiNavBar.TextLogo inverted={isTransparent}>
             <Link to='/'>ZŠ Kostelec</Link>
           </UiNavBar.TextLogo>
           <UiNavBar.List>
-            <UiNav transparent={transparent} inline simple>
+            <UiNav transparent={isTransparent} inline simple>
               {nav.items.map((item, idx) => (
                 <UiNav.Item key={idx}>
                   {renderMenuItem(item)}
