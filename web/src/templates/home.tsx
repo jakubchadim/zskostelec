@@ -33,6 +33,23 @@ const HeaderBoxes = styled.div`
   z-index: 10;
 `
 
+const SecondSection = styled.div`
+  margin: ${p => p.theme.spacing(24, 0, 12)};
+`
+
+const SecondSectionInfo = styled.div`
+  width: 50%;
+`
+
+const More = styled.div`
+  text-align: center;
+  margin-top: ${p => p.theme.spacing(8)};
+`
+
+const SpecLink = styled.a`
+  font-weight: 700;
+`
+
 const Home: React.FC = () => {
   return (
     <Layout transparentNav>
@@ -146,6 +163,92 @@ const Home: React.FC = () => {
               </UiGrid.Item>
             </UiGrid>
           </HeaderBoxes>
+          <SecondSection>
+            <SecondSectionInfo>
+              <h1>Najdete nás na <b className='has-inline-color has-primary-color'>3&nbsp;pracovištích</b> v Kostelci nad Orlicí a okolí.</h1>
+              <h3>Podívejte se kde všude</h3>
+              <UiButton
+                themeType={BlockCoreButtonType.FILL}
+                backgroundColor={BlockColor.PRIMARY}
+                textColor={BlockColor.WHITE}
+              >
+                Zobrazit pracoviště
+              </UiButton>
+            </SecondSectionInfo>
+          </SecondSection>
+        </UiContainer>
+      </UiSection>
+      <UiSection backgroundColor={BlockColor.WHITE}>
+        <UiContainer>
+          <h1>Aktuality</h1>
+          <UiGrid largeGutter>
+            <UiGrid.Item md={4}>
+              <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
+                <UiBox.Header>
+                  <h3 style={{marginTop: '4rem'}}>
+                    <b>
+                      Seznamy žáků 6. tříd
+                    </b>
+                  </h3>
+                </UiBox.Header>
+                <UiBox.Content>
+                  <p>Seznamy žáků 6. tříd pro školní rok 2020 - 2021</p>
+                  <UiButton
+                    themeType={BlockCoreButtonType.OUTLINE}
+                    backgroundColor={BlockColor.MEDIUM_GRAY}
+                    textColor={BlockColor.BLACK}
+                  >
+                    Více informací
+                  </UiButton>
+                </UiBox.Content>
+              </UiBox>
+            </UiGrid.Item>
+            <UiGrid.Item md={4}>
+              <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
+                <UiBox.Header>
+                  <h3 style={{marginTop: '4rem'}}>
+                    <b>
+                      Seznamy žáků 6. tříd
+                    </b>
+                  </h3>
+                </UiBox.Header>
+                <UiBox.Content>
+                  <p>Seznamy žáků 6. tříd pro školní rok 2020 - 2021</p>
+                  <UiButton
+                    themeType={BlockCoreButtonType.OUTLINE}
+                    backgroundColor={BlockColor.MEDIUM_GRAY}
+                    textColor={BlockColor.BLACK}
+                  >
+                    Více informací
+                  </UiButton>
+                </UiBox.Content>
+              </UiBox>
+            </UiGrid.Item>
+            <UiGrid.Item md={4}>
+              <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
+                <UiBox.Header>
+                  <h3 style={{marginTop: '4rem'}}>
+                    <b>
+                      Seznamy žáků 6. tříd
+                    </b>
+                  </h3>
+                </UiBox.Header>
+                <UiBox.Content>
+                  <p>Seznamy žáků 6. tříd pro školní rok 2020 - 2021</p>
+                  <UiButton
+                    themeType={BlockCoreButtonType.OUTLINE}
+                    backgroundColor={BlockColor.MEDIUM_GRAY}
+                    textColor={BlockColor.BLACK}
+                  >
+                    Více informací
+                  </UiButton>
+                </UiBox.Content>
+              </UiBox>
+            </UiGrid.Item>
+          </UiGrid>
+          <More>
+            <SpecLink href='#'>Všechny aktuality</SpecLink>
+          </More>
         </UiContainer>
       </UiSection>
     </Layout>
