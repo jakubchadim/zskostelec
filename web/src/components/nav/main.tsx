@@ -7,7 +7,7 @@ import UiContainer from '../ui/container/container'
 import UiIcon from '../ui/icon/icon'
 import { NavItem, useNavMainQuery } from './main.query'
 import { isExternalLink } from './utils'
-import logoImage from '../../images/logo.png'
+// import logoImage from '../../images/logo.png'
 
 function renderMenuItem(item: NavItem): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
@@ -95,7 +95,6 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
         <UiNavBar.Container>
           <UiNavBar.TextLogo inverted={isTransparent}>
             <Link to='/'>
-              <img src={logoImage} />
               ZŠ Kostelec
             </Link>
           </UiNavBar.TextLogo>
