@@ -10,9 +10,11 @@ import UiButton from '../components/ui/button/button'
 import UiGrid from '../components/ui/grid/grid'
 import UiSection from '../components/ui/section/section'
 import UiBox from '../components/ui/box/box'
+import schoolImage from '../images/school@2x.png'
+import logoImage from '../images/logo.svg'
 
 const MainHeading = styled.section`
-  padding: 15.1rem 0 14rem;
+  padding: 8.1rem 0 8rem;
   margin-top: -8.1rem;
   background: linear-gradient(
     180deg,
@@ -23,8 +25,18 @@ const MainHeading = styled.section`
 `
 
 const MainHeadingInfo = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const MainHeadingInfoItem = styled.div`
   width: 50%;
-  margin: 0 0 0 auto;
+  
+  img {
+    display: block;
+    height: 30rem;
+    margin: 0 auto;
+  }
 `
 
 const HeaderBoxes = styled.div`
@@ -34,11 +46,20 @@ const HeaderBoxes = styled.div`
 `
 
 const SecondSection = styled.div`
-  margin: ${p => p.theme.spacing(24, 0, 12)};
+  margin: ${p => p.theme.spacing(12, 0, 0)};
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const SecondSectionInfo = styled.div`
   width: 50%;
+  
+  img {
+    width: 95%;
+    display: block;
+    margin: 0 0 0 auto;
+  }
 `
 
 const More = styled.div`
@@ -57,16 +78,21 @@ const Home: React.FC = () => {
       <MainHeading>
         <UiContainer>
           <MainHeadingInfo>
-            <h1>Přijatí žáci</h1>
-            <h3>
-              Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.
-            </h3>
-            <UiButton
-              themeType={BlockCoreButtonType.OUTLINE}
-              textColor={BlockColor.WHITE}
-            >
-              Zjistit více
-            </UiButton>
+            <MainHeadingInfoItem>
+              <img src={logoImage} />
+            </MainHeadingInfoItem>
+            <MainHeadingInfoItem>
+              <h1>Přijatí žáci</h1>
+              <h3>
+                Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.
+              </h3>
+              <UiButton
+                themeType={BlockCoreButtonType.OUTLINE}
+                textColor={BlockColor.WHITE}
+              >
+                Zjistit více
+              </UiButton>
+            </MainHeadingInfoItem>
           </MainHeadingInfo>
         </UiContainer>
       </MainHeading>
@@ -165,7 +191,7 @@ const Home: React.FC = () => {
           </HeaderBoxes>
           <SecondSection>
             <SecondSectionInfo>
-              <h1>Najdete nás na <b className='has-inline-color has-primary-color'>3&nbsp;pracovištích</b> v Kostelci nad Orlicí a okolí.</h1>
+              <h1>Najdete nás na <b className='has-inline-color has-primary-color'>4&nbsp;pracovištích</b> v Kostelci nad Orlicí a okolí.</h1>
               <h3>Podívejte se kde všude</h3>
               <UiButton
                 themeType={BlockCoreButtonType.FILL}
@@ -174,6 +200,9 @@ const Home: React.FC = () => {
               >
                 Zobrazit pracoviště
               </UiButton>
+            </SecondSectionInfo>
+            <SecondSectionInfo>
+              <img src={schoolImage} />
             </SecondSectionInfo>
           </SecondSection>
         </UiContainer>

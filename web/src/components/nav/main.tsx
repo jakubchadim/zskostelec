@@ -1,13 +1,13 @@
 import { Link } from 'gatsby'
 import React from 'react'
 import { OpenInNew } from '@styled-icons/material/OpenInNew'
-import { NativeScrollEvent } from 'react-native'
 import UiNavBar from '../ui/nav/bar'
 import UiNav from '../ui/nav/nav'
 import UiContainer from '../ui/container/container'
 import UiIcon from '../ui/icon/icon'
 import { NavItem, useNavMainQuery } from './main.query'
 import { isExternalLink } from './utils'
+import logoImage from '../../images/logo.png'
 
 function renderMenuItem(item: NavItem): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
@@ -94,7 +94,10 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
       <UiContainer>
         <UiNavBar.Container>
           <UiNavBar.TextLogo inverted={isTransparent}>
-            <Link to='/'>ZŠ Kostelec</Link>
+            <Link to='/'>
+              <img src={logoImage} />
+              ZŠ Kostelec
+            </Link>
           </UiNavBar.TextLogo>
           <UiNavBar.List>
             <UiNav transparent={isTransparent} inline simple>
