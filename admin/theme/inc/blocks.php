@@ -1,4 +1,33 @@
 <?php
+
+function transform_blocks ($blocks, &$result, $parentId) {
+    foreach ($blocks as &$block) {
+        $blockResult = [
+            'blockId' => uniqid(),
+            'parentId' => $parentId,
+            'type' => $block['blockName'],
+            'attrs' => json_encode($block['attrs']),
+            'content' => str_replace(["\n", "\r"], '', strval($block['innerHTML']))
+        ];
+
+        if ($block['innerBlocks'] && count($block['innerBlocks']) > 0) {
+            transform_blocks($block['innerBlocks'], $result, $blockResult['blockId']);
+        }
+
+        if (!($blockResult['type'] == null && $blockResult['content'] == '')) {
+            array_push($result, $blockResult);
+        }
+    }
+}
+
+function get_transformed_blocks ($blocks) {
+    $transformedBlocks = [];
+
+    transform_blocks($blocks, $transformedBlocks, null);
+
+    return $transformedBlocks;
+}
+
 add_action(
     'rest_api_init',
     function () {
@@ -16,7 +45,7 @@ add_action(
                     'blocks',
                     [
                         'get_callback' => function ( array $post ) {
-                            return parse_blocks( $post['content']['raw']);
+                            return parse_blocks($post['content']['raw']);
                         },
                     ]
                 );
@@ -65,5 +94,3 @@ add_theme_support( 'editor-color-palette', array(
 ) );
 
 add_theme_support( 'disable-custom-colors' );
-add_theme_support( 'editor-gradient-presets', array() );
-add_theme_support( 'disable-custom-gradients' );
