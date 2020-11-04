@@ -31,7 +31,7 @@ const MainHeadingInfo = styled.div`
 
 const MainHeadingInfoItem = styled.div`
   width: 50%;
-  
+
   img {
     display: block;
     height: 30rem;
@@ -46,7 +46,7 @@ const HeaderBoxes = styled.div`
 `
 
 const SecondSection = styled.div`
-  margin: ${p => p.theme.spacing(12, 0, 0)};
+  margin: ${(p) => p.theme.spacing(12, 0, 0)};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,7 +54,7 @@ const SecondSection = styled.div`
 
 const SecondSectionInfo = styled.div`
   width: 50%;
-  
+
   img {
     width: 95%;
     display: block;
@@ -64,7 +64,7 @@ const SecondSectionInfo = styled.div`
 
 const More = styled.div`
   text-align: center;
-  margin-top: ${p => p.theme.spacing(8)};
+  margin-top: ${(p) => p.theme.spacing(8)};
 `
 
 const SpecLink = styled.a`
@@ -83,9 +83,7 @@ const Home: React.FC = () => {
             </MainHeadingInfoItem>
             <MainHeadingInfoItem>
               <h1>Přijatí žáci</h1>
-              <h3>
-                Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.
-              </h3>
+              <h3>Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.</h3>
               <UiButton
                 themeType={BlockCoreButtonType.OUTLINE}
                 textColor={BlockColor.WHITE}
@@ -111,9 +109,7 @@ const Home: React.FC = () => {
                   <UiBox.Content>
                     <UiNav>
                       <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Zkontrolovat známky
-                        </UiNav.Link>
+                        <UiNav.Link href='#'>Zkontrolovat známky</UiNav.Link>
                       </UiNav.Item>
                       <UiNav.Item>
                         <UiNav.Link href='#'>
@@ -121,9 +117,7 @@ const Home: React.FC = () => {
                         </UiNav.Link>
                       </UiNav.Item>
                       <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Přečíst si Guťák
-                        </UiNav.Link>
+                        <UiNav.Link href='#'>Přečíst si Guťák</UiNav.Link>
                       </UiNav.Item>
                     </UiNav>
                   </UiBox.Content>
@@ -140,9 +134,7 @@ const Home: React.FC = () => {
                   <UiBox.Content>
                     <UiNav>
                       <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Zkontrolovat známky
-                        </UiNav.Link>
+                        <UiNav.Link href='#'>Zkontrolovat známky</UiNav.Link>
                       </UiNav.Item>
                       <UiNav.Item>
                         <UiNav.Link href='#'>
@@ -169,19 +161,13 @@ const Home: React.FC = () => {
                   <UiBox.Content>
                     <UiNav>
                       <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Zapsat známky
-                        </UiNav.Link>
+                        <UiNav.Link href='#'>Zapsat známky</UiNav.Link>
                       </UiNav.Item>
                       <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Najít dokumenty
-                        </UiNav.Link>
+                        <UiNav.Link href='#'>Najít dokumenty</UiNav.Link>
                       </UiNav.Item>
                       <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Něco...
-                        </UiNav.Link>
+                        <UiNav.Link href='#'>Něco...</UiNav.Link>
                       </UiNav.Item>
                     </UiNav>
                   </UiBox.Content>
@@ -191,7 +177,13 @@ const Home: React.FC = () => {
           </HeaderBoxes>
           <SecondSection>
             <SecondSectionInfo>
-              <h1>Najdete nás na <b className='has-inline-color has-primary-color'>4&nbsp;pracovištích</b> v Kostelci nad Orlicí a okolí.</h1>
+              <h1>
+                Najdete nás na{' '}
+                <b className='has-inline-color has-primary-color'>
+                  4&nbsp;pracovištích
+                </b>{' '}
+                v Kostelci nad Orlicí a okolí.
+              </h1>
               <h3>Podívejte se kde všude</h3>
               <UiButton
                 themeType={BlockCoreButtonType.FILL}
@@ -214,10 +206,8 @@ const Home: React.FC = () => {
             <UiGrid.Item md={4}>
               <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
                 <UiBox.Header>
-                  <h3 style={{marginTop: '4rem'}}>
-                    <b>
-                      Seznamy žáků 6. tříd
-                    </b>
+                  <h3 style={{ marginTop: '4rem' }}>
+                    <b>Seznamy žáků 6. tříd</b>
                   </h3>
                 </UiBox.Header>
                 <UiBox.Content>
@@ -235,10 +225,8 @@ const Home: React.FC = () => {
             <UiGrid.Item md={4}>
               <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
                 <UiBox.Header>
-                  <h3 style={{marginTop: '4rem'}}>
-                    <b>
-                      Seznamy žáků 6. tříd
-                    </b>
+                  <h3 style={{ marginTop: '4rem' }}>
+                    <b>Seznamy žáků 6. tříd</b>
                   </h3>
                 </UiBox.Header>
                 <UiBox.Content>
@@ -256,10 +244,8 @@ const Home: React.FC = () => {
             <UiGrid.Item md={4}>
               <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
                 <UiBox.Header>
-                  <h3 style={{marginTop: '4rem'}}>
-                    <b>
-                      Seznamy žáků 6. tříd
-                    </b>
+                  <h3 style={{ marginTop: '4rem' }}>
+                    <b>Seznamy žáků 6. tříd</b>
                   </h3>
                 </UiBox.Header>
                 <UiBox.Content>

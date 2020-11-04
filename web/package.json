@@ -24,6 +24,7 @@
     "html-react-parser": "^0.13.0",
     "polished": "^3.6.5",
     "react-helmet": "^6.0.0",
+    "simple-react-lightbox": "^3.3.4-1",
     "styled-components": "^5.1.1",
     "styled-icons": "^10.14.1"
   },
@@ -42,7 +43,9 @@
     "test:watch": "jest --watch",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "deploy": "gatsby build --prefix-paths && bash ghpages.publish.sh"
+    "deploy": "gatsby build --prefix-paths && bash ghpages.publish.sh",
+    "release-minor": "npm version minor -m \"Release v%s\" && npm run deploy",
+    "release-patch": "npm version patch -m \"Release v%s\" && npm run deploy"
   },
   "husky": {
     "hooks": {

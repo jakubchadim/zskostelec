@@ -29,9 +29,9 @@ const TextLogo = styled.h1<{ inverted?: boolean }>`
 
   a {
     text-decoration: none;
-    
+
     &:hover {
-      color: ${p => p.inverted ? 'inherit' : undefined};
+      color: ${(p) => (p.inverted ? 'inherit' : undefined)};
     }
   }
 `

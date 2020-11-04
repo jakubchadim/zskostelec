@@ -45,11 +45,11 @@ module.exports = {
         hostingWPCOM: false,
         useACF: true,
         excludedRoutes: [
-          '**/categories',
           '**/tags',
-          '**/taxonomies',
           '**/users',
-          '**/comments'
+          '**/comments',
+          '**/settings',
+          '**/themes'
         ],
         searchAndReplaceContentUrls: {
           sourceUrl: ADMIN_URL,
@@ -57,7 +57,7 @@ module.exports = {
         },
         normalizer: composeNormalizers(
           blockNormalizer,
-          navNormalizer
+          navNormalizer,
         )
       }
     },

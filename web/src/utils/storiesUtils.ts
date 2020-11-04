@@ -20,5 +20,5 @@ export const generateSentence = (num = 1) => {
 }
 
 export const generateWord = (num = 1) => {
-  return lorem.generateSentences(num)
+  return lorem.generateWords(num)
 }

@@ -6,7 +6,7 @@ import { getColorFromPalette } from '../../block/color/utils'
 const UiShapeWrapper = styled.div<{ color?: BlockColor }>`
   overflow: hidden;
   height: 2.2rem;
-  margin-top: -2.2rem;
+  margin-top: -2rem;
   position: relative;
   z-index: 5;
   color: ${(p) =>

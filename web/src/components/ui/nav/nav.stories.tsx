@@ -5,10 +5,10 @@ import { OpenInNew } from '@styled-icons/material/OpenInNew'
 import UiIcon from '../icon/icon'
 import UiNav from './nav'
 
-const ColoredBg = styled.div<{colored?: boolean}>`
+const ColoredBg = styled.div<{ colored?: boolean }>`
   height: 25rem;
-  background: ${(p) => p.colored ? p.theme.color.primary1 : undefined};
-  color: ${(p) => p.colored ? p.theme.color.white1 : undefined};
+  background: ${(p) => (p.colored ? p.theme.color.primary1 : undefined)};
+  color: ${(p) => (p.colored ? p.theme.color.white1 : undefined)};
 `
 
 export default {
@@ -24,9 +24,7 @@ const submenu = (
       </UiNav.Link>
     </UiNav.Item>
     <UiNav.Item>
-      <UiNav.Link href='#'>
-        Submenu item 2
-      </UiNav.Link>
+      <UiNav.Link href='#'>Submenu item 2</UiNav.Link>
     </UiNav.Item>
     <UiNav.Item>
       <UiNav.Text>Submenu item 3</UiNav.Text>
@@ -55,23 +53,15 @@ export const Nav = () => {
           </UiNav.Link>
         </UiNav.Item>
         <UiNav.Item>
-          <UiNav.Link href='#'>
-            Item 2
-          </UiNav.Link>
-          <UiNav.Submenu>
-            {submenu}
-          </UiNav.Submenu>
+          <UiNav.Link href='#'>Item 2</UiNav.Link>
+          <UiNav.Submenu>{submenu}</UiNav.Submenu>
         </UiNav.Item>
         <UiNav.Item>
           <UiNav.Text>Item 3</UiNav.Text>
         </UiNav.Item>
         <UiNav.Item>
-          <UiNav.Text>
-            Item 4
-          </UiNav.Text>
-          <UiNav.Submenu last>
-            {submenu}
-          </UiNav.Submenu>
+          <UiNav.Text>Item 4</UiNav.Text>
+          <UiNav.Submenu last>{submenu}</UiNav.Submenu>
         </UiNav.Item>
       </UiNav>
     </ColoredBg>

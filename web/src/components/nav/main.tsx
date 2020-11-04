@@ -55,7 +55,7 @@ type NavMainProps = {
   transparent?: boolean
 }
 
-function canBeTransparent (): boolean {
+function canBeTransparent(): boolean {
   return window.scrollY <= 10
 }
 
@@ -87,16 +87,14 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
     document.addEventListener('scroll', scroll)
 
     return () => document.removeEventListener('scroll', scroll)
-  }, [ transparent, isTransparent ])
+  }, [transparent, isTransparent])
 
   return (
     <UiNavBar transparent={isTransparent}>
       <UiContainer>
         <UiNavBar.Container>
           <UiNavBar.TextLogo inverted={isTransparent}>
-            <Link to='/'>
-              ZŠ Kostelec
-            </Link>
+            <Link to='/'>ZŠ Kostelec</Link>
           </UiNavBar.TextLogo>
           <UiNavBar.List>
             <UiNav transparent={isTransparent} inline simple>
@@ -105,9 +103,7 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
                   {renderMenuItem(item)}
                   {item.items.length > 0 && (
                     <UiNav.Submenu last={nav.items.length === idx + 1}>
-                      <UiNav simple>
-                        {renderSubmenuItems(item.items)}
-                      </UiNav>
+                      <UiNav simple>{renderSubmenuItems(item.items)}</UiNav>
                     </UiNav.Submenu>
                   )}
                 </UiNav.Item>
