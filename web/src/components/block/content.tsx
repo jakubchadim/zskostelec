@@ -7,9 +7,10 @@ import { getBlockSections } from './utils'
 type BlockListProps = {
   blocks?: Block[]
   title?: React.ReactNode
+  footer?: React.ReactNode
 }
 
-const BlockContent: React.FC<BlockListProps> = ({ blocks, title }) => {
+const BlockContent: React.FC<BlockListProps> = ({ blocks, title, footer }) => {
   if (!blocks || !blocks.length) {
     return null
   }
@@ -26,6 +27,7 @@ const BlockContent: React.FC<BlockListProps> = ({ blocks, title }) => {
         >
           {sectionIdx === 0 && title}
           <BlockList blocks={section.blocks} />
+          {sectionIdx === sections.length - 1 && footer}
         </UiSection>
       ))}
     </>

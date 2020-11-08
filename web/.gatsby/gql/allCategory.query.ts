@@ -1,11 +1,13 @@
+import { ID } from '../../src/types'
 import {gql, QueryResult} from './utils'
 
 type AllCategoryData = {
   allWordpressCategory: {
     edges: {
       node: {
-        id: string
+        id: ID
         link: string
+        name: string
       }
     }[]
   }
@@ -18,6 +20,7 @@ export const allCategoryQuery = gql`
                 node {
                     id
                     link
+                    name
                 }
             }
         }

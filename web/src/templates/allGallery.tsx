@@ -11,6 +11,7 @@ import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
 import UiContainer from '../components/ui/container/container'
 import UiGallery from '../components/ui/gallery/gallery'
+import UiGalleryOffset from '../components/ui/gallery/offset'
 import UiGrid from '../components/ui/grid/grid'
 import UiSection from '../components/ui/section/section'
 import UiShape from '../components/ui/shape/shape'
@@ -101,35 +102,37 @@ const AllGallery: React.FC<AllGalleryProps> = ({
 
   const gallery = (
     <UiContainer>
-      <UiGrid>
-        {allWordpressWpGallery.edges.map(({ node: gallery }) => {
-          const preview = gallery.acf.preview.localFile.preview
+      <UiGalleryOffset>
+        <UiGrid>
+          {allWordpressWpGallery.edges.map(({ node: gallery }) => {
+            const preview = gallery.acf.preview.localFile.preview
 
-          return (
-            <UiGrid.Item key={gallery.id} xs={6} sm={4}>
-              <Link to={gallery.link}>
-                <UiGallery>
-                  <UiGallery.Image>
-                    {preview?.fixed ? (
-                      <Img fixed={preview.fixed} alt={gallery.title} />
-                    ) : (
-                      <img
-                        src={gallery.acf.preview.source_url}
-                        alt={gallery.title}
-                      />
-                    )}
-                  </UiGallery.Image>
-                  <UiGallery.Overlay>
-                    <UiShape color={BlockColor.WHITE} />
-                    <UiGallery.Label>{gallery.acf.date}</UiGallery.Label>
-                    <UiGallery.Title>{gallery.title}</UiGallery.Title>
-                  </UiGallery.Overlay>
-                </UiGallery>
-              </Link>
-            </UiGrid.Item>
-          )
-        })}
-      </UiGrid>
+            return (
+              <UiGrid.Item key={gallery.id} xs={6} sm={4}>
+                <Link to={gallery.link}>
+                  <UiGallery>
+                    <UiGallery.Image>
+                      {preview?.fixed ? (
+                        <Img fixed={preview.fixed} alt={gallery.title} />
+                      ) : (
+                        <img
+                          src={gallery.acf.preview.source_url}
+                          alt={gallery.title}
+                        />
+                      )}
+                    </UiGallery.Image>
+                    <UiGallery.Overlay>
+                      <UiShape color={BlockColor.WHITE} />
+                      <UiGallery.Label>{gallery.acf.date}</UiGallery.Label>
+                      <UiGallery.Title>{gallery.title}</UiGallery.Title>
+                    </UiGallery.Overlay>
+                  </UiGallery>
+                </Link>
+              </UiGrid.Item>
+            )
+          })}
+        </UiGrid>
+      </UiGalleryOffset>
     </UiContainer>
   )
 
@@ -137,10 +140,7 @@ const AllGallery: React.FC<AllGalleryProps> = ({
     <Layout>
       <SEO title={wordpressPage.title} />
       {parsedBlocks.length ? (
-        <>
-          <BlockContent blocks={parsedBlocks} title={title} />
-          <UiSection>{gallery}</UiSection>
-        </>
+        <BlockContent blocks={parsedBlocks} title={title} footer={gallery} />
       ) : (
         <UiSection>
           {title}

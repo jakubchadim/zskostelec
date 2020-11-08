@@ -35,7 +35,10 @@ export const query = graphql`
       name
     }
     allWordpressPost(
-      filter: { categories: { elemMatch: { id: { eq: $id } } } }
+      filter: {
+        status: { eq: "publish" }
+        categories: { elemMatch: { id: { eq: $id } } }
+      }
     ) {
       edges {
         node {

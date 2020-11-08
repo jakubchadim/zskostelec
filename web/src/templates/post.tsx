@@ -1,7 +1,6 @@
 import React from 'react'
 import { graphql, Link, PageProps } from 'gatsby'
 import { BlockColor } from '../components/block/color/color'
-import BlockContent from '../components/block/content'
 import { BlockCoreButtonType } from '../components/block/core/button/constants'
 import BlockList from '../components/block/list'
 import { TransformedBlock } from '../components/block/types'
@@ -88,7 +87,7 @@ const Post: React.FC<PostProps> = ({
         <UiContainer>
           <UiGrid largeGutter>
             <UiGrid.Item md={8}>
-              <h1>{wordpressPost.title}</h1>
+              <h1 dangerouslySetInnerHTML={{ __html: wordpressPost.title }} />
               {parsedBlocks.length ? (
                 <BlockList blocks={parsedBlocks} nested />
               ) : (
@@ -102,7 +101,9 @@ const Post: React.FC<PostProps> = ({
                     <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
                       <UiBox.Header>
                         <UiArticle.Header>
-                          <UiArticle.Title>{post.title}</UiArticle.Title>
+                          <UiArticle.Title
+                            dangerouslySetInnerHTML={{ __html: post.title }}
+                          />
                         </UiArticle.Header>
                       </UiBox.Header>
                       <UiBox.Content>

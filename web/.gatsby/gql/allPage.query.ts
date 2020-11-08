@@ -1,10 +1,11 @@
+import { ID } from '../../src/types'
 import {gql, QueryResult} from './utils'
 
 type AllPageData = {
   allWordpressPage: {
     edges: {
       node: {
-        id: string
+        id: ID
         slug: string
         status: any
         template: string

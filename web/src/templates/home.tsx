@@ -1,17 +1,20 @@
+import { Link, PageProps } from 'gatsby'
 import React from 'react'
 import styled from 'styled-components'
 import { BlockColor } from '../components/block/color/color'
 import { BlockCoreButtonType } from '../components/block/core/button/constants'
-import SEO from '../components/seo/seo'
-import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
-import UiNav from '../components/ui/nav/nav'
-import UiButton from '../components/ui/button/button'
-import UiGrid from '../components/ui/grid/grid'
-import UiSection from '../components/ui/section/section'
+import SEO from '../components/seo/seo'
+import UiArticle from '../components/ui/article/article'
 import UiBox from '../components/ui/box/box'
-import schoolImage from '../images/school@2x.png'
+import UiButton from '../components/ui/button/button'
+import UiContainer from '../components/ui/container/container'
+import UiGrid from '../components/ui/grid/grid'
+import UiNav from '../components/ui/nav/nav'
+import UiSection from '../components/ui/section/section'
 import logoImage from '../images/logo.svg'
+import schoolImage from '../images/school@2x.png'
+import { ID } from '../types'
 
 const MainHeading = styled.section`
   padding: 8.1rem 0 8rem;
@@ -71,7 +74,26 @@ const SpecLink = styled.a`
   font-weight: 700;
 `
 
-const Home: React.FC = () => {
+type HomeContext = {
+  articlePreviews: {
+    category: {
+      id: ID
+      name: string
+      link: string
+    }
+    articles: {
+      id: ID
+      date: string
+      title: string
+      excerpt: string
+      link: string
+    }[]
+  }[]
+}
+
+type HomeProps = PageProps<null, HomeContext>
+
+const Home: React.FC<HomeProps> = ({ pageContext }) => {
   return (
     <Layout transparentNav>
       <SEO title='Vítejte' />
@@ -199,73 +221,51 @@ const Home: React.FC = () => {
           </SecondSection>
         </UiContainer>
       </UiSection>
-      <UiSection backgroundColor={BlockColor.WHITE}>
-        <UiContainer>
-          <h1>Aktuality</h1>
-          <UiGrid largeGutter>
-            <UiGrid.Item md={4}>
-              <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
-                <UiBox.Header>
-                  <h3 style={{ marginTop: '4rem' }}>
-                    <b>Seznamy žáků 6. tříd</b>
-                  </h3>
-                </UiBox.Header>
-                <UiBox.Content>
-                  <p>Seznamy žáků 6. tříd pro školní rok 2020 - 2021</p>
-                  <UiButton
-                    themeType={BlockCoreButtonType.OUTLINE}
-                    backgroundColor={BlockColor.MEDIUM_GRAY}
-                    textColor={BlockColor.BLACK}
-                  >
-                    Více informací
-                  </UiButton>
-                </UiBox.Content>
-              </UiBox>
-            </UiGrid.Item>
-            <UiGrid.Item md={4}>
-              <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
-                <UiBox.Header>
-                  <h3 style={{ marginTop: '4rem' }}>
-                    <b>Seznamy žáků 6. tříd</b>
-                  </h3>
-                </UiBox.Header>
-                <UiBox.Content>
-                  <p>Seznamy žáků 6. tříd pro školní rok 2020 - 2021</p>
-                  <UiButton
-                    themeType={BlockCoreButtonType.OUTLINE}
-                    backgroundColor={BlockColor.MEDIUM_GRAY}
-                    textColor={BlockColor.BLACK}
-                  >
-                    Více informací
-                  </UiButton>
-                </UiBox.Content>
-              </UiBox>
-            </UiGrid.Item>
-            <UiGrid.Item md={4}>
-              <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
-                <UiBox.Header>
-                  <h3 style={{ marginTop: '4rem' }}>
-                    <b>Seznamy žáků 6. tříd</b>
-                  </h3>
-                </UiBox.Header>
-                <UiBox.Content>
-                  <p>Seznamy žáků 6. tříd pro školní rok 2020 - 2021</p>
-                  <UiButton
-                    themeType={BlockCoreButtonType.OUTLINE}
-                    backgroundColor={BlockColor.MEDIUM_GRAY}
-                    textColor={BlockColor.BLACK}
-                  >
-                    Více informací
-                  </UiButton>
-                </UiBox.Content>
-              </UiBox>
-            </UiGrid.Item>
-          </UiGrid>
-          <More>
-            <SpecLink href='#'>Všechny aktuality</SpecLink>
-          </More>
-        </UiContainer>
-      </UiSection>
+
+      {pageContext.articlePreviews.map(({ category, articles }, idx) => (
+        <UiSection
+          key={category.id}
+          backgroundColor={idx % 2 === 0 ? BlockColor.WHITE : undefined}
+        >
+          <UiContainer>
+            <h1>{category.name}</h1>
+            <UiGrid largeGutter>
+              {articles.map((post) => (
+                <UiGrid.Item md={4} key={post.id}>
+                  <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
+                    <UiBox.Header>
+                      <UiArticle.Header>
+                        <UiArticle.Title
+                          dangerouslySetInnerHTML={{ __html: post.title }}
+                        />
+                      </UiArticle.Header>
+                    </UiBox.Header>
+                    <UiBox.Content>
+                      <UiArticle.Perex
+                        dangerouslySetInnerHTML={{ __html: post.excerpt }}
+                      />
+                      <Link to={post.link}>
+                        <UiButton
+                          themeType={BlockCoreButtonType.OUTLINE}
+                          backgroundColor={BlockColor.MEDIUM_GRAY}
+                          textColor={BlockColor.BLACK}
+                        >
+                          Více informací
+                        </UiButton>
+                      </Link>
+                    </UiBox.Content>
+                  </UiBox>
+                </UiGrid.Item>
+              ))}
+            </UiGrid>
+            <More>
+              <SpecLink as={Link} to={category.link}>
+                Všechny {category.name.toLowerCase()}
+              </SpecLink>
+            </More>
+          </UiContainer>
+        </UiSection>
+      ))}
     </Layout>
   )
 }
