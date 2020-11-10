@@ -1,16 +1,24 @@
-import { ID } from '../../src/types'
+import { ID, Nullable } from '../../src/types'
 import {gql, QueryResult} from './utils'
+
+export type PageInfo = {
+  id: ID
+  slug: string
+  status: any
+  template: string
+  link: string
+  acf: Nullable<{
+    displayCategory: Nullable<{
+      slug: string
+    }[]>
+  }>
+}
+
 
 type AllPageData = {
   allWordpressPage: {
     edges: {
-      node: {
-        id: ID
-        slug: string
-        status: any
-        template: string
-        link: string
-      }
+      node: PageInfo
     }[]
   }
 }
@@ -25,6 +33,11 @@ export const allPageQuery = gql`
                     status
                     template
                     link
+                    acf {
+                        displayCategory {
+                            slug
+                        }
+                    }
                 }
             }
         }

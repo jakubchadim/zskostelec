@@ -7,6 +7,7 @@ type AllCategoryData = {
       node: {
         id: ID
         link: string
+        slug: string
         name: string
       }
     }[]
@@ -20,6 +21,7 @@ export const allCategoryQuery = gql`
                 node {
                     id
                     link
+                    slug
                     name
                 }
             }

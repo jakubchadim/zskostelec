@@ -1,7 +1,6 @@
-import { ID } from '../src/types'
 import { AllCategoryQuery, allCategoryQuery } from './gql/allCategory.query'
 import { AllGalleryQuery, allGalleryQuery } from './gql/allGallery.query'
-import { allPageQuery, AllPageQuery } from './gql/allPage.query'
+import { allPageQuery, AllPageQuery, PageInfo } from './gql/allPage.query'
 import { allPostQuery, AllPostQuery } from './gql/allPost.query'
 import { filteredPostQuery, FilteredPostQuery } from './gql/filteredPost.query'
 import { extractNodes } from './gql/utils'
@@ -12,7 +11,8 @@ const slash = require('slash')
 
 enum TemplateType {
   HOME = 'page-home',
-  GALLERIES = 'page-galleries'
+  GALLERIES = 'page-galleries',
+  DOCUMENTS = 'page-documents'
 }
 
 export async function createPages ({ graphql, actions, reporter }): Promise<void> {
@@ -33,14 +33,6 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
   const allCategoryFormatted = extractNodes(allCategory.data.allWordpressCategory)
   const defaultCategoryId = allCategoryFormatted[0]?.id
 
-  const articlePreviews = await Promise.all(allCategoryFormatted.map(async (category) => {
-    const articles: FilteredPostQuery = await graphql(filteredPostQuery(category.id))
-
-    return {
-      category,
-      articles: extractNodes(articles.data.allWordpressPost)
-    }
-  }))
 
   const pageTemplate = slash(path.resolve('./src/templates/page.tsx'))
   const postTemplate = slash(path.resolve('./src/templates/post.tsx'))
@@ -49,33 +41,46 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
 
   const templateByType = {
     [TemplateType.HOME]: slash(path.resolve('./src/templates/home.tsx')),
-    [TemplateType.GALLERIES]: slash(path.resolve('./src/templates/allGallery.tsx'))
+    [TemplateType.GALLERIES]: slash(path.resolve('./src/templates/allGallery.tsx')),
+    [TemplateType.DOCUMENTS]: slash(path.resolve('./src/templates/allDocument.tsx')),
   }
 
-  function getPageContext (templateType: TemplateType, pageId: ID) {
+  async function getPageContext (templateType: TemplateType, page: PageInfo) {
     if (templateType === TemplateType.HOME) {
+      const categories = page?.acf?.displayCategory || []
+
+      const articlePreviews = await Promise.all(categories.map(async ({slug}) => {
+        const articles: FilteredPostQuery = await graphql(filteredPostQuery(slug))
+
+        return {
+          category: allCategoryFormatted.find((category) => category.slug === slug),
+          articles: extractNodes(articles.data.allWordpressPost)
+        }
+      }))
+
       return {
-        id: pageId,
+        id: page.id,
         articlePreviews: articlePreviews.filter((previews) => previews.articles.length > 0)
       }
     }
 
     return {
-      id: pageId
+      id: page.id
     }
   }
 
-  // Create page for each WordPress page
-  allPage.data.allWordpressPage.edges.forEach(({node: page}) => {
+  const pages = extractNodes(allPage.data.allWordpressPage)
+
+  for (const page of pages) {
     const templateType = <TemplateType>page.template.replace('.php', '')
     const template = templateByType[templateType] || pageTemplate
 
     createPage({
       path: page.link,
       component: template,
-      context: getPageContext(templateType, page.id)
+      context: await getPageContext(templateType, page)
     })
-  })
+  }
 
   // Create posts for each WordPress post
   allPost.data.allWordpressPost.edges.forEach(({node: post}) => {

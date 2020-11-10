@@ -74,6 +74,12 @@ const SpecLink = styled.a`
   font-weight: 700;
 `
 
+const SectionDivider = styled.hr`
+  margin: ${(p) => p.theme.spacing(12, 0)};
+  border: none;
+  border-top: 0.1rem solid ${(p) => p.theme.color.gray3};
+`
+
 type HomeContext = {
   articlePreviews: {
     category: {
@@ -222,50 +228,50 @@ const Home: React.FC<HomeProps> = ({ pageContext }) => {
         </UiContainer>
       </UiSection>
 
-      {pageContext.articlePreviews.map(({ category, articles }, idx) => (
-        <UiSection
-          key={category.id}
-          backgroundColor={idx % 2 === 0 ? BlockColor.WHITE : undefined}
-        >
-          <UiContainer>
-            <h1>{category.name}</h1>
-            <UiGrid largeGutter>
-              {articles.map((post) => (
-                <UiGrid.Item md={4} key={post.id}>
-                  <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
-                    <UiBox.Header>
-                      <UiArticle.Header>
-                        <UiArticle.Title
-                          dangerouslySetInnerHTML={{ __html: post.title }}
+      <UiSection backgroundColor={BlockColor.WHITE}>
+        <UiContainer>
+          {pageContext.articlePreviews.map(({ category, articles }, idx) => (
+            <>
+              {idx !== 0 && <SectionDivider />}
+              <h1>{category.name}</h1>
+              <UiGrid largeGutter>
+                {articles.map((post) => (
+                  <UiGrid.Item md={4} key={post.id}>
+                    <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
+                      <UiBox.Header>
+                        <UiArticle.Header>
+                          <UiArticle.Title
+                            dangerouslySetInnerHTML={{ __html: post.title }}
+                          />
+                        </UiArticle.Header>
+                      </UiBox.Header>
+                      <UiBox.Content>
+                        <UiArticle.Perex
+                          dangerouslySetInnerHTML={{ __html: post.excerpt }}
                         />
-                      </UiArticle.Header>
-                    </UiBox.Header>
-                    <UiBox.Content>
-                      <UiArticle.Perex
-                        dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                      />
-                      <Link to={post.link}>
-                        <UiButton
-                          themeType={BlockCoreButtonType.OUTLINE}
-                          backgroundColor={BlockColor.MEDIUM_GRAY}
-                          textColor={BlockColor.BLACK}
-                        >
-                          Více informací
-                        </UiButton>
-                      </Link>
-                    </UiBox.Content>
-                  </UiBox>
-                </UiGrid.Item>
-              ))}
-            </UiGrid>
-            <More>
-              <SpecLink as={Link} to={category.link}>
-                Všechny {category.name.toLowerCase()}
-              </SpecLink>
-            </More>
-          </UiContainer>
-        </UiSection>
-      ))}
+                        <Link to={post.link}>
+                          <UiButton
+                            themeType={BlockCoreButtonType.OUTLINE}
+                            backgroundColor={BlockColor.MEDIUM_GRAY}
+                            textColor={BlockColor.BLACK}
+                          >
+                            Více informací
+                          </UiButton>
+                        </Link>
+                      </UiBox.Content>
+                    </UiBox>
+                  </UiGrid.Item>
+                ))}
+              </UiGrid>
+              <More>
+                <SpecLink as={Link} to={category.link}>
+                  Všechny {category.name.toLowerCase()}
+                </SpecLink>
+              </More>
+            </>
+          ))}
+        </UiContainer>
+      </UiSection>
     </Layout>
   )
 }

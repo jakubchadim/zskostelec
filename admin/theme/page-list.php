@@ -1,5 +1,5 @@
 <?php
-/* Template Name: Projekty */
+/* Template Name: Výpis kategorie článků */
 // Silence is golden.
 
 wp_die( "There's always money in the banana stand. 🍌" );

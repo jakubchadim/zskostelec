@@ -1,16 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import {
-  generateParagraph,
-  generateSentence,
-  generateWord
-} from '../../../utils/storiesUtils'
+import { generateSentence, generateWord } from '../../../utils/storiesUtils'
 import { BlockColor } from '../../block/color/color'
 import { BlockCoreButtonType } from '../../block/core/button/constants'
 import UiBox from '../box/box'
 import UiButton from '../button/button'
 import UiGrid from '../grid/grid'
-import UiShape from '../shape/shape'
 import UiArticle from './article'
 
 const Offset = styled.div`

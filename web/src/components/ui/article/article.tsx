@@ -4,6 +4,10 @@ import styled from 'styled-components'
 const Title = styled.div`
   max-height: 3.3em;
   overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 `
 
 const Header = styled.h3`

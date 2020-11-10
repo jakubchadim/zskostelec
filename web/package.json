@@ -37,7 +37,7 @@
     "build": "gatsby build",
     "develop": "gatsby develop",
     "generate": "graphql-codegen --config codegen.yml",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --ignore-pattern 'public/*' --ignore-pattern 'public/*'",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --ignore-pattern 'public/*' --ignore-pattern '__mocks__/*'",
     "format": "eslint '*/**/*.{js,ts,tsx}' --ignore-pattern 'public/*' --ignore-pattern '__mocks__/*' --quiet --fix",
     "test": "jest",
     "test:watch": "jest --watch",
