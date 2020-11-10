@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# git worktree prune
+# git worktree list
+
 # Clean gatsby public folder
 gatsby clean
 
