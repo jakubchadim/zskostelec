@@ -1,10 +1,10 @@
 [
     {
-        "key": "group_5ef479841bba1",
-        "title": "Galleries",
+        "key": "group_5fb43f653f8c5",
+        "title": "Guťak",
         "fields": [
             {
-                "key": "field_5f7e06fab7a77",
+                "key": "field_5fb43f80a2cc4",
                 "label": "Náhledová fotografie",
                 "name": "preview",
                 "type": "image",
@@ -17,38 +17,32 @@
                     "id": ""
                 },
                 "return_format": "array",
-                "preview_size": "medium",
-                "library": "uploadedTo",
-                "min_width": 400,
-                "min_height": 400,
+                "preview_size": "thumbnail",
+                "library": "all",
+                "min_width": 300,
+                "min_height": 300,
                 "min_size": "",
-                "max_width": 1200,
-                "max_height": 1200,
+                "max_width": "",
+                "max_height": "",
                 "max_size": "",
                 "mime_types": ""
             },
             {
-                "key": "field_5f7e0004b15b8",
-                "label": "Fotogalerie",
-                "name": "gallery",
-                "type": "gallery",
+                "key": "field_5fb43f6ca2cc3",
+                "label": "Soubor",
+                "name": "file",
+                "type": "file",
                 "instructions": "",
-                "required": 0,
+                "required": 1,
                 "conditional_logic": 0,
                 "wrapper": {
                     "width": "",
                     "class": "",
                     "id": ""
                 },
-                "min": "",
-                "max": "",
-                "insert": "append",
-                "library": "uploadedTo",
-                "min_width": 400,
-                "min_height": 400,
+                "return_format": "array",
+                "library": "all",
                 "min_size": "",
-                "max_width": 1200,
-                "max_height": 1200,
                 "max_size": "",
                 "mime_types": ""
             }
@@ -58,16 +52,17 @@
                 {
                     "param": "post_type",
                     "operator": "==",
-                    "value": "gallery"
+                    "value": "gutak"
                 }
             ]
         ],
         "menu_order": 0,
         "position": "normal",
-        "style": "seamless",
+        "style": "default",
         "label_placement": "top",
         "instruction_placement": "label",
         "hide_on_screen": [
+            "permalink",
             "the_content",
             "excerpt",
             "discussion",

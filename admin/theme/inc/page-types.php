@@ -13,13 +13,18 @@ function load_custom_page_type ($dir, $type) {
 }
 
 include_once( $page_types_dir . 'gallery.php' );
-include_once( $page_types_dir . 'project.php' );
 include_once( $page_types_dir . 'document.php' );
 include_once( $page_types_dir . 'employee.php' );
+include_once( $page_types_dir . 'gutak.php' );
 
 if( function_exists('acf_add_local_field_group') ) {
+    load_custom_page_type($page_types_dir,'homepage');
     load_custom_page_type($page_types_dir,'gallery');
     load_custom_page_type($page_types_dir,'document');
+    load_custom_page_type($page_types_dir,'building');
+    load_custom_page_type($page_types_dir,'employee');
+    load_custom_page_type($page_types_dir,'gutak');
+    load_custom_page_type($page_types_dir,'article');
 }
 
 // Remove comments page in menu

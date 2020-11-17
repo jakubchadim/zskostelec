@@ -2,20 +2,20 @@
 
 function create_gallery_post_type() {
     $labels = array(
-        'name'               => 'Gallery',
-        'singular_name'      => 'Gallery',
-        'menu_name'          => 'Galleries',
-        'name_admin_bar'     => 'Gallery',
-        'add_new'            => 'New Gallery',
-        'add_new_item'       => 'New Gallery',
-        'new_item'           => 'New Gallery',
-        'edit_item'          => 'Edit Gallery',
-        'view_item'          => 'View Gallery',
-        'all_items'          => 'All Galleries',
-        'search_items'       => 'Search Galleries',
-        'parent_item_colon'  => 'Parent Gallery',
-        'not_found'          => 'No Galleries Found',
-        'not_found_in_trash' => 'No Galleries Found in Trash'
+        'name'               => 'Fotogalerie',
+        'singular_name'      => 'Fotogalerie',
+        'menu_name'          => 'Fotogalerie',
+        'name_admin_bar'     => 'Fotogalerie',
+        'add_new'            => 'Přidat fotogalerii',
+        'add_new_item'       => 'Přidat fotogalerii',
+        'new_item'           => 'Nová fotogalerie',
+        'edit_item'          => 'Upravit fotogalerii',
+        'view_item'          => 'Zobrazit fotogalerii',
+        'all_items'          => 'Všechny fotogalerie',
+        'search_items'       => 'Hledat fotogalerie',
+        'parent_item_colon'  => 'Nadřazená fotogalerie',
+        'not_found'          => 'Fotogalerie nenalezena',
+        'not_found_in_trash' => 'Žádná fotogalerie v koši'
     );
 
     $args = array(

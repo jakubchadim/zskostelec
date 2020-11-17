@@ -2,20 +2,20 @@
 
 function create_document_page_type() {
     $labels = array(
-        'name'               => 'Documents',
-        'singular_name'      => 'Document',
-        'menu_name'          => 'Documents',
-        'name_admin_bar'     => 'Document',
-        'add_new'            => 'Add New',
-        'add_new_item'       => 'Add New Document',
-        'new_item'           => 'New Document',
-        'edit_item'          => 'Edit Document',
-        'view_item'          => 'View Document',
-        'all_items'          => 'All Documents',
-        'search_items'       => 'Search Documents',
-        'parent_item_colon'  => 'Parent Document',
-        'not_found'          => 'No Documents Found',
-        'not_found_in_trash' => 'No Documents Found in Trash'
+        'name'               => 'Dokumenty',
+        'singular_name'      => 'Dokument',
+        'menu_name'          => 'Dokumenty',
+        'name_admin_bar'     => 'Dokument',
+        'add_new'            => 'Nahrát dokument',
+        'add_new_item'       => 'Nahrát nový dokument',
+        'new_item'           => 'Nový dokument',
+        'edit_item'          => 'Upravit dokument',
+        'view_item'          => 'Zobrazit dokument',
+        'all_items'          => 'Všechny dokumenty',
+        'search_items'       => 'Hledat dokumenty',
+        'parent_item_colon'  => 'Nadřazený dokument',
+        'not_found'          => 'Dokument nenalezen',
+        'not_found_in_trash' => 'Žádný dokument v koši'
     );
 
     $args = array(
@@ -60,7 +60,6 @@ function create_document_page_type() {
     );
 
     // Now register the non-hierarchical taxonomy like tag
-
     register_taxonomy('types', 'document', array(
         'hierarchical' => true,
         'labels' => $labels,
