@@ -28,9 +28,9 @@ type WordpressAllGalleryData = {
       node: {
         id: string
         title: string
+        date: string
         link: string
         acf: {
-          date: string
           preview: {
             source_url: string
             localFile: {
@@ -58,12 +58,16 @@ export const query = graphql`
         content
       }
     }
-    allWordpressWpGallery {
+    allWordpressWpGallery(
+      filter: { acf: { preview: { link: { ne: null } } } }
+    ) {
       edges {
         node {
           id
+          title
+          date(formatString: "DD.MM. YYYY")
+          link
           acf {
-            date
             preview {
               id
               source_url
@@ -76,8 +80,6 @@ export const query = graphql`
               }
             }
           }
-          link
-          title
         }
       }
     }
@@ -123,7 +125,7 @@ const AllGallery: React.FC<AllGalleryProps> = ({
                     </UiGallery.Image>
                     <UiGallery.Overlay>
                       <UiShape color={BlockColor.WHITE} />
-                      <UiGallery.Label>{gallery.acf.date}</UiGallery.Label>
+                      <UiGallery.Label>{gallery.date}</UiGallery.Label>
                       <UiGallery.Title>{gallery.title}</UiGallery.Title>
                     </UiGallery.Overlay>
                   </UiGallery>

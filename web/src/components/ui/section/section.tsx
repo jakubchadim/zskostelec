@@ -27,4 +27,8 @@ const UiSection = styled(Section)`
   color: ${(p) => getColorFromPalette(p.textColor, p.theme)};
 `
 
-export default createUiComponent(UiSection, {})
+const Pagination = styled.div`
+  padding: ${(p) => p.theme.spacing(12, 0, 8)};
+`
+
+export default createUiComponent(UiSection, { Pagination })

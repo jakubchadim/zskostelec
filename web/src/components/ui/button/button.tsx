@@ -7,6 +7,8 @@ import { BlockCoreButtonType } from '../../block/core/button/constants'
 
 type UiButtonProps = BlockColorPalette & {
   themeType?: BlockCoreButtonType
+  minWidth?: number
+  disabled?: boolean
 }
 
 const UiButton = styled.button<UiButtonProps>`
@@ -31,10 +33,12 @@ const UiButton = styled.button<UiButtonProps>`
   font-size: ${(p) => p.theme.fontSize.text4};
   font-weight: 500;
   text-decoration: none;
-  cursor: pointer;
   border-radius: ${(p) => p.theme.radius.small};
-  min-width: 6em;
+  min-width: ${(p) => (p.minWidth == null ? '6em' : `${p.minWidth}em`)};
   text-align: center;
+  opacity: ${(p) => (p.disabled ? 0.5 : 1)};
+  cursor: ${(p) => (p.disabled ? 'not-allowed' : 'pointer')};
+  line-height: 1.2;
 `
 
 export default createUiComponent(UiButton, {})

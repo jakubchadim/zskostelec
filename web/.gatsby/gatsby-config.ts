@@ -49,7 +49,12 @@ module.exports = {
           '**/users',
           '**/comments',
           '**/settings',
-          '**/themes'
+          '**/themes',
+          '**/users**',
+          '**/block-types',
+          '**/plugins',
+          '**/block-directory**',
+          '**njt-fbv**'
         ],
         searchAndReplaceContentUrls: {
           sourceUrl: ADMIN_URL,

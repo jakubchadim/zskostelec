@@ -29,8 +29,20 @@ const Perex = styled.div`
   }
 `
 
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+`
+
+const Date = styled.div`
+  opacity: 0.7;
+`
+
 export default {
   Header,
   Title,
-  Perex
+  Perex,
+  Footer,
+  Date
 }

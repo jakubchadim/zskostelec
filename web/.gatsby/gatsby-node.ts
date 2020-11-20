@@ -33,11 +33,23 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
   const allCategoryFormatted = extractNodes(allCategory.data.allWordpressCategory)
   const defaultCategoryId = allCategoryFormatted[0]?.id
 
-
   const pageTemplate = slash(path.resolve('./src/templates/page.tsx'))
   const postTemplate = slash(path.resolve('./src/templates/post.tsx'))
   const galleryTemplate = slash(path.resolve('./src/templates/gallery.tsx'))
   const categoryTemplate = slash(path.resolve('./src/templates/category.tsx'))
+
+  // Create posts for each WordPress post
+  const posts = allPost.data.allWordpressPost.edges.map(({node: post}) => post)
+  posts.forEach((post) => {
+    createPage({
+      path: post.link,
+      component: postTemplate,
+      context: {
+        id: post.id,
+        categoryId: post.categories[0]?.id || defaultCategoryId
+      }
+    })
+  })
 
   const templateByType = {
     [TemplateType.HOME]: slash(path.resolve('./src/templates/home.tsx')),
@@ -82,28 +94,29 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
     })
   }
 
-  // Create posts for each WordPress post
-  allPost.data.allWordpressPost.edges.forEach(({node: post}) => {
-    createPage({
-      path: post.link,
-      component: postTemplate,
-      context: {
-        id: post.id,
-        categoryId: post.categories[0]?.id || defaultCategoryId
-      }
-    })
-  })
-
   // Create wp categories
-  allCategory.data.allWordpressCategory.edges.forEach(({node: category}) => {
-    createPage({
-      path: category.link,
-      component: categoryTemplate,
-      context: {
-        id: category.id
+  const paginationLimit = 15
+  await Promise.all(
+    allCategory.data.allWordpressCategory.edges.map(async ({node: category}) => {
+      const totalCount = posts.filter((post) => post.categories.some((c) => c.id === category.id)).length
+
+      const numberOfPages = Math.ceil(totalCount / paginationLimit)
+
+      for (let i = 0; i < numberOfPages; i++) {
+        createPage({
+          path: i === 0 ? category.link : `${category.link}strana-${i + 1}/`,
+          component: categoryTemplate,
+          context: {
+            id: category.id,
+            offset: i * paginationLimit,
+            limit: paginationLimit,
+            totalCount,
+            basePath: category.link
+          }
+        })
       }
     })
-  })
+  )
 
   // Create gallery for each WordPress gallery
   allGallery.data.allWordpressWpGallery.edges.forEach(({node: gallery}) => {

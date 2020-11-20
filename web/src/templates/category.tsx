@@ -1,7 +1,9 @@
+import { number } from '@storybook/addon-knobs'
 import React from 'react'
 import { Link, graphql, PageProps } from 'gatsby'
 import { BlockColor } from '../components/block/color/color'
 import { BlockCoreButtonType } from '../components/block/core/button/constants'
+import UiNavPagination from '../components/nav/pagination'
 import UiArticle from '../components/ui/article/article'
 import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
@@ -30,11 +32,13 @@ type WordpressCategoryData = {
 }
 
 export const query = graphql`
-  query currentCategoryQuery($id: String!) {
+  query currentCategoryQuery($id: String!, $offset: Int!, $limit: Int!) {
     wordpressCategory(id: { eq: $id }) {
       name
     }
     allWordpressPost(
+      limit: $limit
+      skip: $offset
       filter: {
         status: { eq: "publish" }
         categories: { elemMatch: { id: { eq: $id } } }
@@ -53,10 +57,20 @@ export const query = graphql`
   }
 `
 
-type CategoryProps = PageProps<WordpressCategoryData>
+type CategoryProps = PageProps<
+  WordpressCategoryData,
+  {
+    limit: number
+    offset: number
+    totalCount: number
+    basePath: string
+  }
+>
 
 const Category: React.FC<CategoryProps> = ({
-  data: { wordpressCategory, allWordpressPost }
+  data: { wordpressCategory, allWordpressPost },
+  pageContext,
+  ...rest
 }) => {
   return (
     <Layout>
@@ -79,20 +93,34 @@ const Category: React.FC<CategoryProps> = ({
                     <UiArticle.Perex
                       dangerouslySetInnerHTML={{ __html: post.excerpt }}
                     />
-                    <Link to={post.link}>
+                    <UiArticle.Footer>
                       <UiButton
+                        as={Link}
+                        to={post.link}
                         themeType={BlockCoreButtonType.OUTLINE}
                         backgroundColor={BlockColor.MEDIUM_GRAY}
                         textColor={BlockColor.BLACK}
                       >
-                        Více informací
+                        Zobrazit
                       </UiButton>
-                    </Link>
+                      <UiArticle.Date>{post.date}</UiArticle.Date>
+                    </UiArticle.Footer>
                   </UiBox.Content>
                 </UiBox>
               </UiGrid.Item>
             ))}
           </UiGrid>
+          <UiSection.Pagination>
+            <UiNavPagination
+              totalCount={Math.ceil(pageContext.totalCount / pageContext.limit)}
+              current={pageContext.offset / pageContext.limit + 1}
+              generateLink={(page) =>
+                page === 1
+                  ? pageContext.basePath
+                  : `${pageContext.basePath}strana-${page}`
+              }
+            />
+          </UiSection.Pagination>
         </UiContainer>
       </UiSection>
     </Layout>

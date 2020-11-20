@@ -15,7 +15,7 @@ type AllGalleryData = {
 
 export const allGalleryQuery = gql`
     {
-        allWordpressWpGallery {
+        allWordpressWpGallery (filter: { acf: { preview: { link: { ne: null } } } }) {
             edges {
                 node {
                     id

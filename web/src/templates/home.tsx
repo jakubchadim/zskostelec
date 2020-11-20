@@ -249,15 +249,18 @@ const Home: React.FC<HomeProps> = ({ pageContext }) => {
                         <UiArticle.Perex
                           dangerouslySetInnerHTML={{ __html: post.excerpt }}
                         />
-                        <Link to={post.link}>
+                        <UiArticle.Footer>
                           <UiButton
+                            as={Link}
+                            to={post.link}
                             themeType={BlockCoreButtonType.OUTLINE}
                             backgroundColor={BlockColor.MEDIUM_GRAY}
                             textColor={BlockColor.BLACK}
                           >
-                            Více informací
+                            Zobrazit
                           </UiButton>
-                        </Link>
+                          <UiArticle.Date>{post.date}</UiArticle.Date>
+                        </UiArticle.Footer>
                       </UiBox.Content>
                     </UiBox>
                   </UiGrid.Item>

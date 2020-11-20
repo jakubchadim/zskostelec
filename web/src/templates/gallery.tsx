@@ -76,8 +76,8 @@ const GalleryView: React.FC<GalleryViewProps> = ({ images }) => {
 type WordpressGalleryData = {
   wordpressWpGallery: {
     title: string
+    date: string
     acf: {
-      date: string
       preview: GalleryImage
       gallery: GalleryImage[]
     }
@@ -88,8 +88,8 @@ export const query = graphql`
   query currentGalleryQuery($id: String!) {
     wordpressWpGallery(id: { eq: $id }) {
       title
+      date(formatString: "DD.MM. YYYY")
       acf {
-        date
         gallery {
           id
           source_url
@@ -122,7 +122,7 @@ const Gallery: React.FC<GalleryProps> = ({ data: { wordpressWpGallery } }) => {
       <SEO title={wordpressWpGallery.title} />
       <UiSection>
         <UiContainer>
-          <div>{wordpressWpGallery.acf.date}</div>
+          <div style={{ opacity: '.7' }}>{wordpressWpGallery.date}</div>
           <h1>{wordpressWpGallery.title}</h1>
           <SimpleReactLightbox>
             <GalleryView images={wordpressWpGallery.acf.gallery} />
