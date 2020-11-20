@@ -1,6 +1,6 @@
 {
   "name": "zskostelec-web",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "jakubchadim",
   "description": "ZŠ Kostelec presentational website on WP",
   "dependencies": {
