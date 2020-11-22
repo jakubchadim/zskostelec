@@ -1,5 +1,6 @@
 import blockNormalizer from '../src/components/block/normalizer'
 import navNormalizer from '../src/components/nav/normalizer'
+import galleryNormalizer from '../src/components/gallery/normalizer'
 import { config } from 'dotenv'
 import { composeNormalizers } from '../src/utils/normalizer'
 
@@ -63,6 +64,7 @@ module.exports = {
         normalizer: composeNormalizers(
           blockNormalizer,
           navNormalizer,
+          galleryNormalizer
         )
       }
     },
