@@ -1,4 +1,5 @@
 import React from 'react'
+import { css } from 'styled-components'
 
 type ElementsObject = { [key: string]: React.FC }
 type UiComponent<Component, Elements extends ElementsObject> = Component &
@@ -19,3 +20,10 @@ export function createUiComponent<
 
   return <UiComponent<Component, Elements>>componentWithElements
 }
+
+export const textOverflowMixin = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+`

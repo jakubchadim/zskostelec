@@ -3,7 +3,11 @@ import { BlockColorPalette } from '../../block/color/color'
 import { getColorFromPalette } from '../../block/color/utils'
 import { createUiComponent } from '../utils'
 
-const UiBox = styled.div<BlockColorPalette>`
+type UiBoxProps = BlockColorPalette & {
+  offsetTop?: boolean
+}
+
+const UiBox = styled.div<UiBoxProps>`
   background: ${(p) =>
     getColorFromPalette(
       p.backgroundColor,
@@ -15,6 +19,7 @@ const UiBox = styled.div<BlockColorPalette>`
     getColorFromPalette(p.textColor, p.theme, false, p.theme.color.black1)};
   box-shadow: ${(p) => p.theme.shadow.lift};
   border-radius: ${(p) => p.theme.radius.medium};
+  margin-top: ${(p) => (p.offsetTop ? p.theme.spacing(2) : undefined)};
 `
 
 const Header = styled.div`

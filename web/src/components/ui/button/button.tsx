@@ -39,6 +39,20 @@ const UiButton = styled.button<UiButtonProps>`
   opacity: ${(p) => (p.disabled ? 0.5 : 1)};
   cursor: ${(p) => (p.disabled ? 'not-allowed' : 'pointer')};
   line-height: 1.2;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background: ${(p) =>
+      getColorFromPalette(
+        p.backgroundColor,
+        p.theme,
+        true,
+        rgba(p.theme.color.primary2, 0.1)
+      )};
+    color: ${(p) =>
+      getColorFromPalette(p.textColor, p.theme, false, p.theme.color.primary1)};
+  }
 `
 
 export default createUiComponent(UiButton, {})

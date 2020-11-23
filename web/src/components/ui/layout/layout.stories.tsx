@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import UiLayout from './layout'
 
 export default {
-  title: 'Ui'
+  title: 'Ui/Layout'
 }
 
 const Header = styled.div`

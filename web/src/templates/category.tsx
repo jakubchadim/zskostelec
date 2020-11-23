@@ -81,7 +81,7 @@ const Category: React.FC<CategoryProps> = ({
           <UiGrid largeGutter>
             {allWordpressPost.edges.map(({ node: post }) => (
               <UiGrid.Item md={4} key={post.id}>
-                <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
+                <UiBox backgroundColor={BlockColor.WHITE}>
                   <UiBox.Header>
                     <UiArticle.Header>
                       <UiArticle.Title
@@ -98,7 +98,7 @@ const Category: React.FC<CategoryProps> = ({
                         as={Link}
                         to={post.link}
                         themeType={BlockCoreButtonType.OUTLINE}
-                        backgroundColor={BlockColor.MEDIUM_GRAY}
+                        backgroundColor={BlockColor.WHITE}
                         textColor={BlockColor.BLACK}
                       >
                         Zobrazit

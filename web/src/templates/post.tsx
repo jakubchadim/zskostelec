@@ -98,7 +98,7 @@ const Post: React.FC<PostProps> = ({
               <UiGrid>
                 {allWordpressPost.edges.map(({ node: post }) => (
                   <UiGrid.Item md={12} key={post.id}>
-                    <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
+                    <UiBox backgroundColor={BlockColor.WHITE}>
                       <UiBox.Header>
                         <UiArticle.Header>
                           <UiArticle.Title
@@ -113,7 +113,7 @@ const Post: React.FC<PostProps> = ({
                         <Link to={post.link}>
                           <UiButton
                             themeType={BlockCoreButtonType.OUTLINE}
-                            backgroundColor={BlockColor.MEDIUM_GRAY}
+                            backgroundColor={BlockColor.WHITE}
                             textColor={BlockColor.BLACK}
                           >
                             Více informací
