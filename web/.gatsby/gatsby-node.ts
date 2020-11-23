@@ -12,7 +12,8 @@ const slash = require('slash')
 enum TemplateType {
   HOME = 'page-home',
   GALLERIES = 'page-galleries',
-  DOCUMENTS = 'page-documents'
+  DOCUMENTS = 'page-documents',
+  GUTAKY = 'page-gutak'
 }
 
 export async function createPages ({ graphql, actions, reporter }): Promise<void> {
@@ -55,6 +56,7 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
     [TemplateType.HOME]: slash(path.resolve('./src/templates/home.tsx')),
     [TemplateType.GALLERIES]: slash(path.resolve('./src/templates/allGallery.tsx')),
     [TemplateType.DOCUMENTS]: slash(path.resolve('./src/templates/allDocument.tsx')),
+    [TemplateType.GUTAKY]: slash(path.resolve('./src/templates/allGutak.tsx'))
   }
 
   async function getPageContext (templateType: TemplateType, page: PageInfo) {

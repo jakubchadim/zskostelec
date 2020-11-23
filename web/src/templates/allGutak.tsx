@@ -1,0 +1,160 @@
+import { graphql, Link, PageProps } from 'gatsby'
+import { FixedObject } from 'gatsby-image'
+import React from 'react'
+import Img from 'gatsby-image'
+import { BlockColor } from '../components/block/color/color'
+import BlockContent from '../components/block/content'
+import { TransformedBlock } from '../components/block/types'
+import { parseBlocks } from '../components/block/utils'
+import Content from '../components/content/content'
+import Layout from '../components/layout/layout'
+import SEO from '../components/seo/seo'
+import UiContainer from '../components/ui/container/container'
+import UiGallery from '../components/ui/gallery/gallery'
+import UiGalleryOffset from '../components/ui/gallery/offset'
+import UiGrid from '../components/ui/grid/grid'
+import UiSection from '../components/ui/section/section'
+import UiShape from '../components/ui/shape/shape'
+import defaultGutakImage from '../images/gutak.png'
+
+import { Nullable, RawHTML } from '../types'
+
+type WordpressAllGutakData = {
+  wordpressPage: {
+    title: string
+    content: RawHTML
+    blocks: TransformedBlock[]
+  }
+  allWordpressWpGutak: {
+    edges: {
+      node: {
+        id: string
+        title: string
+        date: string
+        link: string
+        acf?: {
+          preview?: {
+            source_url: string
+            localFile: {
+              preview: Nullable<{
+                fixed: FixedObject
+              }>
+            }
+          }
+        }
+      }
+    }[]
+  }
+}
+
+export const query = graphql`
+  query allGutakQuery($id: String!) {
+    wordpressPage(id: { eq: $id }) {
+      title
+      content
+      blocks {
+        blockId
+        parentId
+        type
+        attrs
+        content
+      }
+    }
+    allWordpressWpGutak {
+      edges {
+        node {
+          id
+          title
+          acf {
+            preview {
+              id
+              source_url
+              localFile {
+                preview: childImageSharp {
+                  fixed(width: 400, height: 400, cropFocus: CENTER) {
+                    ...GatsbyImageSharpFixed
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+type AllGutakProps = PageProps<WordpressAllGutakData>
+
+const AllGutak: React.FC<AllGutakProps> = ({
+  data: { wordpressPage, allWordpressWpGutak }
+}) => {
+  const parsedBlocks = React.useMemo(
+    () => parseBlocks(wordpressPage.blocks || []),
+    [wordpressPage.blocks]
+  )
+
+  const title = (
+    <UiContainer>
+      <h1>{wordpressPage.title}</h1>
+    </UiContainer>
+  )
+
+  const allGutak = (
+    <UiContainer>
+      <UiGalleryOffset>
+        <UiGrid>
+          {allWordpressWpGutak.edges.map(({ node: gutak }) => {
+            const preview = gutak.acf?.preview?.localFile.preview
+
+            return (
+              <UiGrid.Item key={gutak.id} xs={6} sm={4}>
+                <Link to={gutak.link}>
+                  <UiGallery>
+                    <UiGallery.Image>
+                      {gutak.acf?.preview ? (
+                        <>
+                          {preview?.fixed ? (
+                            <Img fixed={preview.fixed} alt={gutak.title} />
+                          ) : (
+                            <img
+                              src={gutak.acf.preview.source_url}
+                              alt={gutak.title}
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <img src={defaultGutakImage} alt={gutak.title} />
+                      )}
+                    </UiGallery.Image>
+                    <UiGallery.Overlay>
+                      <UiShape color={BlockColor.WHITE} />
+                      <UiGallery.Title>{gutak.title}</UiGallery.Title>
+                    </UiGallery.Overlay>
+                  </UiGallery>
+                </Link>
+              </UiGrid.Item>
+            )
+          })}
+        </UiGrid>
+      </UiGalleryOffset>
+    </UiContainer>
+  )
+
+  return (
+    <Layout>
+      <SEO title={wordpressPage.title} />
+      {parsedBlocks.length ? (
+        <BlockContent blocks={parsedBlocks} title={title} footer={allGutak} />
+      ) : (
+        <UiSection>
+          {title}
+          <Content content={wordpressPage.content} />
+          {allGutak}
+        </UiSection>
+      )}
+    </Layout>
+  )
+}
+
+export default AllGutak
