@@ -32,7 +32,14 @@ type WordpressAllGutakData = {
         title: string
         date: string
         link: string
-        acf?: {
+        acf: {
+          file: {
+            url: {
+              localFile: {
+                publicURL: string
+              }
+            }
+          }
           preview?: {
             source_url: string
             localFile: {
@@ -60,12 +67,19 @@ export const query = graphql`
         content
       }
     }
-    allWordpressWpGutak {
+    allWordpressWpGutak(filter: { acf: { file: { link: { ne: null } } } }) {
       edges {
         node {
           id
           title
           acf {
+            file {
+              url {
+                localFile {
+                  publicURL
+                }
+              }
+            }
             preview {
               id
               source_url
@@ -109,7 +123,11 @@ const AllGutak: React.FC<AllGutakProps> = ({
 
             return (
               <UiGrid.Item key={gutak.id} xs={6} sm={4}>
-                <Link to={gutak.link}>
+                <a
+                  href={gutak.acf.file.url.localFile.publicURL}
+                  target='_blank'
+                  rel='noreferrer'
+                >
                   <UiGallery>
                     <UiGallery.Image>
                       {gutak.acf?.preview ? (
@@ -132,7 +150,7 @@ const AllGutak: React.FC<AllGutakProps> = ({
                       <UiGallery.Title>{gutak.title}</UiGallery.Title>
                     </UiGallery.Overlay>
                   </UiGallery>
-                </Link>
+                </a>
               </UiGrid.Item>
             )
           })}
