@@ -60,7 +60,7 @@ function create_document_page_type() {
     );
 
     // Now register the non-hierarchical taxonomy like tag
-    register_taxonomy('types', 'document', array(
+    register_taxonomy('documentCategories', 'document', array(
         'hierarchical' => true,
         'labels' => $labels,
         'show_ui' => true,

@@ -22,6 +22,7 @@ import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
 import UiIcon from '../components/ui/icon/icon'
 import { RawHTML } from '../types'
+import { toggleItemInArray } from '../utils/array'
 
 type WordpressAllDocumentData = {
   wordpressPage: {
@@ -29,11 +30,21 @@ type WordpressAllDocumentData = {
     content: RawHTML
     blocks: TransformedBlock[]
   }
+  allWordpressWpDocumentCategories: {
+    edges: {
+      node: {
+        id: string
+        name: string
+        wordpress_id: string
+      }
+    }[]
+  }
   allWordpressWpDocument: {
     edges: {
       node: {
         id: string
         title: string
+        documentCategories: string[]
         acf: {
           file: {
             filename: string
@@ -63,10 +74,21 @@ export const query = graphql`
         content
       }
     }
+    allWordpressWpDocumentCategories {
+      edges {
+        node {
+          id
+          name
+          wordpress_id
+        }
+      }
+    }
     allWordpressWpDocument {
       edges {
         node {
           id
+          documentCategories
+          title
           acf {
             file {
               filename
@@ -78,7 +100,6 @@ export const query = graphql`
               }
             }
           }
-          title
         }
       }
     }
@@ -88,9 +109,14 @@ export const query = graphql`
 type AllDocumentProps = PageProps<WordpressAllDocumentData>
 
 const AllDocument: React.FC<AllDocumentProps> = ({
-  data: { wordpressPage, allWordpressWpDocument }
+  data: {
+    wordpressPage,
+    allWordpressWpDocument,
+    allWordpressWpDocumentCategories
+  }
 }) => {
   const [nameFilter, setNameFilter] = React.useState('')
+  const [categoryFilter, setCategoryFilter] = React.useState<string[]>([])
   const parsedBlocks = React.useMemo(
     () => parseBlocks(wordpressPage.blocks || []),
     [wordpressPage.blocks]
@@ -111,15 +137,28 @@ const AllDocument: React.FC<AllDocumentProps> = ({
         return false
       }
 
+      if (
+        categoryFilter.length &&
+        !categoryFilter.some((categoryId) =>
+          doc.documentCategories.some((dcid) => dcid === categoryId)
+        )
+      ) {
+        return false
+      }
+
       return true
     })
-  }, [nameFilter, allWordpressWpDocument.edges])
+  }, [nameFilter, categoryFilter, allWordpressWpDocument.edges])
 
   const filterApplied =
     allWordpressWpDocument.edges.length != fileredDocuments.length
 
   const resetFilter = () => {
     setNameFilter('')
+  }
+
+  const toggleCategory = (wpId: string) => {
+    setCategoryFilter((categories) => toggleItemInArray(categories, wpId))
   }
 
   const title = (
@@ -139,6 +178,21 @@ const AllDocument: React.FC<AllDocumentProps> = ({
                 value={nameFilter}
                 onChange={(e) => setNameFilter(e.target.value)}
               />
+              {allWordpressWpDocumentCategories.edges.map(
+                ({ node: category }) => (
+                  <div
+                    key={category.id}
+                    onClick={() => toggleCategory(category.wordpress_id)}
+                    style={{ marginTop: '1rem', cursor: 'pointer' }}
+                  >
+                    {categoryFilter.includes(category.wordpress_id) ? (
+                      <b>{category.name}</b>
+                    ) : (
+                      category.name
+                    )}
+                  </div>
+                )
+              )}
             </Filter>
           </UiLayoutFilter.Filter>
           <UiLayoutFilter.Content>
