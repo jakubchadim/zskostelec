@@ -1,6 +1,4 @@
 import styled from 'styled-components'
-import { BlockColorPalette } from '../../block/color/color'
-import { getColorFromPalette } from '../../block/color/utils'
 import { createUiComponent, textOverflowMixin } from '../utils'
 
 const UiFile = styled.div`

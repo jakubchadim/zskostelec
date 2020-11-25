@@ -8,7 +8,8 @@ import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
 import { getFileIcon } from '../components/file/utils'
-import Filter from '../components/filter/filter'
+import FilterChooser from '../components/filter/chooser'
+import UiContent from '../components/ui/content/content'
 import Layout from '../components/layout/layout'
 import NonIdealState from '../components/nonIdealState/nonIdealState'
 import SEO from '../components/seo/seo'
@@ -21,8 +22,8 @@ import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
 import UiIcon from '../components/ui/icon/icon'
+import Filter from '../components/filter/filter'
 import { RawHTML } from '../types'
-import { toggleItemInArray } from '../utils/array'
 
 type WordpressAllDocumentData = {
   wordpressPage: {
@@ -121,6 +122,12 @@ const AllDocument: React.FC<AllDocumentProps> = ({
     () => parseBlocks(wordpressPage.blocks || []),
     [wordpressPage.blocks]
   )
+  const categories = allWordpressWpDocumentCategories.edges.map(({ node }) => {
+    return {
+      id: node.wordpress_id,
+      name: node.name
+    }
+  })
 
   const fileredDocuments = React.useMemo(() => {
     const docs = allWordpressWpDocument.edges.map(
@@ -155,10 +162,7 @@ const AllDocument: React.FC<AllDocumentProps> = ({
 
   const resetFilter = () => {
     setNameFilter('')
-  }
-
-  const toggleCategory = (wpId: string) => {
-    setCategoryFilter((categories) => toggleItemInArray(categories, wpId))
+    setCategoryFilter([])
   }
 
   const title = (
@@ -172,35 +176,30 @@ const AllDocument: React.FC<AllDocumentProps> = ({
       <UiDocumentOffset>
         <UiLayoutFilter>
           <UiLayoutFilter.Filter>
-            <Filter title='Filtr'>
-              <UiInputText
-                placeholder='Název souboru'
-                value={nameFilter}
-                onChange={(e) => setNameFilter(e.target.value)}
+            <Filter>
+              <UiContent largeGutter>
+                <h5>NÁZEV SOUBORU</h5>
+                <UiInputText
+                  placeholder='Název souboru'
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                />
+              </UiContent>
+              <h5>KATEGORIE</h5>
+              <FilterChooser
+                items={categories}
+                value={categoryFilter}
+                onChange={setCategoryFilter}
+                renderLabel={(category) => category.name}
               />
-              {allWordpressWpDocumentCategories.edges.map(
-                ({ node: category }) => (
-                  <div
-                    key={category.id}
-                    onClick={() => toggleCategory(category.wordpress_id)}
-                    style={{ marginTop: '1rem', cursor: 'pointer' }}
-                  >
-                    {categoryFilter.includes(category.wordpress_id) ? (
-                      <b>{category.name}</b>
-                    ) : (
-                      category.name
-                    )}
-                  </div>
-                )
-              )}
             </Filter>
           </UiLayoutFilter.Filter>
           <UiLayoutFilter.Content>
             {fileredDocuments.length === 0 && (
               <NonIdealState
                 icon={filterApplied ? Search : FileEmpty}
-                title='Soubory nenalezeny'
-                description='Žádné soubory nebyly nazeleny.'
+                title='Dokumenty nenalezeny'
+                description='Hledané dokumenty nebyly nazeleny.'
               >
                 {filterApplied && (
                   <UiButton
