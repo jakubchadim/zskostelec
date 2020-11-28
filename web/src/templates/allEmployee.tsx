@@ -7,20 +7,19 @@ import BlockContent from '../components/block/content'
 import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
-import { getFileIcon } from '../components/file/utils'
+import FilterChooser from '../components/filter/chooser'
 import Filter from '../components/filter/filter'
 import Layout from '../components/layout/layout'
 import NonIdealState from '../components/nonIdealState/nonIdealState'
 import SEO from '../components/seo/seo'
 import UiBox from '../components/ui/box/box'
 import UiButton from '../components/ui/button/button'
-import UiFile from '../components/ui/file/file'
 import UiContainer from '../components/ui/container/container'
+import UiContent from '../components/ui/content/content'
 import UiEmployeeOffset from '../components/ui/gallery/offset'
 import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
-import UiIcon from '../components/ui/icon/icon'
 import { RawHTML } from '../types'
 import { toggleItemInArray } from '../utils/array'
 
@@ -168,6 +167,20 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
   const filterApplied =
     allWordpressWpEmployee.edges.length != fileredEmployees.length
 
+  const positions = allWordpressWpPositions.edges.map(({ node }) => {
+    return {
+      id: node.wordpress_id,
+      name: node.name
+    }
+  })
+
+  const buildings = allWordpressWpBuilding.edges.map(({ node }) => {
+    return {
+      id: node.wordpress_id,
+      name: node.name
+    }
+  })
+
   const resetFilter = () => {
     setNameFilter('')
   }
@@ -191,40 +204,31 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
       <UiEmployeeOffset>
         <UiLayoutFilter>
           <UiLayoutFilter.Filter>
-            <Filter title='Filtr'>
-              <UiInputText
-                placeholder='Název souboru'
-                value={nameFilter}
-                onChange={(e) => setNameFilter(e.target.value)}
+            <Filter>
+              <UiContent largeGutter>
+                <h5>JMÉNO</h5>
+                <UiInputText
+                  placeholder='např. Němec'
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                />
+              </UiContent>
+              <UiContent largeGutter>
+                <h5>POZICE</h5>
+                <FilterChooser
+                  items={positions}
+                  value={positionFilter}
+                  onChange={setPositionFilter}
+                  renderLabel={(category) => category.name}
+                />
+              </UiContent>
+              <h5>PRACOVIŠTĚ</h5>
+              <FilterChooser
+                items={buildings}
+                value={buildingFilter}
+                onChange={setBuildingFilter}
+                renderLabel={(category) => category.name}
               />
-              <h4>Pozice</h4>
-              {allWordpressWpPositions.edges.map(({ node: position }) => (
-                <div
-                  key={position.id}
-                  onClick={() => togglePosition(position.wordpress_id)}
-                  style={{ marginTop: '1rem', cursor: 'pointer' }}
-                >
-                  {positionFilter.includes(position.wordpress_id) ? (
-                    <b>{position.name}</b>
-                  ) : (
-                    position.name
-                  )}
-                </div>
-              ))}
-              <h4>Pracoviště</h4>
-              {allWordpressWpBuilding.edges.map(({ node: building }) => (
-                <div
-                  key={building.id}
-                  onClick={() => toggleBuilding(building.wordpress_id)}
-                  style={{ marginTop: '1rem', cursor: 'pointer' }}
-                >
-                  {positionFilter.includes(building.wordpress_id) ? (
-                    <b>{building.name}</b>
-                  ) : (
-                    building.name
-                  )}
-                </div>
-              ))}
             </Filter>
           </UiLayoutFilter.Filter>
           <UiLayoutFilter.Content>
@@ -246,8 +250,6 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
               </NonIdealState>
             )}
             {fileredEmployees.map((employee, idx) => {
-              const { file } = employee.acf
-
               return (
                 <UiBox
                   key={employee.id}

@@ -46,7 +46,7 @@ function FilterChooser<TItem extends EntityWithId>({
       ))}
       {items.length > limit && (
         <ShowMore onClick={() => setShowAll(!showAll)}>
-          {showAll ? 'Skrýt' : 'Zobrazit více'}
+          {showAll ? 'Skrýt' : 'Zobrazit vše'}
         </ShowMore>
       )}
     </div>

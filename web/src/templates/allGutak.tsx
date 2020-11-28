@@ -1,4 +1,4 @@
-import { graphql, Link, PageProps } from 'gatsby'
+import { graphql, PageProps } from 'gatsby'
 import { FixedObject } from 'gatsby-image'
 import React from 'react'
 import Img from 'gatsby-image'
@@ -124,7 +124,7 @@ const AllGutak: React.FC<AllGutakProps> = ({
             return (
               <UiGrid.Item key={gutak.id} xs={6} sm={4}>
                 <a
-                  href={gutak.acf.file.url.localFile.publicURL}
+                  href={gutak.acf.file.url?.localFile.publicURL}
                   target='_blank'
                   rel='noreferrer'
                 >

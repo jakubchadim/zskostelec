@@ -9,7 +9,7 @@ config()
 const ADMIN_URL = `${process.env.ADMIN_PROTOCOL}://${process.env.ADMIN_URL}`
 
 module.exports = {
-  pathPrefix: `/zskostelec`,
+  pathPrefix: process.env.SITE_PREFIX,
   siteMetadata: {
     title: `ZŠ Kostelec nad Orlicí`,
     description: 'School web',
@@ -31,7 +31,7 @@ module.exports = {
       options: {
         name: `ZŠ Kostelec nad Orlicí`,
         short_name: `zskostelec`,
-        start_url: `/`,
+        start_url: process.env.SITE_PREFIX,
         background_color: `#F46912`,
         theme_color: `#FCB826`,
         display: `minimal-ui`,
@@ -51,11 +51,13 @@ module.exports = {
           '**/comments',
           '**/settings',
           '**/themes',
-          '**/users**',
+          '**/users',
+          '**/users/me',
+          '**/search',
           '**/block-types',
           '**/plugins',
-          '**/block-directory**',
-          '**njt-fbv**'
+          '/wp/v2/block-directory/search',
+          '/njt-fbv/**'
         ],
         searchAndReplaceContentUrls: {
           sourceUrl: ADMIN_URL,
