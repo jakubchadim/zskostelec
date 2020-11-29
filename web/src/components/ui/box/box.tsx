@@ -1,10 +1,12 @@
 import styled from 'styled-components'
 import { BlockColorPalette } from '../../block/color/color'
 import { getColorFromPalette } from '../../block/color/utils'
+import { revealMixin } from '../animations/animations'
 import { createUiComponent } from '../utils'
 
 type UiBoxProps = BlockColorPalette & {
   offsetTop?: boolean
+  revealAnimation?: boolean
 }
 
 const UiBox = styled.div<UiBoxProps>`
@@ -20,6 +22,7 @@ const UiBox = styled.div<UiBoxProps>`
   box-shadow: ${(p) => p.theme.shadow.lift};
   border-radius: ${(p) => p.theme.radius.medium};
   margin-top: ${(p) => (p.offsetTop ? p.theme.spacing(2) : undefined)};
+  ${(p) => p.revealAnimation && revealMixin}
 `
 
 const Header = styled.div`

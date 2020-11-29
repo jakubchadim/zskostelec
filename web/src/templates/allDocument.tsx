@@ -220,6 +220,8 @@ const AllDocument: React.FC<AllDocumentProps> = ({
                   key={document.id}
                   backgroundColor={BlockColor.WHITE}
                   offsetTop={idx !== 0}
+                  revealAnimation
+                  title={file.filename}
                 >
                   <UiFile>
                     <UiFile.Icon>
