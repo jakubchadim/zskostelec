@@ -1,18 +1,20 @@
 import { graphql, PageProps } from 'gatsby'
+import { FixedObject } from 'gatsby-image'
 import React from 'react'
 import { FileEmpty } from '@styled-icons/icomoon/FileEmpty'
 import { Search } from '@styled-icons/material/Search'
+import Img from 'gatsby-image'
 import { BlockColor } from '../components/block/color/color'
 import BlockContent from '../components/block/content'
 import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
+import Employee from '../components/employee/employee'
 import FilterChooser from '../components/filter/chooser'
 import Filter from '../components/filter/filter'
 import Layout from '../components/layout/layout'
 import NonIdealState from '../components/nonIdealState/nonIdealState'
 import SEO from '../components/seo/seo'
-import UiBox from '../components/ui/box/box'
 import UiButton from '../components/ui/button/button'
 import UiContainer from '../components/ui/container/container'
 import UiContent from '../components/ui/content/content'
@@ -20,8 +22,8 @@ import UiEmployeeOffset from '../components/ui/gallery/offset'
 import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
-import { RawHTML } from '../types'
-import { toggleItemInArray } from '../utils/array'
+import { Nullable, RawHTML } from '../types'
+import { getDictionaryTranslator } from '../utils/translate'
 
 type WordpressAllEmployeeData = {
   wordpressPage: {
@@ -57,6 +59,14 @@ type WordpressAllEmployeeData = {
         acf: {
           email: string
           phone: string
+          photo?: {
+            source_url: string
+            localFile: {
+              image: Nullable<{
+                fixed: FixedObject
+              }>
+            }
+          }
         }
       }
     }[]
@@ -104,6 +114,17 @@ export const query = graphql`
           acf {
             email
             phone
+            photo {
+              id
+              source_url
+              localFile {
+                image: childImageSharp {
+                  fixed(width: 400, height: 400, cropFocus: CENTER) {
+                    ...GatsbyImageSharpFixed
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -167,30 +188,34 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
   const filterApplied =
     allWordpressWpEmployee.edges.length != fileredEmployees.length
 
-  const positions = allWordpressWpPositions.edges.map(({ node }) => {
-    return {
-      id: node.wordpress_id,
-      name: node.name
-    }
-  })
+  const positions = React.useMemo(() => {
+    return allWordpressWpPositions.edges.map(({ node }) => {
+      return {
+        id: node.wordpress_id,
+        name: node.name
+      }
+    })
+  }, [allWordpressWpPositions])
+  const translatePosition = React.useMemo(() => {
+    return getDictionaryTranslator(positions)
+  }, [positions])
 
-  const buildings = allWordpressWpBuilding.edges.map(({ node }) => {
-    return {
-      id: node.wordpress_id,
-      name: node.name
-    }
-  })
+  const buildings = React.useMemo(() => {
+    return allWordpressWpBuilding.edges.map(({ node }) => {
+      return {
+        id: node.wordpress_id,
+        name: node.name
+      }
+    })
+  }, [allWordpressWpBuilding])
+  const translateBuilding = React.useMemo(() => {
+    return getDictionaryTranslator(buildings)
+  }, [buildings])
 
   const resetFilter = () => {
     setNameFilter('')
-  }
-
-  const togglePosition = (wpId: string) => {
-    setPositionFilter((positions) => toggleItemInArray(positions, wpId))
-  }
-
-  const toggleBuilding = (wpId: string) => {
-    setBuildingFilter((buildings) => toggleItemInArray(buildings, wpId))
+    setPositionFilter([])
+    setBuildingFilter([])
   }
 
   const title = (
@@ -250,14 +275,40 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
               </NonIdealState>
             )}
             {fileredEmployees.map((employee, idx) => {
+              const photo = employee.acf.photo
+
               return (
-                <UiBox
+                <Employee
                   key={employee.id}
-                  backgroundColor={BlockColor.WHITE}
+                  photo={
+                    photo != null ? (
+                      <>
+                        {photo.localFile?.image?.fixed ? (
+                          <Img
+                            fixed={photo.localFile?.image.fixed}
+                            alt={employee.title}
+                          />
+                        ) : (
+                          <img src={photo.source_url} alt={employee.title} />
+                        )}
+                      </>
+                    ) : undefined
+                  }
                   offsetTop={idx !== 0}
-                >
-                  {employee.title}
-                </UiBox>
+                  name={employee.title}
+                  location={employee.building
+                    ?.map((id) => {
+                      return translateBuilding(id)
+                    })
+                    .join(', ')}
+                  position={employee.positions
+                    ?.map((id) => {
+                      return translatePosition(id)
+                    })
+                    .join(', ')}
+                  phone={employee.acf?.phone}
+                  email={employee.acf?.email}
+                />
               )
             })}
           </UiLayoutFilter.Content>
