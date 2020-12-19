@@ -1,7 +1,7 @@
 import { KeyboardArrowLeft } from '@styled-icons/material/KeyboardArrowLeft'
 import { KeyboardArrowRight } from '@styled-icons/material/KeyboardArrowRight'
 import { StyledIcon } from '@styled-icons/styled-icon'
-import { Link } from 'gatsby'
+import { Link } from '@reach/router'
 import React from 'react'
 import styled from 'styled-components'
 import { BlockColor } from '../block/color/color'

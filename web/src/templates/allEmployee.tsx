@@ -19,6 +19,7 @@ import UiButton from '../components/ui/button/button'
 import UiContainer from '../components/ui/container/container'
 import UiContent from '../components/ui/content/content'
 import UiEmployeeOffset from '../components/ui/gallery/offset'
+import UiGrid from '../components/ui/grid/grid'
 import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
@@ -104,7 +105,7 @@ export const query = graphql`
         }
       }
     }
-    allWordpressWpEmployee {
+    allWordpressWpEmployee(sort: { fields: [acf___priority, title] }) {
       edges {
         node {
           id
@@ -230,30 +231,34 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
         <UiLayoutFilter>
           <UiLayoutFilter.Filter>
             <Filter>
-              <UiContent largeGutter>
-                <h5>JMÉNO</h5>
-                <UiInputText
-                  placeholder='např. Němec'
-                  value={nameFilter}
-                  onChange={(e) => setNameFilter(e.target.value)}
-                />
-              </UiContent>
-              <UiContent largeGutter>
-                <h5>POZICE</h5>
-                <FilterChooser
-                  items={positions}
-                  value={positionFilter}
-                  onChange={setPositionFilter}
-                  renderLabel={(category) => category.name}
-                />
-              </UiContent>
-              <h5>PRACOVIŠTĚ</h5>
-              <FilterChooser
-                items={buildings}
-                value={buildingFilter}
-                onChange={setBuildingFilter}
-                renderLabel={(category) => category.name}
-              />
+              <UiGrid>
+                <UiGrid.Item md={12} sm={4} xs={6}>
+                  <h5>JMÉNO</h5>
+                  <UiInputText
+                    placeholder='např. Němec'
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
+                  />
+                </UiGrid.Item>
+                <UiGrid.Item md={12} sm={4} xs={6}>
+                  <h5>POZICE</h5>
+                  <FilterChooser
+                    items={positions}
+                    value={positionFilter}
+                    onChange={setPositionFilter}
+                    renderLabel={(category) => category.name}
+                  />
+                </UiGrid.Item>
+                <UiGrid.Item md={12} sm={4} xs={6}>
+                  <h5>PRACOVIŠTĚ</h5>
+                  <FilterChooser
+                    items={buildings}
+                    value={buildingFilter}
+                    onChange={setBuildingFilter}
+                    renderLabel={(category) => category.name}
+                  />
+                </UiGrid.Item>
+              </UiGrid>
             </Filter>
           </UiLayoutFilter.Filter>
           <UiLayoutFilter.Content>

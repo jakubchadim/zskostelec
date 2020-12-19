@@ -35,7 +35,11 @@ const Employee: React.FC<EmployeeProps> = ({
   offsetTop
 }) => {
   return (
-    <UiBox backgroundColor={BlockColor.WHITE} offsetTop={offsetTop}>
+    <UiBox
+      backgroundColor={BlockColor.WHITE}
+      offsetTop={offsetTop}
+      revealAnimation
+    >
       <UiEmployee>
         <UiEmployee.Photo>{photo}</UiEmployee.Photo>
         <UiEmployee.Content>

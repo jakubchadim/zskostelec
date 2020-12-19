@@ -44,8 +44,10 @@
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
     "deploy": "gatsby build --prefix-paths && bash ghpages.publish.sh",
+    "deploy:storybook": "yarn chromatic --project-token=rfwz9k472i",
     "release-minor": "npm version minor -m \"Release v%s\" && npm run deploy",
-    "release-patch": "npm version patch -m \"Release v%s\" && npm run deploy"
+    "release-patch": "npm version patch -m \"Release v%s\" && npm run deploy",
+    "chromatic": "npx chromatic --project-token rfwz9k472i"
   },
   "husky": {
     "hooks": {
@@ -73,6 +75,7 @@
     "babel-loader": "^8.1.0",
     "babel-preset-gatsby": "^0.5.2",
     "babel-preset-react-app": "^9.1.2",
+    "chromatic": "^5.4.0",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.22.0",

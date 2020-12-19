@@ -36,12 +36,18 @@ const Item = styled.div<ItemProps>`
 const UiGrid = styled.div<{ largeGutter?: boolean }>`
   display: flex;
   flex-wrap: wrap;
-  margin: ${(p) =>
-    p.largeGutter ? p.theme.spacing(-8, -4, 0) : p.theme.spacing(-4, -2, 0)};
+  margin: ${(p) => p.theme.spacing(-4, -2, 0)};
+
+  ${(p) => p.theme.media.md.up} {
+    margin: ${(p) => (p.largeGutter ? p.theme.spacing(-8, -4, 0) : undefined)};
+  }
 
   & > ${Item} {
-    padding: ${(p) =>
-      p.largeGutter ? p.theme.spacing(8, 4, 0) : p.theme.spacing(4, 2, 0)};
+    padding: ${(p) => p.theme.spacing(4, 2, 0)};
+
+    ${(p) => p.theme.media.md.up} {
+      padding: ${(p) => (p.largeGutter ? p.theme.spacing(8, 4, 0) : undefined)};
+    }
   }
 `
 

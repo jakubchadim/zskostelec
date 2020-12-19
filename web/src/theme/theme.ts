@@ -5,8 +5,8 @@ import { getBreakpoint, getSpacingGetter } from './utils'
 export const theme = {
   media: {
     xs: getBreakpoint(416, 667),
-    sm: getBreakpoint(668, 991),
-    md: getBreakpoint(992, 1311),
+    sm: getBreakpoint(668, 881),
+    md: getBreakpoint(882, 1311),
     lg: getBreakpoint(1311, 1599)
   },
   color: {

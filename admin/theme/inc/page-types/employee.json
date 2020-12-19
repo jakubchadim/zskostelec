@@ -63,6 +63,26 @@
         "prepend": "",
         "append": "",
         "maxlength": ""
+      },
+      {
+        "key": "field_5fd7e4fc08330",
+        "label": "Pozice",
+        "name": "priority",
+        "type": "range",
+        "instructions": "",
+        "required": 0,
+        "conditional_logic": 0,
+        "wrapper": {
+          "width": "",
+          "class": "",
+          "id": ""
+        },
+        "default_value": 50,
+        "min": "",
+        "max": "",
+        "step": "",
+        "prepend": "",
+        "append": ""
       }
     ],
     "location": [

@@ -18,7 +18,7 @@ export const Base = () => (
     <NonIdealState
       icon={FileEmpty}
       title='Soubory nenalezeny'
-      description='Žádné soubory nebyly nazeleny. Zkuste hledat jinde.'
+      description='Nalezeno 0 souborů. Zkuste hledat jinde.'
     >
       <UiButton
         backgroundColor={BlockColor.PRIMARY}

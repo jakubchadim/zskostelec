@@ -110,7 +110,7 @@ const AllGallery: React.FC<AllGalleryProps> = ({
             const preview = gallery.acf.preview.localFile.preview
 
             return (
-              <UiGrid.Item key={gallery.id} xs={6} sm={4}>
+              <UiGrid.Item key={gallery.id} xs={6} md={4}>
                 <Link to={gallery.link}>
                   <UiGallery>
                     <UiGallery.Image>

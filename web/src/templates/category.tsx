@@ -69,8 +69,7 @@ type CategoryProps = PageProps<
 
 const Category: React.FC<CategoryProps> = ({
   data: { wordpressCategory, allWordpressPost },
-  pageContext,
-  ...rest
+  pageContext
 }) => {
   return (
     <Layout>
@@ -80,7 +79,7 @@ const Category: React.FC<CategoryProps> = ({
           <h1>{wordpressCategory.name}</h1>
           <UiGrid largeGutter>
             {allWordpressPost.edges.map(({ node: post }) => (
-              <UiGrid.Item md={4} key={post.id}>
+              <UiGrid.Item md={4} sm={6} key={post.id}>
                 <UiBox backgroundColor={BlockColor.WHITE}>
                   <UiBox.Header>
                     <UiArticle.Header>
