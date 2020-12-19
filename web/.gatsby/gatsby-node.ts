@@ -219,3 +219,31 @@ exports.createResolvers = ({
     }
   })
 }
+
+exports.createSchemaCustomization = ({ actions }) => {
+  const { createTypes } = actions
+  const typeDefs = `
+    type wordpress__PAGEBlocks implements Node {
+      parentId: String
+    }
+    
+    type wordpress__POSTBlocks implements Node {
+      parentId: String
+    }
+  
+    type wordpress__wp_employeeAcf implements Node {
+      photo: wordpress__wp_media
+    }
+
+    type wordpress__wp_gutakAcf implements Node {
+      preview: wordpress__wp_media
+    }
+
+    type wordpress__wp_galleryAcf implements Node {
+      preview: wordpress__wp_media
+      gallery: [wordpress__wp_media!]
+    }
+  `
+
+  createTypes(typeDefs)
+}

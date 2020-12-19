@@ -14,3 +14,43 @@ export function composeNormalizers(
     )
   }
 }
+
+type AcfInputEntity = {
+  acf?: Record<string, unknown>
+  __type: string
+}
+
+export function getAcfImageNormalizer(
+  type: string,
+  fieldName: string
+): NormalizerFc<AcfInputEntity> {
+  return ({ entities }) => {
+    return entities.map((entity) => {
+      if (entity.__type === type) {
+        if (!entity.acf) {
+          return entity
+        }
+
+        const nodeFieldName = `${fieldName}___NODE`
+
+        if (entity.acf[nodeFieldName] != null) {
+          return entity
+        }
+
+        const item = {
+          ...entity,
+          acf: {
+            ...entity.acf,
+            [nodeFieldName]: null
+          }
+        }
+
+        delete item.acf[fieldName]
+
+        return item
+      }
+
+      return entity
+    })
+  }
+}

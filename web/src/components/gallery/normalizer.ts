@@ -13,16 +13,21 @@ type InputEntity = {
 const normalizer: NormalizerFc<InputEntity> = ({ entities }) => {
   return entities.map((entity) => {
     if (entity.__type === 'wordpress__wp_gallery') {
-      if (entity?.acf?.preview___NODE || !entity?.acf?.gallery___NODE?.length) {
+      if (!entity.acf) {
         return entity
       }
 
+      const galleryNode = entity.acf.gallery___NODE
+      const previewNode = entity.acf.preview___NODE || galleryNode?.[0]
+
       const acf = {
-        ...(entity.acf || {}),
-        preview___NODE: entity?.acf?.gallery___NODE?.[0]
+        ...entity.acf,
+        preview___NODE: previewNode || null,
+        gallery___NODE: galleryNode || null
       }
 
       delete acf.preview
+      delete acf.gallery
 
       return {
         ...entity,
