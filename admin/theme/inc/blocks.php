@@ -54,8 +54,7 @@ add_action(
     }
 );
 
-// Theme colors
-add_theme_support( 'editor-color-palette', array(
+$colorPalette = array(
     array(
         'name'  => __( 'Primary', 'genesis-sample' ),
         'slug'  => 'primary',
@@ -91,6 +90,27 @@ add_theme_support( 'editor-color-palette', array(
         'slug'  => 'black',
         'color'	=> '#191919',
     )
-) );
+);
+
+// Theme colors
+add_theme_support( 'editor-color-palette', $colorPalette );
+
+add_action('admin_head', function () use ($colorPalette) {
+    echo '<style>
+        body {
+            border: 5px solid red;
+        }
+';
+
+    foreach ($colorPalette as $color) {
+        echo '
+        .has-inline-color.has-' . $color['slug'] . '-color {
+            color: ' .  $color['color'] . ';
+        }
+        ';
+    }
+
+    echo '</style>';
+});
 
 add_theme_support( 'disable-custom-colors' );

@@ -43,20 +43,45 @@ export const GlobalStyle = createGlobalStyle`
   }
   
   h1 {
-    font-size: 3.7rem;
-    margin: ${(p) => p.theme.spacing(1, 0, 4)};
+    font-size: 2.8rem;
+    margin: ${(p) => p.theme.spacing(1, 0, 2)};
+    
+    ${(p) => p.theme.media.sm.up} {
+      font-size: 3.2rem;
+      margin: ${(p) => p.theme.spacing(1, 0, 4)};
+    }
+    
+    ${(p) => p.theme.media.md.up} {
+      font-size: 3.7rem;
+    }
   }
   
   h2 {
-    font-size: 3.1rem
+    font-size: 2rem;
+    
+    ${(p) => p.theme.media.sm.up} {
+      font-size: 2.5rem;
+    }
+    
+    ${(p) => p.theme.media.md.up} {
+      font-size: 3.1rem;
+    }
   }
 
   h3 {
-    font-size: 2.1rem
+    font-size: 1.9rem;
+    
+    ${(p) => p.theme.media.sm.up} {
+      font-size: 2.1rem;
+    }
   }
 
   h4 {
-    font-size: 1.9rem
+    font-size: 1.8rem;
+    
+    ${(p) => p.theme.media.sm.up} {
+      font-size: 1.9rem;
+    }
   }
 
   h5 {

@@ -17,8 +17,7 @@ import NonIdealState from '../components/nonIdealState/nonIdealState'
 import SEO from '../components/seo/seo'
 import UiButton from '../components/ui/button/button'
 import UiContainer from '../components/ui/container/container'
-import UiContent from '../components/ui/content/content'
-import UiEmployeeOffset from '../components/ui/gallery/offset'
+import UiSectionOffset from '../components/ui/section/offset'
 import UiGrid from '../components/ui/grid/grid'
 import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
@@ -227,12 +226,12 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
 
   const employees = (
     <UiContainer>
-      <UiEmployeeOffset>
+      <UiSectionOffset>
         <UiLayoutFilter>
           <UiLayoutFilter.Filter>
             <Filter>
               <UiGrid>
-                <UiGrid.Item md={12} sm={4} xs={6}>
+                <UiGrid.Item md={12} sm={4}>
                   <h5>JMÉNO</h5>
                   <UiInputText
                     placeholder='např. Němec'
@@ -240,7 +239,7 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
                     onChange={(e) => setNameFilter(e.target.value)}
                   />
                 </UiGrid.Item>
-                <UiGrid.Item md={12} sm={4} xs={6}>
+                <UiGrid.Item md={12} sm={4}>
                   <h5>POZICE</h5>
                   <FilterChooser
                     items={positions}
@@ -249,7 +248,7 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
                     renderLabel={(category) => category.name}
                   />
                 </UiGrid.Item>
-                <UiGrid.Item md={12} sm={4} xs={6}>
+                <UiGrid.Item md={12} sm={4}>
                   <h5>PRACOVIŠTĚ</h5>
                   <FilterChooser
                     items={buildings}
@@ -318,7 +317,7 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
             })}
           </UiLayoutFilter.Content>
         </UiLayoutFilter>
-      </UiEmployeeOffset>
+      </UiSectionOffset>
     </UiContainer>
   )
 

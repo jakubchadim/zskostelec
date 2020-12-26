@@ -11,7 +11,7 @@ import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
 import UiContainer from '../components/ui/container/container'
 import UiGallery from '../components/ui/gallery/gallery'
-import UiGalleryOffset from '../components/ui/gallery/offset'
+import UiSectionOffset from '../components/ui/section/offset'
 import UiGrid from '../components/ui/grid/grid'
 import UiSection from '../components/ui/section/section'
 import UiShape from '../components/ui/shape/shape'
@@ -116,7 +116,7 @@ const AllGutak: React.FC<AllGutakProps> = ({
 
   const allGutak = (
     <UiContainer>
-      <UiGalleryOffset>
+      <UiSectionOffset>
         <UiGrid>
           {allWordpressWpGutak.edges.map(({ node: gutak }) => {
             const preview = gutak.acf?.preview?.localFile.preview
@@ -155,7 +155,7 @@ const AllGutak: React.FC<AllGutakProps> = ({
             )
           })}
         </UiGrid>
-      </UiGalleryOffset>
+      </UiSectionOffset>
     </UiContainer>
   )
 

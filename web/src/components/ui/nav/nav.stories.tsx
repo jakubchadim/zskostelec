@@ -2,6 +2,8 @@ import { boolean } from '@storybook/addon-knobs'
 import React from 'react'
 import styled from 'styled-components'
 import { OpenInNew } from '@styled-icons/material/OpenInNew'
+import { KeyboardArrowDown } from '@styled-icons/material/KeyboardArrowDown'
+import { KeyboardArrowUp } from '@styled-icons/material/KeyboardArrowUp'
 import UiIcon from '../icon/icon'
 import UiNav from './nav'
 
@@ -37,6 +39,7 @@ const submenu = (
 
 export const Nav = () => {
   const transparent = boolean('Transparent', false)
+  const isOpen = boolean('IsOpen', false)
 
   return (
     <ColoredBg colored={transparent}>
@@ -57,7 +60,11 @@ export const Nav = () => {
           <UiNav.Submenu>{submenu}</UiNav.Submenu>
         </UiNav.Item>
         <UiNav.Item>
-          <UiNav.Text>Item 3</UiNav.Text>
+          <UiNav.Button withIcon>
+            Item 3
+            <UiIcon icon={isOpen ? KeyboardArrowUp : KeyboardArrowDown} />
+          </UiNav.Button>
+          <UiNav.ToggleMenu isOpen={isOpen}>{submenu}</UiNav.ToggleMenu>
         </UiNav.Item>
         <UiNav.Item>
           <UiNav.Text>Item 4</UiNav.Text>

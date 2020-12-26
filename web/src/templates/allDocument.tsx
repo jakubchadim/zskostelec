@@ -17,7 +17,7 @@ import UiBox from '../components/ui/box/box'
 import UiButton from '../components/ui/button/button'
 import UiFile from '../components/ui/file/file'
 import UiContainer from '../components/ui/container/container'
-import UiDocumentOffset from '../components/ui/gallery/offset'
+import UiSectionOffset from '../components/ui/section/offset'
 import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
@@ -173,7 +173,7 @@ const AllDocument: React.FC<AllDocumentProps> = ({
 
   const documents = (
     <UiContainer>
-      <UiDocumentOffset>
+      <UiSectionOffset>
         <UiLayoutFilter>
           <UiLayoutFilter.Filter>
             <Filter>
@@ -249,7 +249,7 @@ const AllDocument: React.FC<AllDocumentProps> = ({
             })}
           </UiLayoutFilter.Content>
         </UiLayoutFilter>
-      </UiDocumentOffset>
+      </UiSectionOffset>
     </UiContainer>
   )
 

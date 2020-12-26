@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { createUiComponent, textOverflowMixin } from '../utils'
+import { createUiComponent } from '../utils'
 
 const UiEmployee = styled.div`
   display: flex;
@@ -7,9 +7,20 @@ const UiEmployee = styled.div`
   overflow: hidden;
   border-radius: ${(p) => p.theme.radius.small};
   padding: ${(p) => p.theme.spacing(2)};
+
+  ${(p) => p.theme.media.xs.down} {
+    display: block;
+  }
+
+  &::after {
+    display: block;
+    content: ' ';
+    clear: both;
+  }
 `
 
 const Photo = styled.div`
+  display: none;
   width: 20rem;
   min-width: 20rem;
   background: ${(p) => p.theme.color.gray2};
@@ -22,6 +33,18 @@ const Photo = styled.div`
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
+  }
+
+  ${(p) => p.theme.media.xs.up} {
+    display: block;
+  }
+
+  ${(p) => p.theme.media.xs.down} {
+    float: right;
+    width: 14rem;
+    min-width: 14rem;
+    min-height: 16rem;
+    margin: ${(p) => p.theme.spacing(0, 0, 2, 2)};
   }
 `
 

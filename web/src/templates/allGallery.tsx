@@ -11,7 +11,7 @@ import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
 import UiContainer from '../components/ui/container/container'
 import UiGallery from '../components/ui/gallery/gallery'
-import UiGalleryOffset from '../components/ui/gallery/offset'
+import UiSectionOffset from '../components/ui/section/offset'
 import UiGrid from '../components/ui/grid/grid'
 import UiSection from '../components/ui/section/section'
 import UiShape from '../components/ui/shape/shape'
@@ -104,7 +104,7 @@ const AllGallery: React.FC<AllGalleryProps> = ({
 
   const gallery = (
     <UiContainer>
-      <UiGalleryOffset>
+      <UiSectionOffset>
         <UiGrid>
           {allWordpressWpGallery.edges.map(({ node: gallery }) => {
             const preview = gallery.acf.preview.localFile.preview
@@ -134,7 +134,7 @@ const AllGallery: React.FC<AllGalleryProps> = ({
             )
           })}
         </UiGrid>
-      </UiGalleryOffset>
+      </UiSectionOffset>
     </UiContainer>
   )
 

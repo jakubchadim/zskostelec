@@ -1,6 +1,9 @@
 import { Link } from 'gatsby'
 import React from 'react'
 import { OpenInNew } from '@styled-icons/material/OpenInNew'
+import { KeyboardArrowDown } from '@styled-icons/material/KeyboardArrowDown'
+import { KeyboardArrowUp } from '@styled-icons/material/KeyboardArrowUp'
+import { Navicon } from '@styled-icons/evil/Navicon'
 import UiNavBar from '../ui/nav/bar'
 import UiNav from '../ui/nav/nav'
 import UiContainer from '../ui/container/container'
@@ -51,6 +54,34 @@ function renderSubmenuItems(items: NavItem[]): React.ReactNode {
   )
 }
 
+type MobileMenuItemProps = {
+  item: NavItem
+}
+
+const MobileMenuItem: React.FC<MobileMenuItemProps> = ({ item }) => {
+  const [isOpen, setIsOpen] = React.useState(false)
+
+  return (
+    <UiNav.Item>
+      {item.items.length === 0 ? (
+        renderMenuItem(item)
+      ) : (
+        <>
+          <UiNav.Button onClick={() => setIsOpen(!isOpen)} withIcon>
+            {item.title}
+            <UiIcon icon={isOpen ? KeyboardArrowUp : KeyboardArrowDown} />
+          </UiNav.Button>
+          <UiNav.ToggleMenu isOpen={isOpen}>
+            <UiNav simple fill>
+              {renderSubmenuItems(item.items)}
+            </UiNav>
+          </UiNav.ToggleMenu>
+        </>
+      )}
+    </UiNav.Item>
+  )
+}
+
 type NavMainProps = {
   transparent?: boolean
 }
@@ -62,6 +93,7 @@ function canBeTransparent(): boolean {
 const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
   const nav = useNavMainQuery()
   const [isTransparent, setIsTransparent] = React.useState(transparent || false)
+  const [isOpen, setIsOpen] = React.useState(false)
 
   React.useEffect(() => {
     if (!transparent) {
@@ -93,11 +125,11 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
     <UiNavBar transparent={isTransparent}>
       <UiContainer>
         <UiNavBar.Container>
-          <UiNavBar.TextLogo inverted={isTransparent}>
+          <UiNavBar.TextLogo>
             <Link to='/'>ZŠ Kostelec</Link>
           </UiNavBar.TextLogo>
           <UiNavBar.List>
-            <UiNav transparent={isTransparent} inline simple>
+            <UiNav transparent inline simple>
               {nav.items.map((item, idx) => (
                 <UiNav.Item key={idx}>
                   {renderMenuItem(item)}
@@ -110,6 +142,18 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
               ))}
             </UiNav>
           </UiNavBar.List>
+
+          <UiNavBar.MobileList isOpen={isOpen}>
+            <UiNav>
+              {nav.items.map((item, idx) => (
+                <MobileMenuItem key={idx} item={item} />
+              ))}
+            </UiNav>
+          </UiNavBar.MobileList>
+
+          <UiNavBar.Toggle onClick={() => setIsOpen(!isOpen)}>
+            <UiNavBar.ToggleIcon as={Navicon} />
+          </UiNavBar.Toggle>
         </UiNavBar.Container>
       </UiContainer>
     </UiNavBar>

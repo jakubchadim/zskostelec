@@ -32,13 +32,29 @@ const MainHeadingInfo = styled.div`
   align-items: center;
 `
 
-const MainHeadingInfoItem = styled.div`
-  width: 50%;
+const MainHeadingInfoPhoto = styled.div`
+  width: 40%;
+  padding-right: ${(p) => p.theme.spacing(4)};
+
+  ${(p) => p.theme.media.sm.down} {
+    padding: ${(p) => p.theme.spacing(4, 4, 4, 0)};
+  }
+
+  ${(p) => p.theme.media.xs.down} {
+    display: none;
+  }
 
   img {
     display: block;
-    height: 30rem;
+    max-width: 30rem;
+    width: 100%;
     margin: 0 auto;
+  }
+`
+
+const MainHeadingInfoItem = styled.div`
+  ${(p) => p.theme.media.sm.down} {
+    padding: ${(p) => p.theme.spacing(4, 0)};
   }
 `
 
@@ -106,9 +122,9 @@ const Home: React.FC<HomeProps> = ({ pageContext }) => {
       <MainHeading>
         <UiContainer>
           <MainHeadingInfo>
-            <MainHeadingInfoItem>
+            <MainHeadingInfoPhoto>
               <img src={logoImage} />
-            </MainHeadingInfoItem>
+            </MainHeadingInfoPhoto>
             <MainHeadingInfoItem>
               <h1>Přijatí žáci</h1>
               <h3>Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.</h3>

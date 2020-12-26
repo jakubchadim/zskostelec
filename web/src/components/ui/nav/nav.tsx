@@ -28,6 +28,20 @@ const Submenu = styled.div<{ last?: boolean }>`
   margin-top: 0.5rem;
 `
 
+const ToggleMenu__open = css`
+  max-height: 50rem;
+  padding: ${(p) => p.theme.spacing(1, 0)};
+`
+
+const ToggleMenu = styled.div<{ isOpen?: boolean }>`
+  max-height: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.05);
+  transition: padding 0.3s, max-height 0.3s;
+
+  ${(p) => p.isOpen && ToggleMenu__open};
+`
+
 type MenuItemProps = {
   withIcon?: boolean
 }
@@ -55,6 +69,24 @@ const Link = styled.a<MenuItemProps>`
   display: block;
 `
 
+const Button = styled.button<MenuItemProps>`
+  border: none;
+  background: none;
+  display: block;
+  margin: 0;
+  font-size: inherit;
+  color: inherit;
+  width: 100%;
+  text-align: inherit;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  ${menuItemCss};
+`
+
 type UiNavProps = {
   inline?: boolean
   simple?: boolean
@@ -62,39 +94,68 @@ type UiNavProps = {
   fill?: boolean
 }
 
-const UiNav = styled.ul<UiNavProps>`
-  list-style: none;
-  padding: 0;
-  display: ${(p) => (p.fill ? 'block' : 'inline-block')};
-  margin: ${(p) =>
-    p.inline ? p.theme.spacing(0, -2) : p.theme.spacing(p.simple ? 0 : -1, 0)};
-  display: ${(p) => (p.inline ? 'flex' : undefined)};
+const UiNav__fill = css`
+  display: block;
+`
+
+const UiNav__simple = css`
+  margin: 0;
 
   & > ${Item} {
-    margin: ${(p) =>
-      p.inline ? p.theme.spacing(0, 2) : p.theme.spacing(p.simple ? 0 : 1, 0)};
+    margin: 0;
 
     & > ${Link} {
-      text-decoration: ${(p) => (p.simple ? 'none' : undefined)};
-
-      &:hover {
-        color: ${(p) => (p.transparent ? 'inherit' : undefined)};
-        text-decoration: ${(p) => (p.transparent ? 'underline' : undefined)};
-      }
+      text-decoration: none;
     }
+  }
+`
+
+const UiNav__inline = css`
+  display: flex !important;
+  margin: ${(p) => p.theme.spacing(0, -2)};
+
+  & > ${Item} {
+    margin: ${(p) => p.theme.spacing(0, 2)};
 
     & > ${Submenu} {
-      top: ${(p) => (p.inline ? '100%' : 0)};
-      left: ${(p) => (p.inline ? '50%' : '100%')};
-      transform: translateX(${(p) => (p.inline ? '-50%' : '0')});
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     &:last-child {
       & > ${Submenu} {
-        left: ${(p) => (p.inline ? 'inherit' : undefined)};
-        right: ${(p) => (p.inline ? 0 : undefined)};
-        transform: ${(p) => (p.inline ? 'translateX(0)' : undefined)};
+        left: inherit;
+        right: 0;
+        transform: translateX(0);
       }
+    }
+  }
+`
+
+const UiNav__transparent = css`
+  & > ${Item} {
+    & > ${Link} {
+      &:hover {
+        color: inherit;
+        text-decoration: underline;
+      }
+    }
+  }
+`
+
+const UiNav = styled.ul<UiNavProps>`
+  list-style: none;
+  padding: 0;
+  display: inline-block;
+  margin: ${(p) => p.theme.spacing(-1, 0)};
+
+  & > ${Item} {
+    margin: ${(p) => p.theme.spacing(1, 0)};
+
+    & > ${Submenu} {
+      top: 0;
+      left: 100%;
     }
 
     &:hover {
@@ -105,11 +166,18 @@ const UiNav = styled.ul<UiNavProps>`
       }
     }
   }
+
+  ${(p) => p.simple && UiNav__simple};
+  ${(p) => p.fill && UiNav__fill};
+  ${(p) => p.inline && UiNav__inline};
+  ${(p) => p.transparent && UiNav__transparent};
 `
 
 export default createUiComponent(UiNav, {
   Item,
   Link,
   Text,
-  Submenu
+  Button,
+  Submenu,
+  ToggleMenu
 })

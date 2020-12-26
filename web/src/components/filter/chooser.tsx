@@ -25,7 +25,7 @@ function FilterChooser<TItem extends EntityWithId>({
   value,
   onChange,
   renderLabel,
-  limit = 4
+  limit
 }: FilterChooserProps<TItem>) {
   const [showAll, setShowAll] = React.useState(false)
 
@@ -33,9 +33,16 @@ function FilterChooser<TItem extends EntityWithId>({
     onChange?.(toggleItemInArray(value || [], id))
   }
 
+  const hasLimit = limit != null && limit > 0
+  const hasShowMore = hasLimit && limit != null && items.length > limit
+
+  const filteredItems = hasShowMore
+    ? items.slice(0, showAll ? items.length : limit)
+    : items
+
   return (
     <div>
-      {items.slice(0, showAll ? items.length : limit).map((item) => (
+      {filteredItems.map((item) => (
         <UiInputCheckbox
           key={item.id}
           onClick={() => handleClick(item.id)}
@@ -44,7 +51,7 @@ function FilterChooser<TItem extends EntityWithId>({
           fill
         />
       ))}
-      {items.length > limit && (
+      {hasShowMore && (
         <ShowMore onClick={() => setShowAll(!showAll)}>
           {showAll ? 'Skrýt' : 'Zobrazit vše'}
         </ShowMore>
