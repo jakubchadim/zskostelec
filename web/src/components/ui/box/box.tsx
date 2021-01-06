@@ -102,15 +102,28 @@ const UiBox = styled.div<UiBoxProps>`
 `
 
 const Header = styled.div`
-  padding: ${(p) => p.theme.spacing(5, 6, 0)};
-  margin-bottom: ${(p) => p.theme.spacing(4)};
+  padding: ${(p) => p.theme.spacing(3, 4, 0)};
+  margin-bottom: ${(p) => p.theme.spacing(2)};
+
+  ${(p) => p.theme.media.xs.up} {
+    padding: ${(p) => p.theme.spacing(5, 6, 0)};
+    margin-bottom: ${(p) => p.theme.spacing(4)};
+  }
 `
 
 const Content = styled.div`
-  padding: ${(p) => p.theme.spacing(5, 6)};
+  padding: ${(p) => p.theme.spacing(3, 4)};
+
+  ${(p) => p.theme.media.xs.up} {
+    padding: ${(p) => p.theme.spacing(5, 6)};
+  }
 
   ${Header} + & {
-    padding-top: ${(p) => p.theme.spacing(0)};
+    padding-top: 0;
+
+    ${(p) => p.theme.media.xs.up} {
+      padding-top: 0;
+    }
   }
 
   p:last-child {

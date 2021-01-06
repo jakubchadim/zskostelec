@@ -36,7 +36,15 @@ const UiSection = styled(Section)`
 `
 
 const Pagination = styled.div`
-  padding: ${(p) => p.theme.spacing(12, 0, 8)};
+  padding: ${(p) => p.theme.spacing(8, 0, 2)};
+
+  ${(p) => p.theme.media.sm.up} {
+    padding: ${(p) => p.theme.spacing(10, 0, 8)};
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    padding: ${(p) => p.theme.spacing(12, 0, 8)};
+  }
 `
 
 export default createUiComponent(UiSection, { Pagination })
