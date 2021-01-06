@@ -103,16 +103,20 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
     }
   }
 
-  const pages = extractNodes(allPage.data.allWordpressPage)
+  const pages = extractNodes(allPage.data.allWordpressPage).map((page) => {
+    return {
+      ...page,
+      templateType: <TemplateType>page.template.replace('.php', '')
+    }
+  })
 
   for (const page of pages) {
-    const templateType = <TemplateType>page.template.replace('.php', '')
-    const template = templateByType[templateType] || pageTemplate
+    const template = templateByType[page.templateType] || pageTemplate
 
     createPage({
       path: page.link,
       component: template,
-      context: await getPageContext(templateType, page)
+      context: await getPageContext(page.templateType, page)
     })
   }
 
@@ -140,13 +144,17 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
     })
   )
 
+  const galleryPage = pages.find((page) => page.templateType === TemplateType.GALLERIES)
+  const allGalleryLink = galleryPage?.link
+
   // Create gallery for each WordPress gallery
   allGallery.data.allWordpressWpGallery.edges.forEach(({node: gallery}) => {
     createPage({
       path: gallery.link,
       component: galleryTemplate,
       context: {
-        id: gallery.id
+        id: gallery.id,
+        allGalleryLink
       }
     })
   })

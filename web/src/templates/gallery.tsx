@@ -1,4 +1,4 @@
-import { graphql, PageProps } from 'gatsby'
+import { graphql, Link, PageProps } from 'gatsby'
 import { FixedObject } from 'gatsby-image'
 import React from 'react'
 import SimpleReactLightbox, {
@@ -6,11 +6,14 @@ import SimpleReactLightbox, {
   useLightbox
 } from 'simple-react-lightbox'
 import Img from 'gatsby-image'
+import { ArrowBack } from '@styled-icons/material/ArrowBack'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
 import UiContainer from '../components/ui/container/container'
 import UiGrid from '../components/ui/grid/grid'
 import UiGalleryImage from '../components/ui/gallery/image'
+import UiLinkBack from '../components/ui/link/back'
+import UiLink from '../components/ui/link/link'
 import UiSection from '../components/ui/section/section'
 import { Nullable } from '../types'
 
@@ -112,14 +115,30 @@ export const query = graphql`
   }
 `
 
-type GalleryProps = PageProps<WordpressGalleryData>
+type GalleryProps = PageProps<WordpressGalleryData, { allGalleryLink?: string }>
 
-const Gallery: React.FC<GalleryProps> = ({ data: { wordpressWpGallery } }) => {
+const Gallery: React.FC<GalleryProps> = ({
+  data: { wordpressWpGallery },
+  pageContext
+}) => {
   return (
     <Layout>
       <SEO title={wordpressWpGallery.title} />
       <UiSection>
         <UiContainer>
+          {pageContext.allGalleryLink != null && (
+            <UiLinkBack>
+              <UiLink
+                as={Link}
+                to={pageContext.allGalleryLink}
+                secondary
+                simple
+              >
+                <UiLink.Icon as={ArrowBack} />
+                Fotogalerie
+              </UiLink>
+            </UiLinkBack>
+          )}
           <div style={{ opacity: '.7' }}>{wordpressWpGallery.date}</div>
           <h1>{wordpressWpGallery.title}</h1>
           <SimpleReactLightbox>

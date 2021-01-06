@@ -1,5 +1,6 @@
 import React from 'react'
 import { graphql, Link, PageProps } from 'gatsby'
+import { ArrowBack } from '@styled-icons/material/ArrowBack'
 import { BlockColor } from '../components/block/color/color'
 import { BlockCoreButtonType } from '../components/block/core/button/constants'
 import BlockList from '../components/block/list'
@@ -13,10 +14,16 @@ import UiGrid from '../components/ui/grid/grid'
 import UiArticle from '../components/ui/article/article'
 import UiButton from '../components/ui/button/button'
 import UiBox from '../components/ui/box/box'
+import UiLinkBack from '../components/ui/link/back'
+import UiLink from '../components/ui/link/link'
 import UiSection from '../components/ui/section/section'
 import { DateString, ID, RawHTML } from '../types'
 
 type WordpressPostData = {
+  wordpressCategory: {
+    name: string
+    link: string
+  }
   wordpressPost: {
     title: string
     content: RawHTML
@@ -38,10 +45,14 @@ type WordpressPostData = {
 
 export const query = graphql`
   query currentPostQuery($id: String!, $categoryId: String!) {
+    wordpressCategory(id: { eq: $categoryId }) {
+      name
+      link
+    }
     wordpressPost(id: { eq: $id }) {
       title
       content
-      date(formatString: "MMMM DD, YYYY")
+      date(formatString: "DD.MM. YYYY")
       blocks {
         blockId
         parentId
@@ -73,7 +84,7 @@ export const query = graphql`
 type PostProps = PageProps<WordpressPostData>
 
 const Post: React.FC<PostProps> = ({
-  data: { wordpressPost, allWordpressPost }
+  data: { wordpressCategory, wordpressPost, allWordpressPost }
 }) => {
   const parsedBlocks = React.useMemo(
     () => parseBlocks(wordpressPost.blocks || []),
@@ -87,6 +98,13 @@ const Post: React.FC<PostProps> = ({
         <UiContainer>
           <UiGrid largeGutter>
             <UiGrid.Item md={8}>
+              <UiLinkBack>
+                <UiLink as={Link} to={wordpressCategory.link} secondary simple>
+                  <UiLink.Icon as={ArrowBack} />
+                  {wordpressCategory.name}
+                </UiLink>
+              </UiLinkBack>
+              <div style={{ opacity: '.7' }}>{wordpressPost.date}</div>
               <h1 dangerouslySetInnerHTML={{ __html: wordpressPost.title }} />
               {parsedBlocks.length ? (
                 <BlockList blocks={parsedBlocks} nested />
@@ -97,7 +115,7 @@ const Post: React.FC<PostProps> = ({
             <UiGrid.Item md={4}>
               <UiGrid>
                 {allWordpressPost.edges.map(({ node: post }) => (
-                  <UiGrid.Item md={12} key={post.id}>
+                  <UiGrid.Item md={12} sm={6} key={post.id}>
                     <UiBox backgroundColor={BlockColor.WHITE}>
                       <UiBox.Header>
                         <UiArticle.Header>
