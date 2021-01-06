@@ -14,8 +14,6 @@ const BlockList: React.FC<BlockListProps> = ({ blocks, nested }) => {
     return null
   }
 
-  console.log(JSON.stringify(blocks))
-
   return (
     <>
       {blocks.map((block, blockIdx) => {

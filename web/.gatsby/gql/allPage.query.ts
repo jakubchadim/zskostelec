@@ -8,9 +8,16 @@ export type PageInfo = {
   template: string
   link: string
   acf: Nullable<{
-    displayCategory: Nullable<{
+    mainCategory: Nullable<{
       slug: string
-    }[]>
+    }>
+    additionalCategoryFirst: Nullable<{
+      slug: string
+    }>
+    additionalCategorySecond: Nullable<{
+      slug: string
+    }>
+    mainPost: Nullable<ID>
   }>
 }
 
@@ -34,9 +41,16 @@ export const allPageQuery = gql`
                     template
                     link
                     acf {
-                        displayCategory {
+                        mainCategory {
                             slug
                         }
+                        additionalCategoryFirst {
+                            slug
+                        }
+                        additionalCategorySecond {
+                            slug
+                        }
+                        mainPost
                     }
                 }
             }

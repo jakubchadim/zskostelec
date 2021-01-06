@@ -1,20 +1,20 @@
-import { Link, PageProps } from 'gatsby'
+import { graphql, Link, PageProps } from 'gatsby'
 import React from 'react'
 import styled from 'styled-components'
 import { BlockColor } from '../components/block/color/color'
 import { BlockCoreButtonType } from '../components/block/core/button/constants'
+import { TransformedBlock } from '../components/block/types'
 import Layout from '../components/layout/layout'
+import NavFastFirst from '../components/nav/fastFirst'
+import NavFastSecond from '../components/nav/fastSecond'
 import SEO from '../components/seo/seo'
-import UiArticle from '../components/ui/article/article'
 import UiBox from '../components/ui/box/box'
 import UiButton from '../components/ui/button/button'
 import UiContainer from '../components/ui/container/container'
-import UiGrid from '../components/ui/grid/grid'
-import UiNav from '../components/ui/nav/nav'
 import UiSection from '../components/ui/section/section'
 import logoImage from '../images/logo.svg'
 import schoolImage from '../images/school@2x.png'
-import { ID } from '../types'
+import { ID, Nullable, RawHTML } from '../types'
 
 const MainHeading = styled.section`
   padding: 8.1rem 0 8rem;
@@ -34,6 +34,7 @@ const MainHeadingInfo = styled.div`
 
 const MainHeadingInfoPhoto = styled.div`
   width: 40%;
+  min-width: 35%;
   padding-right: ${(p) => p.theme.spacing(4)};
 
   ${(p) => p.theme.media.sm.down} {
@@ -53,8 +54,12 @@ const MainHeadingInfoPhoto = styled.div`
 `
 
 const MainHeadingInfoItem = styled.div`
-  ${(p) => p.theme.media.sm.down} {
+  ${(p) => p.theme.media.xs.down} {
     padding: ${(p) => p.theme.spacing(4, 0)};
+  }
+
+  ${(p) => p.theme.media.sm.down} {
+    padding: ${(p) => p.theme.spacing(8, 0)};
   }
 `
 
@@ -65,57 +70,283 @@ const HeaderBoxes = styled.div`
 `
 
 const SecondSection = styled.div`
-  margin: ${(p) => p.theme.spacing(12, 0, 0)};
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: ${(p) => p.theme.spacing(8)} auto 0;
+  max-width: 35rem;
+  text-align: center;
+
+  ${(p) => p.theme.media.sm.up} {
+    max-width: initial;
+    margin: ${(p) => p.theme.spacing(10, 0, 0)};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: initial;
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    margin: ${(p) => p.theme.spacing(12, 0, 0)};
+  }
 `
 
 const SecondSectionInfo = styled.div`
-  width: 50%;
+  margin-top: ${(p) => p.theme.spacing(2)};
+
+  ${(p) => p.theme.media.sm.up} {
+    width: 50%;
+    margin: 0;
+  }
 
   img {
-    width: 95%;
+    width: 90%;
     display: block;
-    margin: 0 0 0 auto;
+    margin: 0 auto;
+
+    ${(p) => p.theme.media.sm.up} {
+      width: 95%;
+      margin: 0 0 0 auto;
+    }
   }
 `
 
 const More = styled.div`
   text-align: center;
-  margin-top: ${(p) => p.theme.spacing(8)};
+  margin: ${(p) => p.theme.spacing(6, 0, 2)};
 `
 
 const SpecLink = styled.a`
   font-weight: 700;
 `
 
-const SectionDivider = styled.hr`
-  margin: ${(p) => p.theme.spacing(12, 0)};
-  border: none;
-  border-top: 0.1rem solid ${(p) => p.theme.color.gray3};
+const MainHeadingGrid = styled.div`
+  display: grid;
+  column-gap: ${(p) => p.theme.spacing(3)};
+  row-gap: ${(p) => p.theme.spacing(3)};
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  max-width: 35rem;
+  margin: 0 auto;
+
+  ${(p) => p.theme.media.sm.up} {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    max-width: initial;
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
 `
 
-type HomeContext = {
-  articlePreviews: {
-    category: {
-      id: ID
-      name: string
-      link: string
-    }
-    articles: {
-      id: ID
-      date: string
-      title: string
-      excerpt: string
-      link: string
-    }[]
-  }[]
+const MainHeadingGridWarnings = styled.div`
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+
+  ${(p) => p.theme.media.sm.up} {
+    grid-column: 1 / 1;
+    grid-row: 1 / 3;
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+  }
+`
+
+const MainHeadingGridFirstNav = styled.div`
+  grid-column: 1 / 1;
+  grid-row: 2 / 2;
+
+  ${(p) => p.theme.media.sm.up} {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+`
+
+const MainHeadingGridSecondNav = styled.div`
+  grid-column: 1 / 1;
+  grid-row: 3 / 3;
+
+  ${(p) => p.theme.media.sm.up} {
+    grid-column: 2 / 2;
+    grid-row: 2 / 2;
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    grid-column: 3 / 3;
+    grid-row: 1 / 2;
+  }
+`
+
+const MainHeadingGridFirstArticles = styled.div`
+  grid-column: 1 / 1;
+  grid-row: 4 / 4;
+
+  ${(p) => p.theme.media.sm.up} {
+    grid-column: 1 / 2;
+    grid-row: 3 / 3;
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    grid-column: 2 / 3;
+    grid-row: 2 / 2;
+  }
+`
+
+const MainHeadingGridSecondArticles = styled.div`
+  grid-column: 1 / 1;
+  grid-row: 5 / 5;
+
+  ${(p) => p.theme.media.sm.up} {
+    grid-column: 2 / 2;
+    grid-row: 3 / 3;
+  }
+
+  ${(p) => p.theme.media.md.up} {
+    grid-column: 3 / 3;
+    grid-row: 2 / 2;
+  }
+`
+
+const MainHeadingArticlePerex = styled.div`
+  font-size: 0.875em;
+  opacity: 0.7;
+  margin-top: ${(p) => p.theme.spacing(1)};
+
+  p {
+    margin-top: ${(p) => p.theme.spacing(1)};
+  }
+`
+
+const MainHeadingArticleDate = styled.div`
+  font-size: 0.8em;
+  opacity: 0.5;
+`
+
+const MainHeadingArticleDivider = styled.hr`
+  border: none;
+  border-bottom: 0.1rem solid ${(p) => p.theme.color.gray2};
+  margin: ${(p) => p.theme.spacing(3, 0)};
+`
+
+type Article = {
+  id: ID
+  date: string
+  title: string
+  excerpt: string
+  link: string
 }
 
-type HomeProps = PageProps<null, HomeContext>
+type ArticlePreview = {
+  category: {
+    id: ID
+    name: string
+    link: string
+  }
+  articles: Article[]
+}
 
-const Home: React.FC<HomeProps> = ({ pageContext }) => {
+const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
+  articlesCategory
+}) => {
+  return (
+    <UiBox fullHeight>
+      <UiBox.ScrollParalax />
+      <UiBox.ScrollContainer>
+        <UiBox.Header>
+          <h2>
+            <b>{articlesCategory.category.name}</b>
+          </h2>
+        </UiBox.Header>
+        <UiBox.Content>
+          {articlesCategory.articles.map((article, idx) => (
+            <React.Fragment key={idx}>
+              {idx !== 0 && <MainHeadingArticleDivider />}
+              <MainHeadingArticleDate>{article.date}</MainHeadingArticleDate>
+              <Link
+                to={article.link}
+                dangerouslySetInnerHTML={{
+                  __html: article.title
+                }}
+              />
+              <MainHeadingArticlePerex
+                dangerouslySetInnerHTML={{
+                  __html: article.excerpt
+                }}
+              />
+            </React.Fragment>
+          ))}
+          <More>
+            <SpecLink as={Link} to={articlesCategory.category.link}>
+              Všechny {articlesCategory.category.name.toLowerCase()}
+            </SpecLink>
+          </More>
+        </UiBox.Content>
+      </UiBox.ScrollContainer>
+    </UiBox>
+  )
+}
+
+type HomeContext = {
+  articlePreviews: ArticlePreview[]
+  mainPost?: Article
+}
+
+type WordpressPageData = {
+  wordpressPage: {
+    title: string
+    content?: RawHTML
+    acf: Nullable<{
+      fastMenu?: string
+      fastMenuSecond?: string
+      sectionLink: Nullable<{
+        url: string
+        title: string
+        target: string
+      }>
+    }>
+    blocks?: TransformedBlock[]
+  }
+}
+
+export const query = graphql`
+  query homePageQuery($id: String!) {
+    wordpressPage(id: { eq: $id }) {
+      title
+      acf {
+        fastMenu
+        fastMenuSecond
+        sectionLink {
+          url
+          title
+          target
+        }
+      }
+    }
+  }
+`
+
+type HomeProps = PageProps<WordpressPageData, HomeContext>
+
+const Home: React.FC<HomeProps> = ({
+  data: { wordpressPage },
+  pageContext
+}) => {
+  const { mainPost, articlePreviews } = pageContext
+
+  const [
+    mainArticles,
+    additionalArticles,
+    additionalArticles2
+  ] = articlePreviews
+
+  const sectionLink = wordpressPage.acf?.sectionLink?.url
+
   return (
     <Layout transparentNav>
       <SEO title='Vítejte' />
@@ -125,170 +356,102 @@ const Home: React.FC<HomeProps> = ({ pageContext }) => {
             <MainHeadingInfoPhoto>
               <img src={logoImage} />
             </MainHeadingInfoPhoto>
-            <MainHeadingInfoItem>
-              <h1>Přijatí žáci</h1>
-              <h3>Žáci přijatí do 1. tříd pro školní rok 2020 - 2021.</h3>
-              <UiButton
-                themeType={BlockCoreButtonType.OUTLINE}
-                textColor={BlockColor.WHITE}
-              >
-                Zjistit více
-              </UiButton>
-            </MainHeadingInfoItem>
+            {mainPost && (
+              <MainHeadingInfoItem>
+                <h1
+                  dangerouslySetInnerHTML={{
+                    __html: mainPost.title
+                  }}
+                />
+                <h3
+                  dangerouslySetInnerHTML={{
+                    __html: mainPost.excerpt
+                  }}
+                />
+                <UiButton
+                  as={Link}
+                  to={mainPost.link}
+                  themeType={BlockCoreButtonType.OUTLINE}
+                  textColor={BlockColor.WHITE}
+                >
+                  Zjistit více
+                </UiButton>
+              </MainHeadingInfoItem>
+            )}
           </MainHeadingInfo>
         </UiContainer>
       </MainHeading>
       <UiSection backgroundColor={BlockColor.LIGHT_GRAY}>
         <UiContainer>
           <HeaderBoxes>
-            <UiGrid>
-              <UiGrid.Item md={4}>
-                <UiBox>
+            <MainHeadingGrid>
+              {mainArticles && (
+                <MainHeadingGridWarnings>
+                  <ArticlesCategory articlesCategory={mainArticles} />
+                </MainHeadingGridWarnings>
+              )}
+              <MainHeadingGridFirstNav>
+                <UiBox fullHeight>
                   <UiBox.Header>
                     <h2>
-                      Jsem <b>žák</b>
+                      <b>{wordpressPage.acf?.fastMenu}</b>
                     </h2>
-                    <h4>a chci...</h4>
                   </UiBox.Header>
                   <UiBox.Content>
-                    <UiNav>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>Zkontrolovat známky</UiNav.Link>
-                      </UiNav.Item>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Prohlédnout rozvrh hodin
-                        </UiNav.Link>
-                      </UiNav.Item>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>Přečíst si Guťák</UiNav.Link>
-                      </UiNav.Item>
-                    </UiNav>
+                    <NavFastFirst fill />
                   </UiBox.Content>
                 </UiBox>
-              </UiGrid.Item>
-              <UiGrid.Item md={4}>
-                <UiBox>
+              </MainHeadingGridFirstNav>
+              <MainHeadingGridSecondNav>
+                <UiBox fullHeight>
                   <UiBox.Header>
                     <h2>
-                      Jsem <b>rodič</b>
+                      <b>{wordpressPage.acf?.fastMenuSecond}</b>
                     </h2>
-                    <h4>a chci...</h4>
                   </UiBox.Header>
                   <UiBox.Content>
-                    <UiNav>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>Zkontrolovat známky</UiNav.Link>
-                      </UiNav.Item>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Prohlédnout úspěchy dítěte
-                        </UiNav.Link>
-                      </UiNav.Item>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>
-                          Informace o klubu rodičů
-                        </UiNav.Link>
-                      </UiNav.Item>
-                    </UiNav>
+                    <NavFastSecond fill />
                   </UiBox.Content>
                 </UiBox>
-              </UiGrid.Item>
-              <UiGrid.Item md={4}>
-                <UiBox>
-                  <UiBox.Header>
-                    <h2>
-                      Jsem <b>učitel</b>
-                    </h2>
-                    <h4>a chci...</h4>
-                  </UiBox.Header>
-                  <UiBox.Content>
-                    <UiNav>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>Zapsat známky</UiNav.Link>
-                      </UiNav.Item>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>Najít dokumenty</UiNav.Link>
-                      </UiNav.Item>
-                      <UiNav.Item>
-                        <UiNav.Link href='#'>Něco...</UiNav.Link>
-                      </UiNav.Item>
-                    </UiNav>
-                  </UiBox.Content>
-                </UiBox>
-              </UiGrid.Item>
-            </UiGrid>
+              </MainHeadingGridSecondNav>
+              {additionalArticles && (
+                <MainHeadingGridFirstArticles>
+                  <ArticlesCategory articlesCategory={additionalArticles} />
+                </MainHeadingGridFirstArticles>
+              )}
+              {additionalArticles2 && (
+                <MainHeadingGridSecondArticles>
+                  <ArticlesCategory articlesCategory={additionalArticles2} />
+                </MainHeadingGridSecondArticles>
+              )}
+            </MainHeadingGrid>
           </HeaderBoxes>
           <SecondSection>
             <SecondSectionInfo>
               <h1>
                 Najdete nás na{' '}
                 <b className='has-inline-color has-primary-color'>
-                  4&nbsp;pracovištích
+                  5&nbsp;pracovištích
                 </b>{' '}
                 v Kostelci nad Orlicí a okolí.
               </h1>
               <h3>Podívejte se kde všude</h3>
-              <UiButton
-                themeType={BlockCoreButtonType.FILL}
-                backgroundColor={BlockColor.PRIMARY}
-                textColor={BlockColor.WHITE}
-              >
-                Zobrazit pracoviště
-              </UiButton>
+              {sectionLink != null && (
+                <UiButton
+                  as={Link}
+                  to={sectionLink}
+                  themeType={BlockCoreButtonType.FILL}
+                  backgroundColor={BlockColor.PRIMARY}
+                  textColor={BlockColor.WHITE}
+                >
+                  Zobrazit pracoviště
+                </UiButton>
+              )}
             </SecondSectionInfo>
             <SecondSectionInfo>
               <img src={schoolImage} />
             </SecondSectionInfo>
           </SecondSection>
-        </UiContainer>
-      </UiSection>
-
-      <UiSection backgroundColor={BlockColor.WHITE}>
-        <UiContainer>
-          {pageContext.articlePreviews.map(({ category, articles }, idx) => (
-            <>
-              {idx !== 0 && <SectionDivider />}
-              <h1>{category.name}</h1>
-              <UiGrid largeGutter>
-                {articles.map((post) => (
-                  <UiGrid.Item md={4} key={post.id}>
-                    <UiBox backgroundColor={BlockColor.MEDIUM_GRAY}>
-                      <UiBox.Header>
-                        <UiArticle.Header>
-                          <UiArticle.Title
-                            dangerouslySetInnerHTML={{ __html: post.title }}
-                          />
-                        </UiArticle.Header>
-                      </UiBox.Header>
-                      <UiBox.Content>
-                        <UiArticle.Perex
-                          dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                        />
-                        <UiArticle.Footer>
-                          <UiButton
-                            as={Link}
-                            to={post.link}
-                            themeType={BlockCoreButtonType.OUTLINE}
-                            backgroundColor={BlockColor.MEDIUM_GRAY}
-                            textColor={BlockColor.BLACK}
-                          >
-                            Zobrazit
-                          </UiButton>
-                          <UiArticle.Date>{post.date}</UiArticle.Date>
-                        </UiArticle.Footer>
-                      </UiBox.Content>
-                    </UiBox>
-                  </UiGrid.Item>
-                ))}
-              </UiGrid>
-              <More>
-                <SpecLink as={Link} to={category.link}>
-                  Všechny {category.name.toLowerCase()}
-                </SpecLink>
-              </More>
-            </>
-          ))}
         </UiContainer>
       </UiSection>
     </Layout>

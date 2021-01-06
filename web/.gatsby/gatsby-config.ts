@@ -1,6 +1,7 @@
 import blockNormalizer from '../src/components/block/normalizer'
 import navNormalizer from '../src/components/nav/normalizer'
 import galleryNormalizer from '../src/components/gallery/normalizer'
+import homeNormalizer from '../src/components/home/normalizer'
 import { config } from 'dotenv'
 import { composeNormalizers, getAcfImageNormalizer } from '../src/utils/normalizer'
 
@@ -69,6 +70,7 @@ module.exports = {
           galleryNormalizer,
           getAcfImageNormalizer('wordpress__wp_employee', 'photo'),
           getAcfImageNormalizer('wordpress__wp_gutak', 'preview'),
+          homeNormalizer
         )
       }
     },

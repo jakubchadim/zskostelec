@@ -115,8 +115,6 @@ export const query = graphql`
 type GalleryProps = PageProps<WordpressGalleryData>
 
 const Gallery: React.FC<GalleryProps> = ({ data: { wordpressWpGallery } }) => {
-  console.log(wordpressWpGallery)
-
   return (
     <Layout>
       <SEO title={wordpressWpGallery.title} />

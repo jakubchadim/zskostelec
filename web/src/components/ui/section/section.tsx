@@ -22,16 +22,12 @@ const Section: React.FC<SectionProps> = ({
 )
 
 const UiSection = styled(Section)`
-  padding: ${(p) => p.theme.spacing(2, 0)};
+  padding: ${(p) => p.theme.spacing(8, 0)};
   background: ${(p) => getColorFromPalette(p.backgroundColor, p.theme)};
   color: ${(p) => getColorFromPalette(p.textColor, p.theme)};
 
-  ${(p) => p.theme.media.xs.up} {
-    padding: ${(p) => p.theme.spacing(4, 0)};
-  }
-
   ${(p) => p.theme.media.sm.up} {
-    padding: ${(p) => p.theme.spacing(6, 0)};
+    padding: ${(p) => p.theme.spacing(10, 0)};
   }
 
   ${(p) => p.theme.media.md.up} {

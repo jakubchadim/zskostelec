@@ -3,6 +3,7 @@ import { AllGalleryQuery, allGalleryQuery } from './gql/allGallery.query'
 import { allPageQuery, AllPageQuery, PageInfo } from './gql/allPage.query'
 import { allPostQuery, AllPostQuery } from './gql/allPost.query'
 import { filteredPostQuery, FilteredPostQuery } from './gql/filteredPost.query'
+import { SinglePostQuery, singlePostQuery } from './gql/singlePost.query'
 import { extractNodes } from './gql/utils'
 const { createRemoteFileNode } = require(`gatsby-source-filesystem`)
 
@@ -63,10 +64,20 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
 
   async function getPageContext (templateType: TemplateType, page: PageInfo) {
     if (templateType === TemplateType.HOME) {
-      const categories = page?.acf?.displayCategory || []
+      const categories = [
+        page?.acf?.mainCategory,
+        page?.acf?.additionalCategoryFirst,
+        page?.acf?.additionalCategorySecond
+      ].filter((category) => category != null)
 
-      const articlePreviews = await Promise.all(categories.map(async ({slug}) => {
-        const articles: FilteredPostQuery = await graphql(filteredPostQuery(slug))
+      const mainId = page?.acf?.mainPost
+
+      let mainPost: SinglePostQuery['data']['wordpressPost'] | undefined = mainId
+        ? (await graphql(singlePostQuery(mainId)))?.data?.wordpressPost
+        : undefined
+
+      const articlePreviews = await Promise.all(categories.map(async ({slug}, idx) => {
+        const articles: FilteredPostQuery = await graphql(filteredPostQuery(slug, idx === 0 ? 6 : 3, mainId))
 
         return {
           category: allCategoryFormatted.find((category) => category.slug === slug),
@@ -74,8 +85,15 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
         }
       }))
 
+      if (!mainPost && articlePreviews[0]) {
+        const [first, ...rest] = articlePreviews[0].articles
+        mainPost = first
+        articlePreviews[0].articles = rest
+      }
+
       return {
         id: page.id,
+        mainPost,
         articlePreviews: articlePreviews.filter((previews) => previews.articles.length > 0)
       }
     }
@@ -242,6 +260,10 @@ exports.createSchemaCustomization = ({ actions }) => {
     type wordpress__wp_galleryAcf implements Node {
       preview: wordpress__wp_media
       gallery: [wordpress__wp_media!]
+    }
+
+    type wordpress__PAGEAcf implements Node {
+      mainPost: Int
     }
   `
 

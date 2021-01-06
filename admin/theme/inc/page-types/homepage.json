@@ -20,32 +20,129 @@
                     "post"
                 ],
                 "taxonomy": "",
-                "allow_null": 0,
+                "allow_null": 1,
                 "multiple": 0,
                 "return_format": "object",
                 "ui": 1
             },
             {
-                "key": "field_5fa7d01c6278a",
-                "label": "Zobrazit kategorie",
-                "name": "displayCategory",
+                "key": "field_5ff4f16a1eb58",
+                "label": "Hlavní kategorie",
+                "name": "mainCategory",
                 "type": "taxonomy",
                 "instructions": "",
+                "required": 1,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "33",
+                    "class": "",
+                    "id": ""
+                },
+                "taxonomy": "category",
+                "field_type": "select",
+                "allow_null": 0,
+                "add_term": 0,
+                "save_terms": 0,
+                "load_terms": 0,
+                "return_format": "object",
+                "multiple": 0
+            },
+            {
+                "key": "field_5ff4f1ef1eb59",
+                "label": "Vedlejší kategorie",
+                "name": "additionalCategoryFirst",
+                "type": "taxonomy",
+                "instructions": "",
+                "required": 1,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "33",
+                    "class": "",
+                    "id": ""
+                },
+                "taxonomy": "category",
+                "field_type": "select",
+                "allow_null": 0,
+                "add_term": 0,
+                "save_terms": 0,
+                "load_terms": 0,
+                "return_format": "object",
+                "multiple": 0
+            },
+            {
+                "key": "field_5ff4f2101eb5a",
+                "label": "Vedlejší kategorie 2",
+                "name": "additionalCategorySecond",
+                "type": "taxonomy",
+                "instructions": "",
+                "required": 1,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "33",
+                    "class": "",
+                    "id": ""
+                },
+                "taxonomy": "category",
+                "field_type": "select",
+                "allow_null": 0,
+                "add_term": 0,
+                "save_terms": 0,
+                "load_terms": 0,
+                "return_format": "object",
+                "multiple": 0
+            },
+            {
+                "key": "field_5ff5c42999845",
+                "label": "Rychlé menu titulek",
+                "name": "fastMenu",
+                "type": "text",
+                "instructions": "",
                 "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_5ff5c45199846",
+                "label": "Rychlé menu 2 titulek",
+                "name": "fastMenuSecond",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "50",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_5ff5c46d99847",
+                "label": "Pracoviště",
+                "name": "sectionLink",
+                "type": "link",
+                "instructions": "",
+                "required": 1,
                 "conditional_logic": 0,
                 "wrapper": {
                     "width": "",
                     "class": "",
                     "id": ""
                 },
-                "taxonomy": "category",
-                "field_type": "checkbox",
-                "add_term": 1,
-                "save_terms": 0,
-                "load_terms": 0,
-                "return_format": "object",
-                "multiple": 0,
-                "allow_null": 0
+                "return_format": "array"
             }
         ],
         "location": [
@@ -58,7 +155,7 @@
             ]
         ],
         "menu_order": 0,
-        "position": "side",
+        "position": "normal",
         "style": "default",
         "label_placement": "top",
         "instruction_placement": "label",

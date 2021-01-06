@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { BlockColorPalette } from '../../block/color/color'
 import { getColorFromPalette } from '../../block/color/utils'
 import { revealMixin } from '../animations/animations'
@@ -7,7 +7,82 @@ import { createUiComponent } from '../utils'
 type UiBoxProps = BlockColorPalette & {
   offsetTop?: boolean
   revealAnimation?: boolean
+  fullHeight?: boolean
 }
+
+const ScrollContainer = styled.div`
+  max-height: 100%;
+  overflow: auto;
+
+  /* total width */
+  &::-webkit-scrollbar {
+    background-color: ${(p) => p.theme.color.white1};
+    width: 10px;
+    height: 10px;
+  }
+
+  /* background of the scrollbar except button or resizer */
+  &::-webkit-scrollbar-track {
+    background-color: ${(p) => p.theme.color.white1};
+  }
+
+  /* scrollbar itself */
+  &::-webkit-scrollbar-thumb {
+    background-color: ${(p) => p.theme.color.gray5};
+    border-radius: 10px;
+    border: 2px solid ${(p) => p.theme.color.white1};
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${(p) => p.theme.color.gray5};
+    border: 1px solid ${(p) => p.theme.color.white1};
+  }
+
+  /* set button(top and bottom of the scrollbar) */
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: ${(p) => p.theme.color.gray6};
+  }
+`
+
+const UiBox__fullHeight = css`
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  & > ${ScrollContainer} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+`
+
+const ScrollParalax = styled.span`
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 1rem;
+    height: ${(p) => p.theme.spacing(5)};
+    z-index: 5;
+  }
+
+  &:before {
+    top: 0;
+    background: linear-gradient(180deg, #fff 0, rgba(255, 255, 255, 0) 100%);
+  }
+
+  &:after {
+    bottom: 0;
+    background: linear-gradient(0deg, #fff 0, rgba(255, 255, 255, 0) 100%);
+  }
+`
 
 const UiBox = styled.div<UiBoxProps>`
   background: ${(p) =>
@@ -22,7 +97,8 @@ const UiBox = styled.div<UiBoxProps>`
   box-shadow: ${(p) => p.theme.shadow.lift};
   border-radius: ${(p) => p.theme.radius.medium};
   margin-top: ${(p) => (p.offsetTop ? p.theme.spacing(2) : undefined)};
-  ${(p) => p.revealAnimation && revealMixin}
+  ${(p) => p.revealAnimation && revealMixin};
+  ${(p) => p.fullHeight && UiBox__fullHeight};
 `
 
 const Header = styled.div`
@@ -44,5 +120,7 @@ const Content = styled.div`
 
 export default createUiComponent(UiBox, {
   Header,
-  Content
+  Content,
+  ScrollContainer,
+  ScrollParalax
 })

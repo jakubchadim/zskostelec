@@ -15,9 +15,9 @@ type FilteredPostData = {
   }
 }
 
-export const filteredPostQuery = (categorySlug: string, limit: number = 3) => `
+export const filteredPostQuery = (categorySlug: string, limit: number = 3, exceptWpId?: string) => `
   {
-    allWordpressPost (filter: {status: {eq: "publish"}, categories: {elemMatch: {slug: {eq: "${categorySlug}"}}}}, limit: ${limit}) {
+    allWordpressPost (filter: {status: {eq: "publish"}, categories: {elemMatch: {slug: {eq: "${categorySlug}"}}}${exceptWpId == null ? '' : `, wordpress_id: {ne: ${exceptWpId}}`}}, limit: ${limit}) {
       edges {
         node {
           id

@@ -96,11 +96,7 @@ $colorPalette = array(
 add_theme_support( 'editor-color-palette', $colorPalette );
 
 add_action('admin_head', function () use ($colorPalette) {
-    echo '<style>
-        body {
-            border: 5px solid red;
-        }
-';
+    echo '<style>';
 
     foreach ($colorPalette as $color) {
         echo '

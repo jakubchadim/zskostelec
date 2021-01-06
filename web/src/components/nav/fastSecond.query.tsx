@@ -2,8 +2,8 @@ import { graphql, useStaticQuery } from 'gatsby'
 import { NavData, transformNavData } from './utils'
 
 const query = graphql`
-  query topMenuQuery {
-    wordpressWpApiMenusMenusItems(slug: { eq: "top-menu" }) {
+  query fastMenuSecondQuery {
+    wordpressWpApiMenusMenusItems(slug: { eq: "fast-menu-2" }) {
       items {
         title
         url
@@ -16,7 +16,7 @@ const query = graphql`
   }
 `
 
-export function useNavMainQuery() {
+export function useNavFastSecondQuery() {
   const data: NavData = useStaticQuery(query)
 
   return transformNavData(data)
