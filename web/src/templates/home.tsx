@@ -118,15 +118,21 @@ const SpecLink = styled.a`
 `
 
 const MainHeadingGrid = styled.div`
-  display: grid;
-  column-gap: ${(p) => p.theme.spacing(3)};
-  row-gap: ${(p) => p.theme.spacing(3)};
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(5, 1fr);
+  //grid-template-columns: 1fr;
+  //grid-template-rows: repeat(5, 1fr);
   max-width: 35rem;
   margin: 0 auto;
 
+  ${(p) => p.theme.media.xs.down} {
+    & > * {
+      margin-top: ${(p) => p.theme.spacing(2)};
+    }
+  }
+
   ${(p) => p.theme.media.sm.up} {
+    display: grid;
+    column-gap: ${(p) => p.theme.spacing(3)};
+    row-gap: ${(p) => p.theme.spacing(3)};
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(3, 1fr);
     max-width: initial;
@@ -234,6 +240,18 @@ const MainHeadingArticleDivider = styled.hr`
   margin: ${(p) => p.theme.spacing(3, 0)};
 `
 
+const ArticleScrollContainer = styled(UiBox.ScrollContainer)`
+  ${(p) => p.theme.media.xs.down} {
+    position: static !important;
+  }
+`
+
+const ArticleItem = styled.div<{ visible?: boolean }>`
+  ${(p) => p.theme.media.xs.down} {
+    display: ${(p) => (p.visible ? 'block' : 'none')};
+  }
+`
+
 type Article = {
   id: ID
   date: string
@@ -257,7 +275,7 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
   return (
     <UiBox fullHeight>
       <UiBox.ScrollParalax />
-      <UiBox.ScrollContainer>
+      <ArticleScrollContainer>
         <UiBox.Header>
           <h2>
             <b>{articlesCategory.category.name}</b>
@@ -265,7 +283,7 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
         </UiBox.Header>
         <UiBox.Content>
           {articlesCategory.articles.map((article, idx) => (
-            <React.Fragment key={idx}>
+            <ArticleItem key={idx} visible={idx === 0}>
               {idx !== 0 && <MainHeadingArticleDivider />}
               <MainHeadingArticleDate>{article.date}</MainHeadingArticleDate>
               <Link
@@ -279,7 +297,7 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
                   __html: article.excerpt
                 }}
               />
-            </React.Fragment>
+            </ArticleItem>
           ))}
           <More>
             <SpecLink as={Link} to={articlesCategory.category.link}>
@@ -287,7 +305,7 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
             </SpecLink>
           </More>
         </UiBox.Content>
-      </UiBox.ScrollContainer>
+      </ArticleScrollContainer>
     </UiBox>
   )
 }

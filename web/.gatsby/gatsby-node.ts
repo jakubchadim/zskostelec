@@ -126,7 +126,7 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
     allCategory.data.allWordpressCategory.edges.map(async ({node: category}) => {
       const totalCount = posts.filter((post) => post.categories.some((c) => c.id === category.id)).length
 
-      const numberOfPages = Math.ceil(totalCount / paginationLimit)
+      const numberOfPages = Math.max(Math.ceil(totalCount / paginationLimit), 1)
 
       for (let i = 0; i < numberOfPages; i++) {
         createPage({
@@ -134,6 +134,7 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
           component: categoryTemplate,
           context: {
             id: category.id,
+            rootCategoryId: category.parent_element?.id || category.id,
             offset: i * paginationLimit,
             limit: paginationLimit,
             totalCount,
@@ -272,6 +273,10 @@ exports.createSchemaCustomization = ({ actions }) => {
 
     type wordpress__PAGEAcf implements Node {
       mainPost: Int
+    }
+    
+    type wordpress__CATEGORY implements Node {
+      parent_element: wordpress__CATEGORY
     }
   `
 

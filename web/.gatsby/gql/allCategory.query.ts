@@ -1,4 +1,4 @@
-import { ID } from '../../src/types'
+import { ID, Nullable } from '../../src/types'
 import {gql, QueryResult} from './utils'
 
 type AllCategoryData = {
@@ -9,6 +9,9 @@ type AllCategoryData = {
         link: string
         slug: string
         name: string
+        parent_element: Nullable<{
+          id: ID
+        }>
       }
     }[]
   }
@@ -23,6 +26,9 @@ export const allCategoryQuery = gql`
                     link
                     slug
                     name
+                    parent_element {
+                        id
+                    }
                 }
             }
         }
