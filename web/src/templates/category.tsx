@@ -186,32 +186,34 @@ const Category: React.FC<CategoryProps> = ({
             {isCategory
               ? wordpressCategory.parent_element?.name
               : wordpressCategory.name}
-            <ChooseCategory active={isOpen} ref={tooltipRef}>
-              <ChooseCategoryIcon as={ArrowRight} />
-              <span onClick={handleToggle}>
-                {isCategory ? wordpressCategory.name : 'vyberte kategorii'}
-              </span>
-              <ChooseCategoryPopup isOpen={isOpen}>
-                <ChooseCategoryItems>
-                  {wordpressCategory.parent_element != null && (
-                    <ChooseCategoryItem>
-                      <ChooseCategoryLink
-                        to={wordpressCategory.parent_element.link}
-                      >
-                        Zobrazit vše
-                      </ChooseCategoryLink>
-                    </ChooseCategoryItem>
-                  )}
-                  {allWordpressCategory.edges.map(({ node: category }) => (
-                    <ChooseCategoryItem key={category.id}>
-                      <ChooseCategoryLink to={category.link}>
-                        {category.name}
-                      </ChooseCategoryLink>
-                    </ChooseCategoryItem>
-                  ))}
-                </ChooseCategoryItems>
-              </ChooseCategoryPopup>
-            </ChooseCategory>
+            {allWordpressCategory.edges.length > 0 && (
+              <ChooseCategory active={isOpen} ref={tooltipRef}>
+                <ChooseCategoryIcon as={ArrowRight} />
+                <span onClick={handleToggle}>
+                  {isCategory ? wordpressCategory.name : 'vyberte kategorii'}
+                </span>
+                <ChooseCategoryPopup isOpen={isOpen}>
+                  <ChooseCategoryItems>
+                    {wordpressCategory.parent_element != null && (
+                      <ChooseCategoryItem>
+                        <ChooseCategoryLink
+                          to={wordpressCategory.parent_element.link}
+                        >
+                          Zobrazit vše
+                        </ChooseCategoryLink>
+                      </ChooseCategoryItem>
+                    )}
+                    {allWordpressCategory.edges.map(({ node: category }) => (
+                      <ChooseCategoryItem key={category.id}>
+                        <ChooseCategoryLink to={category.link}>
+                          {category.name}
+                        </ChooseCategoryLink>
+                      </ChooseCategoryItem>
+                    ))}
+                  </ChooseCategoryItems>
+                </ChooseCategoryPopup>
+              </ChooseCategory>
+            )}
           </h1>
           <UiGrid largeGutter>
             {allWordpressPost.edges.map(({ node: post }) => (
@@ -248,7 +250,9 @@ const Category: React.FC<CategoryProps> = ({
           {allWordpressPost.edges.length > 0 && (
             <UiSection.Pagination>
               <UiNavPagination
-                totalCount={Math.ceil(pageContext.totalCount / pageContext.limit)}
+                totalCount={Math.ceil(
+                  pageContext.totalCount / pageContext.limit
+                )}
                 current={pageContext.offset / pageContext.limit + 1}
                 generateLink={(page) =>
                   page === 1
