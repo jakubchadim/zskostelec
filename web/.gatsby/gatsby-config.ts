@@ -58,7 +58,8 @@ module.exports = {
           '**/block-types',
           '**/plugins',
           '/wp/v2/block-directory/search',
-          '/njt-fbv/**'
+          '/njt-fbv/**',
+          'filebird/**'
         ],
         searchAndReplaceContentUrls: {
           sourceUrl: ADMIN_URL,
