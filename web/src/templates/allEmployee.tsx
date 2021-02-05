@@ -1,9 +1,7 @@
 import { graphql, PageProps } from 'gatsby'
-import { FixedObject } from 'gatsby-image'
 import React from 'react'
 import { FileEmpty } from '@styled-icons/icomoon/FileEmpty'
 import { Search } from '@styled-icons/material/Search'
-import Img from 'gatsby-image'
 import { BlockColor } from '../components/block/color/color'
 import BlockContent from '../components/block/content'
 import { TransformedBlock } from '../components/block/types'
@@ -22,7 +20,7 @@ import UiGrid from '../components/ui/grid/grid'
 import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
-import { Nullable, RawHTML } from '../types'
+import { RawHTML } from '../types'
 import { getDictionaryTranslator } from '../utils/translate'
 
 type WordpressAllEmployeeData = {
@@ -61,10 +59,12 @@ type WordpressAllEmployeeData = {
           phone: string
           photo?: {
             source_url: string
-            localFile: {
-              image: Nullable<{
-                fixed: FixedObject
-              }>
+            media_details?: {
+              sizes?: {
+                medium: {
+                  source_url: string
+                }
+              }
             }
           }
         }
@@ -117,10 +117,10 @@ export const query = graphql`
             photo {
               id
               source_url
-              localFile {
-                image: childImageSharp {
-                  fixed(width: 400, height: 400, cropFocus: CENTER) {
-                    ...GatsbyImageSharpFixed
+              media_details {
+                sizes {
+                  medium {
+                    source_url
                   }
                 }
               }
@@ -287,14 +287,13 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
                   photo={
                     photo != null ? (
                       <>
-                        {photo.localFile?.image?.fixed ? (
-                          <Img
-                            fixed={photo.localFile?.image.fixed}
-                            alt={employee.title}
-                          />
-                        ) : (
-                          <img src={photo.source_url} alt={employee.title} />
-                        )}
+                        <img
+                          src={
+                            photo.media_details?.sizes?.medium?.source_url ||
+                            photo.source_url
+                          }
+                          alt={employee.title}
+                        />
                       </>
                     ) : undefined
                   }

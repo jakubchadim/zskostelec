@@ -10,10 +10,11 @@ export const theme = {
     lg: getBreakpoint(1311, 1599)
   },
   color: {
-    primary1: '#FFC107',
-    primary2: '#e7ab07',
+    primary1: '#ff9800',
+    primary2: '#e78800',
     secondary1: '#009688',
     secondary2: '#00867a',
+    secondary3: '#00786c',
     success1: '#4caf50',
     warning1: '#ff9800',
     danger1: '#f44336',

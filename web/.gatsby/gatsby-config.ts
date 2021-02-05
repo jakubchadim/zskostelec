@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import blockNormalizer from '../src/components/block/normalizer'
 import navNormalizer from '../src/components/nav/normalizer'
 import galleryNormalizer from '../src/components/gallery/normalizer'
@@ -8,6 +9,66 @@ import { composeNormalizers, getAcfImageNormalizer } from '../src/utils/normaliz
 config()
 
 const ADMIN_URL = `${process.env.ADMIN_PROTOCOL}://${process.env.ADMIN_URL}`
+
+function searchReplaceContentUrls({ entities, searchAndReplaceContentUrls }) {
+  if (
+    !_.isPlainObject(searchAndReplaceContentUrls) ||
+    !_.has(searchAndReplaceContentUrls, `sourceUrl`) ||
+    !_.has(searchAndReplaceContentUrls, `replacementUrl`) ||
+    typeof searchAndReplaceContentUrls.sourceUrl !== `string` ||
+    typeof searchAndReplaceContentUrls.replacementUrl !== `string`
+  ) {
+    return entities
+  }
+
+  const { sourceUrl, replacementUrl } = searchAndReplaceContentUrls
+
+  const _blacklist = [`_links`, `__type`, `source_url`]
+
+  const blacklistProperties = function (obj = {}, blacklist = []) {
+    for (let i = 0; i < blacklist.length; i++) {
+      delete obj[blacklist[i]]
+    }
+
+    return obj
+  }
+
+  return entities.map(function (entity) {
+    const original = Object.assign({}, entity)
+
+    try {
+      const whiteList = blacklistProperties(entity, _blacklist)
+      const replaceable = JSON.stringify(whiteList)
+      const replaced = replaceable.replace(
+        new RegExp(`href=\'${sourceUrl}`, `g`),
+        `href=\'${replacementUrl}`
+      ).replace(
+        new RegExp(`"url":"${sourceUrl}`, `g`),
+        `"url":"${replacementUrl}`
+      )
+      const parsed = JSON.parse(replaced)
+
+      if (typeof parsed?.link === 'string') {
+        parsed.link = parsed.link.replace(
+          new RegExp(sourceUrl, `g`),
+          replacementUrl
+        )
+      }
+
+      if (typeof parsed?.url === 'string') {
+        parsed.url = parsed.url.replace(
+          new RegExp(sourceUrl, `g`),
+          replacementUrl
+        )
+      }
+
+      return _.defaultsDeep(parsed, original)
+    } catch (e) {
+      console.log(e.message)
+      return original
+    }
+  })
+}
 
 module.exports = {
   pathPrefix: process.env.SITE_PREFIX,
@@ -25,8 +86,6 @@ module.exports = {
         path: `${__dirname}/../src/images`
       }
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -46,6 +105,7 @@ module.exports = {
         protocol: process.env.ADMIN_PROTOCOL,
         hostingWPCOM: false,
         useACF: true,
+        keepMediaSizes: true,
         excludedRoutes: [
           '**/tags',
           '**/users',
@@ -74,7 +134,21 @@ module.exports = {
           getAcfImageNormalizer('wordpress__wp_employee', 'photo'),
           getAcfImageNormalizer('wordpress__wp_gutak', 'preview'),
           homeNormalizer
-        )
+        ),
+        normalizers: (normalizers) => {
+          return normalizers
+            .filter((normalizer) => normalizer.name !== 'downloadMediaFiles')
+            .map((normalizer) => {
+              if (normalizer.name === 'searchReplaceContentUrls') {
+                return {
+                  ...normalizer,
+                  normalizer: searchReplaceContentUrls
+                }
+              }
+
+              return normalizer
+            })
+        }
       }
     },
     {

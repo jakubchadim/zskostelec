@@ -1,11 +1,9 @@
 import { graphql, Link, PageProps } from 'gatsby'
-import { FixedObject } from 'gatsby-image'
 import React from 'react'
 import SimpleReactLightbox, {
   SRLWrapper,
   useLightbox
 } from 'simple-react-lightbox'
-import Img from 'gatsby-image'
 import { ArrowBack } from '@styled-icons/material/ArrowBack'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
@@ -15,23 +13,17 @@ import UiGalleryImage from '../components/ui/gallery/image'
 import UiLinkBack from '../components/ui/link/back'
 import UiLink from '../components/ui/link/link'
 import UiSection from '../components/ui/section/section'
-import { Nullable } from '../types'
 
 type GalleryImage = {
   id: string
   source_url: string
   caption: string
-  localFile: {
-    preview: Nullable<{
-      fixed: FixedObject
-    }>
-    full: Nullable<{
-      fluid: {
-        src: string
-        presentationHeight: number
-        presentationWidth: number
+  media_details?: {
+    sizes?: {
+      medium?: {
+        source_url: string
       }
-    }>
+    }
   }
 }
 
@@ -44,14 +36,13 @@ const GalleryView: React.FC<GalleryViewProps> = ({ images }) => {
 
   const galleryImages = React.useMemo(() => {
     return images.map((image) => {
-      const full = image.localFile.full?.fluid
-
       return {
-        src: full?.src || image.source_url,
-        thumbnail: image.localFile.preview?.fixed.src || image.source_url,
+        src: image.source_url,
+        thumbnail:
+          image.media_details?.sizes?.medium?.source_url || image.source_url,
         caption: image.caption,
-        width: full?.presentationWidth || 'auto',
-        height: full?.presentationHeight || 'auto'
+        width: 'auto',
+        height: 'auto'
       }
     })
   }, [images])
@@ -60,14 +51,10 @@ const GalleryView: React.FC<GalleryViewProps> = ({ images }) => {
     <>
       <SRLWrapper images={galleryImages} />
       <UiGrid>
-        {images.map((image, idx) => (
+        {galleryImages.map((image, idx) => (
           <UiGrid.Item key={idx} xs={6} sm={4}>
             <UiGalleryImage onClick={() => openLightbox(idx)}>
-              {image.localFile.preview ? (
-                <Img fixed={image.localFile.preview.fixed} alt='' />
-              ) : (
-                <img src={image.source_url} />
-              )}
+              <img src={image.thumbnail} />
             </UiGalleryImage>
           </UiGrid.Item>
         ))}
@@ -81,7 +68,6 @@ type WordpressGalleryData = {
     title: string
     date: string
     acf: {
-      preview: GalleryImage
       gallery: GalleryImage[]
     }
   }
@@ -97,15 +83,10 @@ export const query = graphql`
           id
           source_url
           caption
-          localFile {
-            full: childImageSharp {
-              fluid(maxWidth: 1000, maxHeight: 700, fit: INSIDE, quality: 100) {
-                src
-              }
-            }
-            preview: childImageSharp {
-              fixed(width: 400, height: 400, cropFocus: CENTER) {
-                ...GatsbyImageSharpFixed
+          media_details {
+            sizes {
+              medium {
+                source_url
               }
             }
           }

@@ -34,10 +34,10 @@ const Footer: React.FC = () => {
                 Palackého náměstí 45,
                 <br />
                 517 41 Kostelec nad Orlicí
-                <UiFooter.Phone>
-                  <UiIcon icon={Phone} />
-                  <a href='tel:+420494323138'>+420 494 323 138</a>
-                </UiFooter.Phone>
+                {/*<UiFooter.Phone>*/}
+                {/*<UiIcon icon={Phone} />*/}
+                {/*<a href='tel:+420494323138'>+420 494 323 138</a>*/}
+                {/*</UiFooter.Phone>*/}
               </UiFooter.Contact>
             </UiGrid.Item>
           </UiGrid>

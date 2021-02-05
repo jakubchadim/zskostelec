@@ -35,17 +35,17 @@ type WordpressAllGutakData = {
         acf: {
           file: {
             url: {
-              localFile: {
-                publicURL: string
-              }
+              source_url: string
             }
           }
           preview?: {
             source_url: string
-            localFile: {
-              preview: Nullable<{
-                fixed: FixedObject
-              }>
+            media_details?: {
+              sizes?: {
+                medium_large?: {
+                  source_url: string
+                }
+              }
             }
           }
         }
@@ -75,18 +75,16 @@ export const query = graphql`
           acf {
             file {
               url {
-                localFile {
-                  publicURL
-                }
+                source_url
               }
             }
             preview {
               id
               source_url
-              localFile {
-                preview: childImageSharp {
-                  fixed(width: 400, height: 400, cropFocus: CENTER) {
-                    ...GatsbyImageSharpFixed
+              media_details {
+                sizes {
+                  medium_large {
+                    source_url
                   }
                 }
               }
@@ -119,28 +117,23 @@ const AllGutak: React.FC<AllGutakProps> = ({
       <UiSectionOffset>
         <UiGrid>
           {allWordpressWpGutak.edges.map(({ node: gutak }) => {
-            const preview = gutak.acf?.preview?.localFile.preview
-
             return (
               <UiGrid.Item key={gutak.id} xs={6} sm={4}>
                 <a
-                  href={gutak.acf.file.url?.localFile.publicURL}
+                  href={gutak.acf.file.url?.source_url}
                   target='_blank'
                   rel='noreferrer'
                 >
                   <UiGallery>
                     <UiGallery.Image>
                       {gutak.acf?.preview ? (
-                        <>
-                          {preview?.fixed ? (
-                            <Img fixed={preview.fixed} alt={gutak.title} />
-                          ) : (
-                            <img
-                              src={gutak.acf.preview.source_url}
-                              alt={gutak.title}
-                            />
-                          )}
-                        </>
+                        <img
+                          src={
+                            gutak.acf.preview.media_details?.sizes?.medium_large
+                              ?.source_url || gutak.acf.preview.source_url
+                          }
+                          alt={gutak.title}
+                        />
                       ) : (
                         <img src={defaultGutakImage} alt={gutak.title} />
                       )}

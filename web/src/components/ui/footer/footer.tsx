@@ -4,7 +4,7 @@ import UiShape from '../shape/shape'
 import { createUiComponent } from '../utils'
 
 const UiFooterShape = styled(UiShape)`
-  color: ${(p) => p.theme.color.gray9};
+  color: ${(p) => p.theme.color.secondary3};
 `
 
 const Footer: React.FC<{ className?: string; children: React.ReactNode }> = ({
@@ -18,7 +18,7 @@ const Footer: React.FC<{ className?: string; children: React.ReactNode }> = ({
 )
 
 const UiFooter = styled(Footer)`
-  background: ${(p) => p.theme.color.gray9};
+  background: ${(p) => p.theme.color.secondary3};
   color: ${(p) => p.theme.color.white1};
 `
 

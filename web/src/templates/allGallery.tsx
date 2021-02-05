@@ -1,7 +1,5 @@
 import { graphql, Link, PageProps } from 'gatsby'
-import { FixedObject } from 'gatsby-image'
 import React from 'react'
-import Img from 'gatsby-image'
 import { BlockColor } from '../components/block/color/color'
 import BlockContent from '../components/block/content'
 import { TransformedBlock } from '../components/block/types'
@@ -15,7 +13,7 @@ import UiSectionOffset from '../components/ui/section/offset'
 import UiGrid from '../components/ui/grid/grid'
 import UiSection from '../components/ui/section/section'
 import UiShape from '../components/ui/shape/shape'
-import { Nullable, RawHTML } from '../types'
+import { RawHTML } from '../types'
 
 type WordpressAllGalleryData = {
   wordpressPage: {
@@ -33,10 +31,12 @@ type WordpressAllGalleryData = {
         acf: {
           preview: {
             source_url: string
-            localFile: {
-              preview: Nullable<{
-                fixed: FixedObject
-              }>
+            media_details?: {
+              sizes?: {
+                medium?: {
+                  source_url: string
+                }
+              }
             }
           }
         }
@@ -71,10 +71,10 @@ export const query = graphql`
             preview {
               id
               source_url
-              localFile {
-                preview: childImageSharp {
-                  fixed(width: 400, height: 400, cropFocus: CENTER) {
-                    ...GatsbyImageSharpFixed
+              media_details {
+                sizes {
+                  medium {
+                    source_url
                   }
                 }
               }
@@ -107,21 +107,18 @@ const AllGallery: React.FC<AllGalleryProps> = ({
       <UiSectionOffset>
         <UiGrid>
           {allWordpressWpGallery.edges.map(({ node: gallery }) => {
-            const preview = gallery.acf.preview.localFile.preview
-
             return (
               <UiGrid.Item key={gallery.id} xs={6} md={4}>
                 <Link to={gallery.link}>
                   <UiGallery>
                     <UiGallery.Image>
-                      {preview?.fixed ? (
-                        <Img fixed={preview.fixed} alt={gallery.title} />
-                      ) : (
-                        <img
-                          src={gallery.acf.preview.source_url}
-                          alt={gallery.title}
-                        />
-                      )}
+                      <img
+                        src={
+                          gallery.acf.preview.media_details?.sizes?.medium
+                            ?.source_url ?? gallery.acf.preview.source_url
+                        }
+                        alt={gallery.title}
+                      />
                     </UiGallery.Image>
                     <UiGallery.Overlay>
                       <UiShape color={BlockColor.WHITE} />

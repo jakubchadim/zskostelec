@@ -1,4 +1,5 @@
 import { graphql, Link, PageProps } from 'gatsby'
+
 import React from 'react'
 import styled from 'styled-components'
 import { BlockColor } from '../components/block/color/color'
@@ -22,7 +23,7 @@ const MainHeading = styled.section`
   background: linear-gradient(
     180deg,
     ${(p) => p.theme.color.primary1} 0,
-    ${(p) => p.theme.color.warning1} 100%
+    #ed704a 100%
   );
   color: #fff;
 `

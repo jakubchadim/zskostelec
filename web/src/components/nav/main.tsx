@@ -8,8 +8,8 @@ import UiNav from '../ui/nav/nav'
 import UiContainer from '../ui/container/container'
 import UiIcon from '../ui/icon/icon'
 import { useNavMainQuery } from './main.query'
-import { NavItem } from './nav.query'
 import NavSubmenu, { renderMenuItem } from './submenu'
+import { NavItem } from './utils'
 
 type MobileMenuItemProps = {
   item: NavItem

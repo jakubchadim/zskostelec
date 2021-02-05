@@ -50,10 +50,7 @@ type WordpressAllDocumentData = {
           file: {
             filename: string
             url: {
-              localFile: {
-                publicURL: string
-                extension: string
-              }
+              source_url: string
             }
           }
         }
@@ -94,10 +91,7 @@ export const query = graphql`
             file {
               filename
               url {
-                localFile {
-                  publicURL
-                  extension
-                }
+                source_url
               }
             }
           }
@@ -215,6 +209,8 @@ const AllDocument: React.FC<AllDocumentProps> = ({
             {fileredDocuments.map((document, idx) => {
               const { file } = document.acf
 
+              const extension = file.url.source_url?.split('.').pop()
+
               return (
                 <UiBox
                   key={document.id}
@@ -225,17 +221,14 @@ const AllDocument: React.FC<AllDocumentProps> = ({
                 >
                   <UiFile>
                     <UiFile.Icon>
-                      <UiIcon
-                        icon={getFileIcon(file.url.localFile.extension)}
-                        size={34}
-                      />
+                      <UiIcon icon={getFileIcon(extension)} size={34} />
                     </UiFile.Icon>
                     <UiFile.Name>{document.title || file.filename}</UiFile.Name>
-                    <UiFile.Ext>.{file.url.localFile.extension}</UiFile.Ext>
+                    <UiFile.Ext>.{extension}</UiFile.Ext>
                     <UiFile.Button>
                       <UiButton
                         as='a'
-                        href={file.url.localFile.publicURL}
+                        href={file.url.source_url}
                         target='_blank'
                         backgroundColor={BlockColor.PRIMARY}
                         textColor={BlockColor.WHITE}

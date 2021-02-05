@@ -74,7 +74,7 @@ const ContentIcon = styled.div`
 const Name = styled.h2`
   font-size: 2.5rem;
   margin: ${(p) => p.theme.spacing(0, 0, 3)};
-  color: ${(p) => p.theme.color.primary2};
+  color: ${(p) => p.theme.color.secondary1};
 };
 `
 
