@@ -1,7 +1,5 @@
 import { graphql, PageProps } from 'gatsby'
-import { FixedObject } from 'gatsby-image'
 import React from 'react'
-import Img from 'gatsby-image'
 import { BlockColor } from '../components/block/color/color'
 import BlockContent from '../components/block/content'
 import { TransformedBlock } from '../components/block/types'
@@ -17,7 +15,7 @@ import UiSection from '../components/ui/section/section'
 import UiShape from '../components/ui/shape/shape'
 import defaultGutakImage from '../images/gutak.png'
 
-import { Nullable, RawHTML } from '../types'
+import { RawHTML } from '../types'
 
 type WordpressAllGutakData = {
   wordpressPage: {

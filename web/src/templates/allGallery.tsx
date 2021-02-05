@@ -33,7 +33,7 @@ type WordpressAllGalleryData = {
             source_url: string
             media_details?: {
               sizes?: {
-                medium?: {
+                medium_large?: {
                   source_url: string
                 }
               }
@@ -73,7 +73,7 @@ export const query = graphql`
               source_url
               media_details {
                 sizes {
-                  medium {
+                  medium_large {
                     source_url
                   }
                 }
@@ -114,8 +114,8 @@ const AllGallery: React.FC<AllGalleryProps> = ({
                     <UiGallery.Image>
                       <img
                         src={
-                          gallery.acf.preview.media_details?.sizes?.medium
-                            ?.source_url ?? gallery.acf.preview.source_url
+                          gallery.acf.preview.media_details?.sizes?.medium_large
+                            ?.source_url || gallery.acf.preview.source_url
                         }
                         alt={gallery.title}
                       />

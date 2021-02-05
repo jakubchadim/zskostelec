@@ -20,7 +20,7 @@ type GalleryImage = {
   caption: string
   media_details?: {
     sizes?: {
-      medium?: {
+      medium_large?: {
         source_url: string
       }
     }
@@ -39,7 +39,7 @@ const GalleryView: React.FC<GalleryViewProps> = ({ images }) => {
       return {
         src: image.source_url,
         thumbnail:
-          image.media_details?.sizes?.medium?.source_url || image.source_url,
+          image.media_details?.sizes?.medium_large?.source_url || image.source_url,
         caption: image.caption,
         width: 'auto',
         height: 'auto'
@@ -85,7 +85,7 @@ export const query = graphql`
           caption
           media_details {
             sizes {
-              medium {
+              medium_large {
                 source_url
               }
             }

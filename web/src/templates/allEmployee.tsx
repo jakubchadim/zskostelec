@@ -61,7 +61,7 @@ type WordpressAllEmployeeData = {
             source_url: string
             media_details?: {
               sizes?: {
-                medium: {
+                medium_large: {
                   source_url: string
                 }
               }
@@ -119,7 +119,7 @@ export const query = graphql`
               source_url
               media_details {
                 sizes {
-                  medium {
+                  medium_large {
                     source_url
                   }
                 }
@@ -289,8 +289,8 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
                       <>
                         <img
                           src={
-                            photo.media_details?.sizes?.medium?.source_url ||
-                            photo.source_url
+                            photo.media_details?.sizes?.medium_large
+                              ?.source_url || photo.source_url
                           }
                           alt={employee.title}
                         />

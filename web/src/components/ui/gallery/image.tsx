@@ -11,6 +11,10 @@ const UiGalleryImage = styled.div`
   overflow: hidden;
   cursor: pointer;
 
+  img {
+    object-fit: cover;
+  }
+
   &:hover {
     box-shadow: ${(p) => p.theme.shadow.lift};
 

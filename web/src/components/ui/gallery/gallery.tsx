@@ -15,6 +15,7 @@ const Image = styled.div`
     left: 0;
     width: 100% !important;
     height: 100% !important;
+    object-fit: cover;
     transition: transform 0.2s ease-in-out;
   }
 `
