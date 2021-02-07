@@ -8,16 +8,18 @@ type NonIdealStateProps = {
   title: string
   description?: string
   children?: React.ReactNode
+  offsetTop?: boolean
 }
 
 const NonIdealState: React.FC<NonIdealStateProps> = ({
   icon,
   title,
   description,
+  offsetTop,
   children
 }) => {
   return (
-    <UiNonIdealState>
+    <UiNonIdealState offsetTop={offsetTop}>
       <UiNonIdealState.Icon>
         <UiIcon icon={icon} size={46} />
       </UiNonIdealState.Icon>

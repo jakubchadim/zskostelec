@@ -1,8 +1,17 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { createUiComponent } from '../utils'
 
-const UiNonIdealState = styled.div`
+const UiNonIdealState__offset = css`
+  margin-top: 5rem;
+
+  ${(p) => p.theme.media.sm.up} {
+    margin-top: 7rem;
+  }
+`
+
+const UiNonIdealState = styled.div<{ offsetTop?: boolean }>`
   text-align: center;
+  ${(p) => p.offsetTop && UiNonIdealState__offset};
 `
 
 const Icon = styled.div`

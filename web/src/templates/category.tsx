@@ -2,9 +2,11 @@ import React from 'react'
 import { Link, graphql, PageProps } from 'gatsby'
 import { ArrowRight } from '@styled-icons/material/ArrowRight'
 import styled, { css } from 'styled-components'
+import { SearchOff } from '@styled-icons/material/SearchOff'
 import { BlockColor } from '../components/block/color/color'
 import { BlockCoreButtonType } from '../components/block/core/button/constants'
 import UiNavPagination from '../components/nav/pagination'
+import NonIdealState from '../components/nonIdealState/nonIdealState'
 import UiArticle from '../components/ui/article/article'
 import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
@@ -215,38 +217,58 @@ const Category: React.FC<CategoryProps> = ({
               </ChooseCategory>
             )}
           </h1>
-          <UiGrid largeGutter>
-            {allWordpressPost.edges.map(({ node: post }) => (
-              <UiGrid.Item md={4} sm={6} key={post.id}>
-                <UiBox backgroundColor={BlockColor.WHITE}>
-                  <UiBox.Header>
-                    <UiArticle.Header>
-                      <UiArticle.Title
-                        dangerouslySetInnerHTML={{ __html: post.title }}
+          {allWordpressPost.edges.length === 0 ? (
+            <NonIdealState
+              icon={SearchOff}
+              title='Články nenalezeny'
+              description='Nalezeno 0 článků. Zkuste hledat jinde.'
+              offsetTop
+            >
+              {wordpressCategory.parent_element != null && (
+                <Link to={wordpressCategory.parent_element.link}>
+                  <UiButton
+                    backgroundColor={BlockColor.PRIMARY}
+                    textColor={BlockColor.WHITE}
+                  >
+                    Vyčistit filtr
+                  </UiButton>
+                </Link>
+              )}
+            </NonIdealState>
+          ) : (
+            <UiGrid largeGutter>
+              {allWordpressPost.edges.map(({ node: post }) => (
+                <UiGrid.Item md={4} sm={6} key={post.id}>
+                  <UiBox backgroundColor={BlockColor.WHITE}>
+                    <UiBox.Header>
+                      <UiArticle.Header>
+                        <UiArticle.Title
+                          dangerouslySetInnerHTML={{ __html: post.title }}
+                        />
+                      </UiArticle.Header>
+                    </UiBox.Header>
+                    <UiBox.Content>
+                      <UiArticle.Perex
+                        dangerouslySetInnerHTML={{ __html: post.excerpt }}
                       />
-                    </UiArticle.Header>
-                  </UiBox.Header>
-                  <UiBox.Content>
-                    <UiArticle.Perex
-                      dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                    />
-                    <UiArticle.Footer>
-                      <UiButton
-                        as={Link}
-                        to={post.link}
-                        themeType={BlockCoreButtonType.OUTLINE}
-                        backgroundColor={BlockColor.WHITE}
-                        textColor={BlockColor.BLACK}
-                      >
-                        Zobrazit
-                      </UiButton>
-                      <UiArticle.Date>{post.date}</UiArticle.Date>
-                    </UiArticle.Footer>
-                  </UiBox.Content>
-                </UiBox>
-              </UiGrid.Item>
-            ))}
-          </UiGrid>
+                      <UiArticle.Footer>
+                        <UiButton
+                          as={Link}
+                          to={post.link}
+                          themeType={BlockCoreButtonType.OUTLINE}
+                          backgroundColor={BlockColor.WHITE}
+                          textColor={BlockColor.BLACK}
+                        >
+                          Zobrazit
+                        </UiButton>
+                        <UiArticle.Date>{post.date}</UiArticle.Date>
+                      </UiArticle.Footer>
+                    </UiBox.Content>
+                  </UiBox>
+                </UiGrid.Item>
+              ))}
+            </UiGrid>
+          )}
           {allWordpressPost.edges.length > 0 && (
             <UiSection.Pagination>
               <UiNavPagination
