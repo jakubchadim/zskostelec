@@ -16,6 +16,7 @@ import UiSection from '../components/ui/section/section'
 import logoImage from '../images/logo.svg'
 import schoolImage from '../images/school@2x.png'
 import { ID, Nullable, RawHTML } from '../types'
+import { getExternalLinkTarget } from '../utils/link'
 
 const MainHeading = styled.section`
   padding: 8.1rem 0 8rem;
@@ -289,6 +290,7 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
               <MainHeadingArticleDate>{article.date}</MainHeadingArticleDate>
               <Link
                 to={article.link}
+                target={getExternalLinkTarget(article.link)}
                 dangerouslySetInnerHTML={{
                   __html: article.title
                 }}
@@ -390,6 +392,7 @@ const Home: React.FC<HomeProps> = ({
                 <UiButton
                   as={Link}
                   to={mainPost.link}
+                  target={getExternalLinkTarget(mainPost.link)}
                   themeType={BlockCoreButtonType.OUTLINE}
                   textColor={BlockColor.WHITE}
                 >

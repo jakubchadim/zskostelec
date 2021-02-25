@@ -16,6 +16,7 @@ import { DateString, ID, Nullable, RawHTML } from '../types'
 import UiButton from '../components/ui/button/button'
 import UiGrid from '../components/ui/grid/grid'
 import UiBox from '../components/ui/box/box'
+import { getExternalLinkTarget } from '../utils/link'
 import { useTooltip } from '../utils/tooltip'
 
 const ChooseCategory = styled.span<{ active?: boolean }>`
@@ -255,6 +256,7 @@ const Category: React.FC<CategoryProps> = ({
                         <UiButton
                           as={Link}
                           to={post.link}
+                          target={getExternalLinkTarget(post.link)}
                           themeType={BlockCoreButtonType.OUTLINE}
                           backgroundColor={BlockColor.WHITE}
                           textColor={BlockColor.BLACK}

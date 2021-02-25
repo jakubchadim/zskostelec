@@ -189,6 +189,11 @@ exports.createSchemaCustomization = ({ actions }) => {
       mainPost: Int
     }
     
+    type wordpress__POSTAcf implements Node {
+      link: String
+      file: wordpress__wp_media
+    }
+    
     type wordpress__CATEGORY implements Node {
       parent_element: wordpress__CATEGORY
     }

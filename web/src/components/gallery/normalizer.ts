@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { NormalizerFc } from '../../utils/normalizer'
 
 type InputEntity = {
@@ -19,11 +20,15 @@ const normalizer: NormalizerFc<InputEntity> = ({ entities }) => {
 
       const galleryNode = entity.acf.gallery___NODE
       const previewNode = entity.acf.preview___NODE || galleryNode?.[0]
+      const previewsNode = _.uniq(
+        [previewNode, ...(galleryNode ?? [])].filter((n) => n != null)
+      ).slice(0, 3)
 
       const acf = {
         ...entity.acf,
         preview___NODE: previewNode || null,
-        gallery___NODE: galleryNode || null
+        gallery___NODE: galleryNode || null,
+        previews___NODE: previewsNode
       }
 
       delete acf.preview
