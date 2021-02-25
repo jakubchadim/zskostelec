@@ -87,7 +87,6 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ gallery }) => {
   return (
     <>
       <SRLWrapper images={galleryImages} />
-      <h3>{gallery.title}</h3>
       <UiGrid>
         {galleryImages.map((image, idx) => {
           const last = galleryImages.length === idx + 1
