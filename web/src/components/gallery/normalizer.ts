@@ -22,7 +22,7 @@ const normalizer: NormalizerFc<InputEntity> = ({ entities }) => {
       const previewNode = entity.acf.preview___NODE || galleryNode?.[0]
       const previewsNode = _.uniq(
         [previewNode, ...(galleryNode ?? [])].filter((n) => n != null)
-      ).slice(0, 3)
+      ).slice(0, 4)
 
       const acf = {
         ...entity.acf,
