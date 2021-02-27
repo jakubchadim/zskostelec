@@ -23,6 +23,7 @@ const ChooseCategory = styled.span<{ active?: boolean }>`
   position: relative;
   padding-left: 1.2em;
   display: inline-block;
+  z-index: 10;
 
   &:hover {
     color: ${(p) => p.theme.color.secondary2};
