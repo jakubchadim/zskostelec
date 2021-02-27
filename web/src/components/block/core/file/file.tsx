@@ -15,7 +15,7 @@ const BlockCoreFile: BlockFC<BlockCoreFileAttrs> = ({ block, nested }) => {
   }
 
   const file = (
-    <UiBox backgroundColor={BlockColor.WHITE} offsetTop>
+    <UiBox backgroundColor={BlockColor.WHITE} offsetTop offsetBottom>
       <File name={block.content || 'Soubor'} href={block.attrs.src} />
     </UiBox>
   )

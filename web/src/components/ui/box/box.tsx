@@ -6,6 +6,7 @@ import { createUiComponent } from '../utils'
 
 type UiBoxProps = BlockColorPalette & {
   offsetTop?: boolean
+  offsetBottom?: boolean
   revealAnimation?: boolean
   fullHeight?: boolean
 }
@@ -97,6 +98,7 @@ const UiBox = styled.div<UiBoxProps>`
   box-shadow: ${(p) => p.theme.shadow.lift};
   border-radius: ${(p) => p.theme.radius.medium};
   margin-top: ${(p) => (p.offsetTop ? p.theme.spacing(2) : undefined)};
+  margin-bottom: ${(p) => (p.offsetBottom ? p.theme.spacing(2) : undefined)};
   ${(p) => p.revealAnimation && revealMixin};
   ${(p) => p.fullHeight && UiBox__fullHeight};
 `
