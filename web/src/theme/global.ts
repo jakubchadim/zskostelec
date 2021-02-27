@@ -36,19 +36,21 @@ export const GlobalStyle = createGlobalStyle`
   }
   
   h1, h2, h3, h4, h5, h6 {
-    margin: ${(p) => p.theme.spacing(1, 0, 2)};
+    margin: ${(p) => p.theme.spacing(5, 0)};
     font-weight: 300;
     line-height: 1.1;
     font-family: ${(p) => p.theme.font.secondary};
+    
+    &.top {
+      margin-top: ${(p) => p.theme.spacing(1)};
+    }
   }
   
   h1 {
     font-size: 2.8rem;
-    margin: ${(p) => p.theme.spacing(1, 0, 2)};
     
     ${(p) => p.theme.media.sm.up} {
       font-size: 3.2rem;
-      margin: ${(p) => p.theme.spacing(1, 0, 4)};
     }
     
     ${(p) => p.theme.media.md.up} {

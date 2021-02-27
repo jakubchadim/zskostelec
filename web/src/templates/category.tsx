@@ -183,7 +183,7 @@ const Category: React.FC<CategoryProps> = ({
       <SEO title={wordpressCategory.name} />
       <UiSection>
         <UiContainer>
-          <h1>
+          <h1 className='top'>
             {isCategory
               ? wordpressCategory.parent_element?.name
               : wordpressCategory.name}

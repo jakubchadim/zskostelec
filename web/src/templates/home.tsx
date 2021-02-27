@@ -256,6 +256,12 @@ const ArticleItem = styled.div<{ visible?: boolean }>`
 
 const TitleLight = styled.h3`
   font-weight: 300;
+  margin-bottom: 1.5rem;
+`
+
+const TitleCategory = styled.h2`
+  margin-top: ${(p) => p.theme.spacing(1)};
+  font-weight: 700;
 `
 
 type Article = {
@@ -283,9 +289,7 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
       <UiBox.ScrollParalax />
       <ArticleScrollContainer>
         <UiBox.Header>
-          <h2>
-            <b>{articlesCategory.category.name}</b>
-          </h2>
+          <TitleCategory>{articlesCategory.category.name}</TitleCategory>
         </UiBox.Header>
         <UiBox.Content>
           {articlesCategory.articles.map((article, idx) => (
@@ -429,9 +433,9 @@ const Home: React.FC<HomeProps> = ({
               <MainHeadingGridFirstNav>
                 <UiBox fullHeight>
                   <UiBox.Header>
-                    <h2>
+                    <TitleCategory>
                       <b>{wordpressPage.acf?.fastMenu}</b>
-                    </h2>
+                    </TitleCategory>
                   </UiBox.Header>
                   <UiBox.Content>
                     <NavFastFirst fill />
@@ -441,9 +445,9 @@ const Home: React.FC<HomeProps> = ({
               <MainHeadingGridSecondNav>
                 <UiBox fullHeight>
                   <UiBox.Header>
-                    <h2>
+                    <TitleCategory>
                       <b>{wordpressPage.acf?.fastMenuSecond}</b>
-                    </h2>
+                    </TitleCategory>
                   </UiBox.Header>
                   <UiBox.Content>
                     <NavFastSecond fill />
@@ -464,7 +468,7 @@ const Home: React.FC<HomeProps> = ({
           </HeaderBoxes>
           <SecondSection>
             <SecondSectionInfo>
-              <h1>
+              <h1 className='top'>
                 Najdete nás na{' '}
                 <b className='has-inline-color has-primary-color'>
                   5&nbsp;pracovištích

@@ -121,7 +121,7 @@ const Gallery: React.FC<GalleryProps> = ({
             </UiLinkBack>
           )}
           <div style={{ opacity: '.7' }}>{wordpressWpGallery.date}</div>
-          <h1>{wordpressWpGallery.title}</h1>
+          <h1 className='top'>{wordpressWpGallery.title}</h1>
           <SimpleReactLightbox>
             <GalleryView images={wordpressWpGallery.acf.gallery} />
           </SimpleReactLightbox>

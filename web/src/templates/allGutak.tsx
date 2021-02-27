@@ -106,7 +106,7 @@ const AllGutak: React.FC<AllGutakProps> = ({
 
   const title = (
     <UiContainer>
-      <h1>{wordpressPage.title}</h1>
+      <h1 className='top'>{wordpressPage.title}</h1>
     </UiContainer>
   )
 
