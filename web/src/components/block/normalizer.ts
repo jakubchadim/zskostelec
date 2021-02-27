@@ -2,13 +2,15 @@ import { v4 } from 'uuid'
 import { ID, Json, Nullable, RawHTML } from '../../types'
 import { NormalizerFc } from '../../utils/normalizer'
 import { BlockType } from './constants'
+import { blockCoreFileNormalize } from './core/file/file.normalize'
 import { blockCoreGroupNormalize } from './core/group/group.normalize'
 import { NormalizeFunc, RawBlock, TransformedBlock } from './types'
 import { blockCoreButtonNormalize } from './core/button/button.normalize'
 
 const normalizeByType: Partial<{ [type in BlockType]: NormalizeFunc }> = {
   [BlockType.CORE_GROUP]: blockCoreGroupNormalize,
-  [BlockType.CORE_BUTTON]: blockCoreButtonNormalize
+  [BlockType.CORE_BUTTON]: blockCoreButtonNormalize,
+  [BlockType.CORE_FILE]: blockCoreFileNormalize
 }
 
 type InputEntity = {

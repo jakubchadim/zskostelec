@@ -23,6 +23,7 @@ import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
 import UiIcon from '../components/ui/icon/icon'
 import Filter from '../components/filter/filter'
+import File from '../components/file/file'
 import { RawHTML } from '../types'
 
 type WordpressAllDocumentData = {
@@ -209,8 +210,6 @@ const AllDocument: React.FC<AllDocumentProps> = ({
             {fileredDocuments.map((document, idx) => {
               const { file } = document.acf
 
-              const extension = file.url.source_url?.split('.').pop()
-
               return (
                 <UiBox
                   key={document.id}
@@ -219,24 +218,10 @@ const AllDocument: React.FC<AllDocumentProps> = ({
                   revealAnimation
                   title={file.filename}
                 >
-                  <UiFile>
-                    <UiFile.Icon>
-                      <UiIcon icon={getFileIcon(extension)} size={34} />
-                    </UiFile.Icon>
-                    <UiFile.Name>{document.title || file.filename}</UiFile.Name>
-                    <UiFile.Ext>.{extension}</UiFile.Ext>
-                    <UiFile.Button>
-                      <UiButton
-                        as='a'
-                        href={file.url.source_url}
-                        target='_blank'
-                        backgroundColor={BlockColor.PRIMARY}
-                        textColor={BlockColor.WHITE}
-                      >
-                        Stáhnout
-                      </UiButton>
-                    </UiFile.Button>
-                  </UiFile>
+                  <File
+                    name={document.title || file.filename}
+                    href={file.url.source_url}
+                  />
                 </UiBox>
               )
             })}

@@ -50,7 +50,6 @@ const normalizer: NormalizerFc<InputEntity> = ({ entities }) => {
         }
 
         if (!entity.content) {
-
           if (link) {
             normalized.link = normalized.acf.link
           } else if (fileId) {
@@ -59,6 +58,8 @@ const normalizer: NormalizerFc<InputEntity> = ({ entities }) => {
             if (file) {
               normalized.link = file.source_url
             }
+          } else {
+            normalized.link = null
           }
         }
       }

@@ -8,8 +8,6 @@ import SimpleReactLightbox, {
 import styled from 'styled-components'
 import { navigate } from 'gatsby'
 import Article from '../components/article/article'
-import { BlockColor } from '../components/block/color/color'
-import { BlockCoreButtonType } from '../components/block/core/button/constants'
 import BlockList from '../components/block/list'
 import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
@@ -18,15 +16,11 @@ import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
 import UiGrid from '../components/ui/grid/grid'
-import UiArticle from '../components/ui/article/article'
-import UiButton from '../components/ui/button/button'
-import UiBox from '../components/ui/box/box'
 import UiLinkBack from '../components/ui/link/back'
 import UiLink from '../components/ui/link/link'
 import UiSection from '../components/ui/section/section'
 import { DateString, ID, RawHTML } from '../types'
 import UiGalleryImage from '../components/ui/gallery/image'
-import { getExternalLinkTarget } from '../utils/link'
 
 type Gallery = {
   id: string
@@ -136,7 +130,7 @@ type WordpressPostData = {
         date: DateString
         title: string
         excerpt: RawHTML
-        link: string
+        link: string | null
       }
     }[]
   }
@@ -199,6 +193,14 @@ export const query = graphql`
   }
 `
 
+const HiddenSmDown = styled.div`
+  display: none;
+
+  ${(p) => p.theme.media.md.up} {
+    display: block;
+  }
+`
+
 type PostProps = PageProps<WordpressPostData>
 
 const Post: React.FC<PostProps> = ({
@@ -245,11 +247,19 @@ const Post: React.FC<PostProps> = ({
             </UiGrid.Item>
             <UiGrid.Item md={4}>
               <UiGrid>
-                {allWordpressPost.edges.map(({ node: post }) => (
-                  <UiGrid.Item md={12} sm={6} key={post.id}>
-                    <Article post={post} />
-                  </UiGrid.Item>
-                ))}
+                {allWordpressPost.edges.map(({ node: post }, idx) => {
+                  const article = <Article post={post} />
+
+                  return (
+                    <UiGrid.Item md={12} sm={6} key={post.id}>
+                      {idx < 2 ? (
+                        article
+                      ) : (
+                        <HiddenSmDown>{article}</HiddenSmDown>
+                      )}
+                    </UiGrid.Item>
+                  )
+                })}
               </UiGrid>
             </UiGrid.Item>
           </UiGrid>

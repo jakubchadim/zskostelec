@@ -107,7 +107,7 @@ type WordpressCategoryData = {
         date: DateString
         title: string
         excerpt: RawHTML
-        link: string
+        link: string | null
       }
     }[]
   }

@@ -10,5 +10,7 @@ export enum BlockType {
   CORE_GROUP = 'core/group',
   CORE_MEDIA_TEXT = 'core/media-text',
   CORE_QUOTE = 'core/quote',
+  CORE_LIST = 'core/list',
+  CORE_FILE = 'core/file',
   CORE_EMBED_YOUTUBE = 'core-embed/youtube'
 }

@@ -30,6 +30,12 @@ const iconByExt: { [ext in FileExtension]: StyledIcon } = {
   [FileExtension.AVI]: FileVideo
 }
 
-export function getFileIcon(extension: string): StyledIcon {
-  return iconByExt[<FileExtension>extension.toLowerCase()] || FileEmpty
+export function getFileIcon(extension?: string): StyledIcon {
+  let icon: StyledIcon = FileEmpty
+
+  if (extension) {
+    icon = iconByExt[<FileExtension>extension.toLowerCase()]
+  }
+
+  return icon || FileEmpty
 }

@@ -44,6 +44,10 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
   // Create posts for each WordPress post
   const posts = allPost.data.allWordpressPost.edges.map(({node: post}) => post)
   posts.forEach((post) => {
+    if (!post.link || post.link.startsWith('http')) {
+      return
+    }
+
     createPage({
       path: post.link,
       component: postTemplate,

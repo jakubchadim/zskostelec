@@ -259,7 +259,7 @@ type Article = {
   date: string
   title: string
   excerpt: string
-  link: string
+  link: string | null
 }
 
 type ArticlePreview = {
@@ -288,13 +288,21 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
             <ArticleItem key={idx} visible={idx === 0}>
               {idx !== 0 && <MainHeadingArticleDivider />}
               <MainHeadingArticleDate>{article.date}</MainHeadingArticleDate>
-              <Link
-                to={article.link}
-                target={getExternalLinkTarget(article.link)}
-                dangerouslySetInnerHTML={{
-                  __html: article.title
-                }}
-              />
+              {article.link == null ? (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: article.title
+                  }}
+                />
+              ) : (
+                <Link
+                  to={article.link}
+                  target={getExternalLinkTarget(article.link)}
+                  dangerouslySetInnerHTML={{
+                    __html: article.title
+                  }}
+                />
+              )}
               <MainHeadingArticlePerex
                 dangerouslySetInnerHTML={{
                   __html: article.excerpt
@@ -389,15 +397,17 @@ const Home: React.FC<HomeProps> = ({
                     __html: mainPost.excerpt
                   }}
                 />
-                <UiButton
-                  as={Link}
-                  to={mainPost.link}
-                  target={getExternalLinkTarget(mainPost.link)}
-                  themeType={BlockCoreButtonType.OUTLINE}
-                  textColor={BlockColor.WHITE}
-                >
-                  Zjistit více
-                </UiButton>
+                {mainPost.link != null && (
+                  <UiButton
+                    as={Link}
+                    to={mainPost.link}
+                    target={getExternalLinkTarget(mainPost.link)}
+                    themeType={BlockCoreButtonType.OUTLINE}
+                    textColor={BlockColor.WHITE}
+                  >
+                    Zjistit více
+                  </UiButton>
+                )}
               </MainHeadingInfoItem>
             )}
           </MainHeadingInfo>
