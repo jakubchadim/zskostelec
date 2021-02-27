@@ -34,6 +34,10 @@ const Content = styled.div<{ isOpen?: boolean }>`
   }
 `
 
+export const UiFilterTitle = styled.h5`
+  margin: ${(p) => p.theme.spacing(1, 0, 3)};
+`
+
 type FilterProps = {
   title?: string
   children: React.ReactNode

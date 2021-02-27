@@ -9,7 +9,7 @@ import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
 import Employee from '../components/employee/employee'
 import FilterChooser from '../components/filter/chooser'
-import Filter from '../components/filter/filter'
+import Filter, { UiFilterTitle } from '../components/filter/filter'
 import Layout from '../components/layout/layout'
 import NonIdealState from '../components/nonIdealState/nonIdealState'
 import SEO from '../components/seo/seo'
@@ -232,7 +232,7 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
             <Filter>
               <UiGrid>
                 <UiGrid.Item md={12} sm={4}>
-                  <h5>JMÉNO</h5>
+                  <UiFilterTitle>JMÉNO</UiFilterTitle>
                   <UiInputText
                     placeholder='např. Němec'
                     value={nameFilter}
@@ -240,7 +240,7 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
                   />
                 </UiGrid.Item>
                 <UiGrid.Item md={12} sm={4}>
-                  <h5>POZICE</h5>
+                  <UiFilterTitle>POZICE</UiFilterTitle>
                   <FilterChooser
                     items={positions}
                     value={positionFilter}
@@ -249,7 +249,7 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
                   />
                 </UiGrid.Item>
                 <UiGrid.Item md={12} sm={4}>
-                  <h5>PRACOVIŠTĚ</h5>
+                  <UiFilterTitle>PRACOVIŠTĚ</UiFilterTitle>
                   <FilterChooser
                     items={buildings}
                     value={buildingFilter}

@@ -7,7 +7,6 @@ import BlockContent from '../components/block/content'
 import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
-import { getFileIcon } from '../components/file/utils'
 import FilterChooser from '../components/filter/chooser'
 import UiContent from '../components/ui/content/content'
 import Layout from '../components/layout/layout'
@@ -15,14 +14,12 @@ import NonIdealState from '../components/nonIdealState/nonIdealState'
 import SEO from '../components/seo/seo'
 import UiBox from '../components/ui/box/box'
 import UiButton from '../components/ui/button/button'
-import UiFile from '../components/ui/file/file'
 import UiContainer from '../components/ui/container/container'
 import UiSectionOffset from '../components/ui/section/offset'
 import UiInputText from '../components/ui/input/text'
 import UiLayoutFilter from '../components/ui/layout/filter'
 import UiSection from '../components/ui/section/section'
-import UiIcon from '../components/ui/icon/icon'
-import Filter from '../components/filter/filter'
+import Filter, { UiFilterTitle } from '../components/filter/filter'
 import File from '../components/file/file'
 import { RawHTML } from '../types'
 
@@ -173,14 +170,14 @@ const AllDocument: React.FC<AllDocumentProps> = ({
           <UiLayoutFilter.Filter>
             <Filter>
               <UiContent largeGutter>
-                <h5>NÁZEV SOUBORU</h5>
+                <UiFilterTitle>NÁZEV SOUBORU</UiFilterTitle>
                 <UiInputText
                   placeholder='Název souboru'
                   value={nameFilter}
                   onChange={(e) => setNameFilter(e.target.value)}
                 />
               </UiContent>
-              <h5>KATEGORIE</h5>
+              <UiFilterTitle>KATEGORIE</UiFilterTitle>
               <FilterChooser
                 items={categories}
                 value={categoryFilter}
