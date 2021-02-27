@@ -31,6 +31,8 @@ const replaceMedia = (node: DomElement) => {
     if (
       !attrs.href ||
       attrs.href.startsWith('http') ||
+      attrs.href.startsWith('mail') ||
+      attrs.href.startsWith('tel') ||
       attrs.target === '_blank'
     ) {
       return node

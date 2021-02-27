@@ -4,13 +4,15 @@ import { NormalizerFc } from '../../utils/normalizer'
 import { BlockType } from './constants'
 import { blockCoreFileNormalize } from './core/file/file.normalize'
 import { blockCoreGroupNormalize } from './core/group/group.normalize'
+import { blockCoreImageNormalize } from './core/image/image.normalize'
 import { NormalizeFunc, RawBlock, TransformedBlock } from './types'
 import { blockCoreButtonNormalize } from './core/button/button.normalize'
 
 const normalizeByType: Partial<{ [type in BlockType]: NormalizeFunc }> = {
   [BlockType.CORE_GROUP]: blockCoreGroupNormalize,
   [BlockType.CORE_BUTTON]: blockCoreButtonNormalize,
-  [BlockType.CORE_FILE]: blockCoreFileNormalize
+  [BlockType.CORE_FILE]: blockCoreFileNormalize,
+  [BlockType.CORE_IMAGE]: blockCoreImageNormalize
 }
 
 type InputEntity = {

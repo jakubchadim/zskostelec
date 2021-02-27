@@ -12,5 +12,6 @@ export enum BlockType {
   CORE_QUOTE = 'core/quote',
   CORE_LIST = 'core/list',
   CORE_FILE = 'core/file',
+  CORE_IMAGE = 'core/image',
   CORE_EMBED_YOUTUBE = 'core-embed/youtube'
 }
