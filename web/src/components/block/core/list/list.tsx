@@ -29,6 +29,24 @@ const BlockList = styled.div`
       margin-top: 0.3em;
     }
   }
+
+  ul ul {
+    margin: 1rem 0;
+
+    & > li {
+      &:before {
+        background: ${(p) => p.theme.color.primary1};
+      }
+    }
+  }
+
+  ul ul ul {
+    & > li {
+      &:before {
+        background: ${(p) => p.theme.color.gray6};
+      }
+    }
+  }
 `
 
 type BlockCoreGroupAttrs = {}

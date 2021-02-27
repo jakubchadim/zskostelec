@@ -225,7 +225,7 @@ const Post: React.FC<PostProps> = ({
                 </UiLink>
               </UiLinkBack>
               <div style={{ opacity: '.7' }}>{wordpressPost.date}</div>
-              <h1 dangerouslySetInnerHTML={{ __html: wordpressPost.title }} />
+              <h1 className='top' dangerouslySetInnerHTML={{ __html: wordpressPost.title }} />
               {parsedBlocks.length ? (
                 <BlockList blocks={parsedBlocks} nested />
               ) : (

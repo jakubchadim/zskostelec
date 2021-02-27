@@ -396,6 +396,7 @@ const Home: React.FC<HomeProps> = ({
             {mainPost && (
               <MainHeadingInfoItem>
                 <h1
+                  className='top'
                   dangerouslySetInnerHTML={{
                     __html: mainPost.title
                   }}
