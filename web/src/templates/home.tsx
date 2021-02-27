@@ -254,6 +254,10 @@ const ArticleItem = styled.div<{ visible?: boolean }>`
   }
 `
 
+const TitleLight = styled.h3`
+  font-weight: 300;
+`
+
 type Article = {
   id: ID
   date: string
@@ -392,7 +396,7 @@ const Home: React.FC<HomeProps> = ({
                     __html: mainPost.title
                   }}
                 />
-                <h3
+                <TitleLight
                   dangerouslySetInnerHTML={{
                     __html: mainPost.excerpt
                   }}
@@ -467,7 +471,7 @@ const Home: React.FC<HomeProps> = ({
                 </b>{' '}
                 v Kostelci nad Orlicí a okolí.
               </h1>
-              <h3>Podívejte se kde všude</h3>
+              <TitleLight>Podívejte se kde všude</TitleLight>
               {sectionLink != null && (
                 <UiButton
                   as={Link}

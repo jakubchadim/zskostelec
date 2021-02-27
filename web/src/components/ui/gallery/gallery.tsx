@@ -49,6 +49,7 @@ const Label = styled.div`
 `
 
 const Title = styled.h4`
+  font-weight: 300;
   background: ${(p) => p.theme.color.white1};
   margin: 0;
   padding: ${(p) => p.theme.spacing(0, 5, 5)};
