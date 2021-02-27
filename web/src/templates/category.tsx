@@ -3,11 +3,10 @@ import { Link, graphql, PageProps } from 'gatsby'
 import { ArrowRight } from '@styled-icons/material/ArrowRight'
 import styled, { css } from 'styled-components'
 import { SearchOff } from '@styled-icons/material/SearchOff'
+import Article from '../components/article/article'
 import { BlockColor } from '../components/block/color/color'
-import { BlockCoreButtonType } from '../components/block/core/button/constants'
 import UiNavPagination from '../components/nav/pagination'
 import NonIdealState from '../components/nonIdealState/nonIdealState'
-import UiArticle from '../components/ui/article/article'
 import UiContainer from '../components/ui/container/container'
 import Layout from '../components/layout/layout'
 import SEO from '../components/seo/seo'
@@ -15,8 +14,6 @@ import UiSection from '../components/ui/section/section'
 import { DateString, ID, Nullable, RawHTML } from '../types'
 import UiButton from '../components/ui/button/button'
 import UiGrid from '../components/ui/grid/grid'
-import UiBox from '../components/ui/box/box'
-import { getExternalLinkTarget } from '../utils/link'
 import { useTooltip } from '../utils/tooltip'
 
 const ChooseCategory = styled.span<{ active?: boolean }>`
@@ -240,33 +237,7 @@ const Category: React.FC<CategoryProps> = ({
             <UiGrid largeGutter>
               {allWordpressPost.edges.map(({ node: post }) => (
                 <UiGrid.Item md={4} sm={6} key={post.id}>
-                  <UiBox backgroundColor={BlockColor.WHITE}>
-                    <UiBox.Header>
-                      <UiArticle.Header>
-                        <UiArticle.Title
-                          dangerouslySetInnerHTML={{ __html: post.title }}
-                        />
-                      </UiArticle.Header>
-                    </UiBox.Header>
-                    <UiBox.Content>
-                      <UiArticle.Perex
-                        dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                      />
-                      <UiArticle.Footer>
-                        <UiButton
-                          as={Link}
-                          to={post.link}
-                          target={getExternalLinkTarget(post.link)}
-                          themeType={BlockCoreButtonType.OUTLINE}
-                          backgroundColor={BlockColor.WHITE}
-                          textColor={BlockColor.BLACK}
-                        >
-                          Zobrazit
-                        </UiButton>
-                        <UiArticle.Date>{post.date}</UiArticle.Date>
-                      </UiArticle.Footer>
-                    </UiBox.Content>
-                  </UiBox>
+                  <Article post={post} />
                 </UiGrid.Item>
               ))}
             </UiGrid>

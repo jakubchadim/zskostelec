@@ -7,6 +7,7 @@ import SimpleReactLightbox, {
 } from 'simple-react-lightbox'
 import styled from 'styled-components'
 import { navigate } from 'gatsby'
+import Article from '../components/article/article'
 import { BlockColor } from '../components/block/color/color'
 import { BlockCoreButtonType } from '../components/block/core/button/constants'
 import BlockList from '../components/block/list'
@@ -25,6 +26,7 @@ import UiLink from '../components/ui/link/link'
 import UiSection from '../components/ui/section/section'
 import { DateString, ID, RawHTML } from '../types'
 import UiGalleryImage from '../components/ui/gallery/image'
+import { getExternalLinkTarget } from '../utils/link'
 
 type Gallery = {
   id: string
@@ -245,29 +247,7 @@ const Post: React.FC<PostProps> = ({
               <UiGrid>
                 {allWordpressPost.edges.map(({ node: post }) => (
                   <UiGrid.Item md={12} sm={6} key={post.id}>
-                    <UiBox backgroundColor={BlockColor.WHITE}>
-                      <UiBox.Header>
-                        <UiArticle.Header>
-                          <UiArticle.Title
-                            dangerouslySetInnerHTML={{ __html: post.title }}
-                          />
-                        </UiArticle.Header>
-                      </UiBox.Header>
-                      <UiBox.Content>
-                        <UiArticle.Perex
-                          dangerouslySetInnerHTML={{ __html: post.excerpt }}
-                        />
-                        <Link to={post.link}>
-                          <UiButton
-                            themeType={BlockCoreButtonType.OUTLINE}
-                            backgroundColor={BlockColor.WHITE}
-                            textColor={BlockColor.BLACK}
-                          >
-                            Více informací
-                          </UiButton>
-                        </Link>
-                      </UiBox.Content>
-                    </UiBox>
+                    <Article post={post} />
                   </UiGrid.Item>
                 ))}
               </UiGrid>
