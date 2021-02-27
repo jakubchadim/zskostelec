@@ -20,6 +20,7 @@ const UiEmployee = styled.div`
 `
 
 const Photo = styled.div`
+  position: relative;
   display: none;
   width: 20rem;
   min-width: 20rem;
@@ -30,6 +31,7 @@ const Photo = styled.div`
 
   .gatsby-image-wrapper,
   img {
+    position: absolute;
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
@@ -75,6 +77,7 @@ const Name = styled.h2`
   font-size: 2.5rem;
   margin: ${(p) => p.theme.spacing(0, 0, 3)};
   color: ${(p) => p.theme.color.secondary1};
+  font-weight: 300 !important;
 };
 `
 
