@@ -58,9 +58,11 @@ export const GlobalStyle = createGlobalStyle`
   
   h2 {
     font-size: 2rem;
+    font-weight: 700;
     
     ${(p) => p.theme.media.sm.up} {
       font-size: 2.5rem;
+      font-weight: 300;
     }
     
     ${(p) => p.theme.media.md.up} {
@@ -70,6 +72,7 @@ export const GlobalStyle = createGlobalStyle`
 
   h3 {
     font-size: 1.9rem;
+    font-weight: 700;
     
     ${(p) => p.theme.media.sm.up} {
       font-size: 2.1rem;
@@ -78,6 +81,7 @@ export const GlobalStyle = createGlobalStyle`
 
   h4 {
     font-size: 1.8rem;
+    font-weight: 700;
     
     ${(p) => p.theme.media.sm.up} {
       font-size: 1.9rem;
@@ -85,11 +89,13 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   h5 {
-    font-size: 1.7rem
+    font-size: 1.7rem;
+    font-weight: 700;
   }
 
   h6 {
-    font-size: 1.2rem
+    font-size: 1.2rem;
+    font-weight: 700;
   }
   
   .has-inline-color {
