@@ -2,6 +2,7 @@ export enum BlockType {
   CORE_PARAGRAPH = 'core/paragraph',
   CORE_BUTTON = 'core/button',
   CORE_NEXT_PAGE = 'core/nextpage',
+  CORE_TABLE = 'core/table',
   CORE_BUTTONS = 'core/buttons',
   CORE_MORE = 'core/more',
   CORE_VERSE = 'core/verse',

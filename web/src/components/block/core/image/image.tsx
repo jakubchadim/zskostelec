@@ -1,7 +1,9 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
+import { RawHTML } from '../../../../types'
 import { BlockFC } from '../../types'
 import UiContainer from '../../../ui/container/container'
+import Content from '../../../content/content'
 
 const BlockContainer__left = css`
   float: left;
@@ -47,7 +49,7 @@ const BlockImage = styled.img`
 type BlockCoreImageAttrs = {
   src: string
   alt?: string
-  fig?: string
+  fig?: RawHTML
   rounded: boolean
   width?: number
   align?: string
@@ -68,7 +70,11 @@ const BlockCoreImage: BlockFC<BlockCoreImageAttrs> = ({ block, nested }) => {
           alt={block.attrs.alt}
           width={block.attrs.width}
         />
-        {!!block.attrs.fig && <BlockFig>{block.attrs.fig}</BlockFig>}
+        {block.attrs.fig != null && (
+          <BlockFig>
+            <Content content={block.attrs.fig} />
+          </BlockFig>
+        )}
       </BlockInner>
     </BlockContainer>
   )

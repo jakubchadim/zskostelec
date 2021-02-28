@@ -7,6 +7,7 @@ import BlockCoreImage from './core/image/image'
 import BlockCoreList from './core/list/list'
 import BlockCoreParagraph from './core/paragraph/paragraph'
 import BlockCoreQuote from './core/quote/paragraph'
+import BlockCoreTable from './core/table/table'
 import { BlockFC } from './types'
 
 export const componentByType: Partial<{ [type in BlockType]: BlockFC }> = {
@@ -17,5 +18,6 @@ export const componentByType: Partial<{ [type in BlockType]: BlockFC }> = {
   [BlockType.CORE_PARAGRAPH]: BlockCoreParagraph,
   [BlockType.CORE_QUOTE]: BlockCoreQuote,
   [BlockType.CORE_FILE]: BlockCoreFile,
-  [BlockType.CORE_IMAGE]: BlockCoreImage
+  [BlockType.CORE_IMAGE]: BlockCoreImage,
+  [BlockType.CORE_TABLE]: BlockCoreTable
 }
