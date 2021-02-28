@@ -11,6 +11,11 @@ config()
 
 const ADMIN_URL = `${process.env.ADMIN_PROTOCOL}://${process.env.ADMIN_URL}`
 
+const searchAndReplace = {
+  sourceUrl: ADMIN_URL,
+  replacementUrl: ''
+}
+
 function searchReplaceContentUrls({ entities, searchAndReplaceContentUrls }) {
   if (
     !_.isPlainObject(searchAndReplaceContentUrls) ||
@@ -124,12 +129,9 @@ module.exports = {
           '/wp-site-health/**',
           '/batch/**'
         ],
-        searchAndReplaceContentUrls: {
-          sourceUrl: ADMIN_URL,
-          replacementUrl: ''
-        },
+        searchAndReplaceContentUrls: searchAndReplace,
         normalizer: composeNormalizers(
-          blockNormalizer,
+          blockNormalizer(searchAndReplace),
           navNormalizer,
           galleryNormalizer,
           getAcfImageNormalizer('wordpress__wp_employee', 'photo'),

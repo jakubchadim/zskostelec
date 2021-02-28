@@ -96,8 +96,6 @@ const BlockCoreTable: BlockFC<BlockCoreTableAttrs> = ({ block, nested }) => {
     </BlockTableOuter>
   )
 
-  console.log(block)
-
   return nested ? table : <UiContainer>{table}</UiContainer>
 }
 
