@@ -474,7 +474,7 @@ const Home: React.FC<HomeProps> = ({
                 <b className='has-inline-color has-primary-color'>
                   5&nbsp;pracovištích
                 </b>{' '}
-                v Kostelci nad Orlicí a okolí.
+                v Kostelci nad Orlicí.
               </h1>
               <TitleLight>Podívejte se kde všude</TitleLight>
               {sectionLink != null && (

@@ -82,7 +82,7 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
     <UiNavBar transparent={isTransparent}>
       <UiContainer>
         <UiNavBar.Container>
-          <UiNavBar.TextLogo>
+          <UiNavBar.TextLogo transparent={isTransparent}>
             <Link to='/'>ZŠ Kostelec</Link>
           </UiNavBar.TextLogo>
           <UiNavBar.List>

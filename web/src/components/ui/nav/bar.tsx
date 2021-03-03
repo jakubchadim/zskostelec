@@ -61,7 +61,15 @@ const MobileList = styled.div<{ isOpen?: boolean }>`
   }
 `
 
-const TextLogo = styled.h1`
+const TextLogo__transparent = css`
+  ${(p) => p.theme.media.sm.up} {
+    display: none;
+  }
+`
+
+const TextLogo = styled.h1<{
+  transparent?: boolean
+}>`
   font-size: 2.4rem;
   color: inherit;
   margin: 0;
@@ -73,6 +81,8 @@ const TextLogo = styled.h1`
       color: inherit;
     }
   }
+
+  ${(p) => p.transparent && TextLogo__transparent};
 `
 
 const Toggle = styled.button`
