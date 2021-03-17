@@ -284,12 +284,14 @@ type ArticlePreview = {
 const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
   articlesCategory
 }) => {
+  const categoryName = articlesCategory.category.name
+
   return (
     <UiBox fullHeight>
       <UiBox.ScrollParalax />
       <ArticleScrollContainer>
         <UiBox.Header>
-          <TitleCategory>{articlesCategory.category.name}</TitleCategory>
+          <TitleCategory>{categoryName}</TitleCategory>
         </UiBox.Header>
         <UiBox.Content>
           {articlesCategory.articles.map((article, idx) => (
@@ -320,7 +322,10 @@ const ArticlesCategory: React.FC<{ articlesCategory: ArticlePreview }> = ({
           ))}
           <More>
             <SpecLink as={Link} to={articlesCategory.category.link}>
-              Všechny {articlesCategory.category.name.toLowerCase()}
+              {categoryName.toLowerCase() === 'upozornění'
+                ? 'Všechna'
+                : 'Všechny'}{' '}
+              {categoryName.toLowerCase()}
             </SpecLink>
           </More>
         </UiBox.Content>
