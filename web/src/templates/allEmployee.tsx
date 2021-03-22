@@ -264,8 +264,8 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
             {fileredEmployees.length === 0 && (
               <NonIdealState
                 icon={filterApplied ? Search : FileEmpty}
-                title='Soubory nenalezeny'
-                description='Žádné soubory nebyly nazeleny.'
+                title='Zaměstnanec nenalezen'
+                description='Žádný zaměstnanec neodpovídá zadaným kritériím.'
               >
                 {filterApplied && (
                   <UiButton
@@ -273,7 +273,7 @@ const AllEmployee: React.FC<AllEmployeeProps> = ({
                     textColor={BlockColor.WHITE}
                     onClick={resetFilter}
                   >
-                    Vyčistit filtr
+                    Zobrazit všechny
                   </UiButton>
                 )}
               </NonIdealState>

@@ -1,10 +1,33 @@
+import { Link } from 'gatsby'
 import React from 'react'
+import { FileEmpty } from '@styled-icons/icomoon/FileEmpty'
+import { BlockColor } from '../components/block/color/color'
 import Layout from '../components/layout/layout'
+import NonIdealState from '../components/nonIdealState/nonIdealState'
+import UiButton from '../components/ui/button/button'
+import UiContainer from '../components/ui/container/container'
+import UiSection from '../components/ui/section/section'
 
 const NotFoundPage = () => (
   <Layout>
-    <h1>NOT FOUND</h1>
-    <p>You just hit a route that doesn&#39;t exist... the sadness.</p>
+    <UiSection>
+      <UiContainer>
+        <NonIdealState
+          icon={FileEmpty}
+          title='404'
+          description='Hledaná stránka nebyla nalezena.'
+        >
+          <UiButton
+            as={Link}
+            to='/'
+            backgroundColor={BlockColor.PRIMARY}
+            textColor={BlockColor.WHITE}
+          >
+            Hlavní strana
+          </UiButton>
+        </NonIdealState>
+      </UiContainer>
+    </UiSection>
   </Layout>
 )
 
