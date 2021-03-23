@@ -47,7 +47,7 @@ const MobileList = styled.div<{ isOpen?: boolean }>`
   right: 0;
   left: 0;
   background: ${(p) => p.theme.color.white1};
-  padding: ${(p) => p.theme.spacing(2, 1, 0)};
+  padding: ${(p) => p.theme.spacing(1)};
   border-bottom: 0.1rem solid ${(p) => p.theme.color.gray2};
   border-left: 0.1rem solid ${(p) => p.theme.color.gray2};
   color: ${(p) => p.theme.color.gray7};

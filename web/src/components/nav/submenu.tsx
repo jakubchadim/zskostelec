@@ -6,16 +6,19 @@ import UiIcon from '../ui/icon/icon'
 import { NavItem } from './nav.query'
 import { isExternalLink } from './utils'
 
-export function renderMenuItem(item: NavItem): React.ReactNode {
+export function renderMenuItem(
+  item: NavItem,
+  large?: boolean
+): React.ReactNode {
   const externalLink = isExternalLink(item.url, item.target)
 
   if (!item.url) {
-    return <UiNav.Text>{item.title}</UiNav.Text>
+    return <UiNav.Text $large={large}>{item.title}</UiNav.Text>
   }
 
   if (externalLink) {
     return (
-      <UiNav.Link href={item.url} target={item.target} withIcon>
+      <UiNav.Link href={item.url} target={item.target} $large={large} withIcon>
         {item.title}
         <UiIcon icon={OpenInNew} />
       </UiNav.Link>
@@ -23,13 +26,16 @@ export function renderMenuItem(item: NavItem): React.ReactNode {
   }
 
   return (
-    <UiNav.Link as={Link} to={item.url || '/'}>
+    <UiNav.Link as={Link} to={item.url || '/'} $large={large}>
       {item.title}
     </UiNav.Link>
   )
 }
 
-function renderSubmenuItems(items: NavItem[]): React.ReactNode {
+function renderSubmenuItems(
+  items: NavItem[],
+  large?: boolean
+): React.ReactNode {
   if (!items.length) {
     return null
   }
@@ -38,10 +44,10 @@ function renderSubmenuItems(items: NavItem[]): React.ReactNode {
     <>
       {items.map((item, idx) => (
         <React.Fragment key={`${item.slug}/${idx}`}>
-          <UiNav.Item important={!!item.items.length}>
-            {renderMenuItem(item)}
+          <UiNav.Item important={!!item.items.length} $large={large}>
+            {renderMenuItem(item, large)}
           </UiNav.Item>
-          {renderSubmenuItems(item.items)}
+          {renderSubmenuItems(item.items, large)}
         </React.Fragment>
       ))}
     </>
@@ -50,10 +56,11 @@ function renderSubmenuItems(items: NavItem[]): React.ReactNode {
 
 type NavSubmenuProps = {
   items: NavItem[]
+  large?: boolean
 }
 
-const NavSubmenu: React.FC<NavSubmenuProps> = ({ items }) => {
-  return <>{renderSubmenuItems(items)}</>
+const NavSubmenu: React.FC<NavSubmenuProps> = ({ items, large }) => {
+  return <>{renderSubmenuItems(items, large)}</>
 }
 
 export default React.memo(NavSubmenu)

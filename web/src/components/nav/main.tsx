@@ -13,24 +13,25 @@ import { NavItem } from './utils'
 
 type MobileMenuItemProps = {
   item: NavItem
+  large?: boolean
 }
 
 const MobileMenuItem: React.FC<MobileMenuItemProps> = ({ item }) => {
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
-    <UiNav.Item>
+    <UiNav.Item $large>
       {item.items.length === 0 ? (
-        renderMenuItem(item)
+        renderMenuItem(item, true)
       ) : (
         <>
-          <UiNav.Button onClick={() => setIsOpen(!isOpen)} withIcon>
+          <UiNav.Button onClick={() => setIsOpen(!isOpen)} withIcon $large>
             {item.title}
             <UiIcon icon={isOpen ? KeyboardArrowUp : KeyboardArrowDown} />
           </UiNav.Button>
           <UiNav.ToggleMenu isOpen={isOpen}>
             <UiNav simple fill>
-              <NavSubmenu items={item.items} />
+              <NavSubmenu items={item.items} large />
             </UiNav>
           </UiNav.ToggleMenu>
         </>

@@ -3,7 +3,11 @@ import styled, { css } from 'styled-components'
 import UiIcon from '../icon/icon'
 import { createUiComponent } from '../utils'
 
-const Item = styled.li<{ important?: boolean }>`
+const Item__large = css`
+  margin: 0 !important;
+`
+
+const Item = styled.li<{ important?: boolean; $large?: boolean }>`
   position: relative;
   cursor: default;
   padding: 0;
@@ -11,6 +15,7 @@ const Item = styled.li<{ important?: boolean }>`
   color: ${(p) => (p.important ? p.theme.color.primary1 : 'inherit')};
   text-transform: ${(p) => (p.important ? 'uppercase' : 'inherit')};
   font-size: ${(p) => (p.important ? '.8em' : '1em')};
+  ${(p) => p.$large && Item__large};
 `
 
 const Submenu = styled.div<{ last?: boolean }>`
@@ -44,12 +49,24 @@ const ToggleMenu = styled.div<{ isOpen?: boolean }>`
 
 type MenuItemProps = {
   withIcon?: boolean
+  $large?: boolean
 }
+
+const menuItemCss__large = css<MenuItemProps>`
+  padding-top: 0.625em;
+  padding-bottom: 0.625em;
+`
+
+const menuItemCss__withIcon = css<MenuItemProps>`
+  padding: 0.3125em 2.1875em 0.3125em 0.625em;
+`
 
 const menuItemCss = css<MenuItemProps>`
   position: relative;
-  padding: ${(p) =>
-    p.withIcon ? p.theme.spacing(1, 7, 1, 2) : p.theme.spacing(1, 2)};
+  padding: 0.3125em 0.625em;
+
+  ${(p) => p.withIcon && menuItemCss__withIcon};
+  ${(p) => p.$large && menuItemCss__large};
 
   ${UiIcon} {
     position: absolute;
