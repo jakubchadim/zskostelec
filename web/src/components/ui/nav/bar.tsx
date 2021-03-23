@@ -45,6 +45,7 @@ const MobileList = styled.div<{ isOpen?: boolean }>`
   position: absolute;
   top: 5rem;
   right: 0;
+  left: 0;
   background: ${(p) => p.theme.color.white1};
   padding: ${(p) => p.theme.spacing(2, 1, 0)};
   border-bottom: 0.1rem solid ${(p) => p.theme.color.gray2};
@@ -55,6 +56,10 @@ const MobileList = styled.div<{ isOpen?: boolean }>`
   overflow: auto;
 
   ${(p) => p.isOpen && MobileList__open};
+
+  ${(p) => p.theme.media.xs.up} {
+    left: initial;
+  }
 
   ${(p) => p.theme.media.md.up} {
     display: none;

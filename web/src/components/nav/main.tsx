@@ -103,7 +103,7 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
           </UiNavBar.List>
 
           <UiNavBar.MobileList isOpen={isOpen}>
-            <UiNav>
+            <UiNav large fill>
               {nav.items.map((item, idx) => (
                 <MobileMenuItem key={idx} item={item} />
               ))}

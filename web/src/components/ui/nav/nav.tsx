@@ -92,6 +92,7 @@ type UiNavProps = {
   simple?: boolean
   transparent?: boolean
   fill?: boolean
+  large?: boolean
 }
 
 const UiNav__fill = css`
@@ -144,6 +145,10 @@ const UiNav__transparent = css`
   }
 `
 
+const UiNav__large = css`
+  font-size: 2rem;
+`
+
 const UiNav = styled.ul<UiNavProps>`
   list-style: none;
   padding: 0;
@@ -171,6 +176,7 @@ const UiNav = styled.ul<UiNavProps>`
   ${(p) => p.fill && UiNav__fill};
   ${(p) => p.inline && UiNav__inline};
   ${(p) => p.transparent && UiNav__transparent};
+  ${(p) => p.large && UiNav__large};
 `
 
 export default createUiComponent(UiNav, {
