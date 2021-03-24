@@ -475,11 +475,10 @@ const Home: React.FC<HomeProps> = ({
           <SecondSection>
             <SecondSectionInfo>
               <h1 className='top'>
-                Najdete nás na{' '}
+                Najdete nás na pracovištích v{' '}
                 <b className='has-inline-color has-primary-color'>
-                  pracovištích
-                </b>{' '}
-                v Kostelci nad Orlicí.
+                  Kostelci nad Orlicí
+                </b>
               </h1>
               <TitleLight>Podívejte se kde všude</TitleLight>
               {sectionLink != null && (
