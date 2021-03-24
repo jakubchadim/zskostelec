@@ -51,7 +51,11 @@ function searchReplaceContentUrls({ entities, searchAndReplaceContentUrls }) {
       ).replace(
         new RegExp(`"url":"${sourceUrl}`, `g`),
         `"url":"${replacementUrl}`
-      )
+      ).replace(
+        new RegExp(`&#8211;`, `g`),
+        `-`
+      ) // Fix '-' char
+
       const parsed = JSON.parse(replaced)
 
       if (typeof parsed?.link === 'string') {
