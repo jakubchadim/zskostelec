@@ -64,8 +64,6 @@ const NavMain: React.FC<NavMainProps> = ({ transparent }) => {
 
     if (canBeTransparent() !== isTransparent) {
       setIsTransparent(true)
-
-      return
     }
 
     const scroll = () => {
