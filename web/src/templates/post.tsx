@@ -225,7 +225,10 @@ const Post: React.FC<PostProps> = ({
                 </UiLink>
               </UiLinkBack>
               <div style={{ opacity: '.7' }}>{wordpressPost.date}</div>
-              <h1 className='top' dangerouslySetInnerHTML={{ __html: wordpressPost.title }} />
+              <h1
+                className='top'
+                dangerouslySetInnerHTML={{ __html: wordpressPost.title }}
+              />
               {parsedBlocks.length ? (
                 <BlockList blocks={parsedBlocks} nested />
               ) : (
@@ -235,7 +238,7 @@ const Post: React.FC<PostProps> = ({
                 <div>
                   {wordpressPost.galleries
                     .filter(
-                      (gallery) => (gallery.acf?.previews?.length || 0) > 0
+                      (gallery) => (gallery?.acf?.previews?.length || 0) > 0
                     )
                     .map((gallery) => (
                       <SimpleReactLightbox key={gallery.id}>
