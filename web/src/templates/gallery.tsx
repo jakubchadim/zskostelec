@@ -39,7 +39,8 @@ const GalleryView: React.FC<GalleryViewProps> = ({ images }) => {
       return {
         src: image.source_url,
         thumbnail:
-          image.media_details?.sizes?.medium_large?.source_url || image.source_url,
+          image.media_details?.sizes?.medium_large?.source_url ||
+          image.source_url,
         caption: image.caption,
         width: 'auto',
         height: 'auto'
@@ -122,9 +123,14 @@ const Gallery: React.FC<GalleryProps> = ({
           )}
           <div style={{ opacity: '.7' }}>{wordpressWpGallery.date}</div>
           <h1 className='top'>{wordpressWpGallery.title}</h1>
-          <SimpleReactLightbox>
-            <GalleryView images={wordpressWpGallery.acf.gallery} />
-          </SimpleReactLightbox>
+          {wordpressWpGallery.acf.gallery != null &&
+          wordpressWpGallery.acf.gallery.length > 0 ? (
+            <SimpleReactLightbox>
+              <GalleryView images={wordpressWpGallery.acf.gallery} />
+            </SimpleReactLightbox>
+          ) : (
+            <p>Prázdná fotogalerie</p>
+          )}
         </UiContainer>
       </UiSection>
     </Layout>
