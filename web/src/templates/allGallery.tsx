@@ -60,6 +60,7 @@ export const query = graphql`
     }
     allWordpressWpGallery(
       filter: { acf: { preview: { link: { ne: null } } } }
+      sort: { fields: date, order: DESC }
     ) {
       edges {
         node {
