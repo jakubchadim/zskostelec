@@ -40,6 +40,9 @@ export type WpMediaLike = {
   caption?: string
   alt_text?: string
   media_details?: {
+    /** The full-size original's dimensions - lets consumers (`buildSrcSet`) offer it as a srcset candidate above the named sizes. */
+    width?: number
+    height?: number
     sizes?: Record<string, WpImageSize>
   }
 }

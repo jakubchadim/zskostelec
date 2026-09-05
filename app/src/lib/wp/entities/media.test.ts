@@ -29,7 +29,7 @@ const rawAcfImage = {
 }
 
 describe('normalizeAcfImage', () => {
-  it('reshapes the flat ACF array format into WpMediaLike/media_details.sizes', () => {
+  it('reshapes the flat ACF array format into WpMediaLike/media_details.{width,height,sizes}', () => {
     const result = normalizeAcfImage(rawAcfImage)
 
     expect(result).toEqual({
@@ -38,6 +38,8 @@ describe('normalizeAcfImage', () => {
       filename: 'photo.jpg',
       alt_text: 'A photo',
       media_details: {
+        width: 1200,
+        height: 800,
         sizes: {
           thumbnail: {
             source_url: 'https://admin.example.test/wp-content/uploads/2024/01/photo-150x150.jpg',
@@ -78,5 +80,10 @@ describe('normalizeAcfImage', () => {
     const result = normalizeAcfImage({ url: 'https://example.test/no-id.jpg' })
     expect(result?.id).toBe('https://example.test/no-id.jpg')
     expect(result?.media_details).toBeUndefined()
+  })
+
+  it('carries width/height through even when there is no sizes map', () => {
+    const result = normalizeAcfImage({ id: 1, url: 'https://example.test/photo.jpg', width: 640, height: 480 })
+    expect(result?.media_details).toEqual({ width: 640, height: 480 })
   })
 })

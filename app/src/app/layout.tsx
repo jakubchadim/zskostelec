@@ -4,6 +4,7 @@ import { Roboto } from 'next/font/google'
 import Header from '@/components/nav/header'
 import Footer from '@/components/footer/footer'
 import { getNavData } from '@/components/nav/data'
+import { getSiteUrl, SITE_DEFAULT_DESCRIPTION, SITE_NAME } from '@/lib/seo'
 import './globals.css'
 
 // Replaces gatsby-plugin-google-fonts (`roboto:300,400,400i,700`, external
@@ -19,9 +20,12 @@ const roboto = Roboto({
   display: 'swap'
 })
 
+const siteUrl = getSiteUrl()
+
 export const metadata: Metadata = {
-  title: 'ZŠ Kostelec nad Orlicí',
-  description: 'Základní škola Gutha Jarkovského Kostelec nad Orlicí'
+  title: SITE_NAME,
+  description: SITE_DEFAULT_DESCRIPTION,
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined
 }
 
 type RootLayoutProps = {

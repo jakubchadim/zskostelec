@@ -76,6 +76,8 @@ type RawAcfImage = {
   url?: string
   alt?: string
   filename?: string
+  width?: number
+  height?: number
   sizes?: Record<string, string | number>
 }
 
@@ -85,11 +87,15 @@ type RawAcfImage = {
  * - all confirmed `"type": "image"`, `"return_format": "array"` in
  * `admin/theme/inc/page-types/*.json`) is a FLAT shape, distinct from the
  * `/wp/v2/media` endpoint's shape: a top-level `url` string (not
- * `source_url`), and a flat `sizes` map where `sizes.medium` is a URL
- * string and `sizes['medium-width']`/`sizes['medium-height']` are separate
- * numeric keys (no nested `media_details`). Reshapes that into the
- * `WpMediaLike`/`media_details.sizes` contract the rest of this data layer
- * (and T2's `<WpImage>`) expects.
+ * `source_url`), top-level `width`/`height` for the full-size original,
+ * and a flat `sizes` map where `sizes.medium` is a URL string and
+ * `sizes['medium-width']`/`sizes['medium-height']` are separate numeric
+ * keys (no nested `media_details`). Reshapes that into the
+ * `WpMediaLike`/`media_details` contract the rest of this data layer (and
+ * T2's `<WpImage>`/`buildSrcSet`) expects - including the full-size
+ * original's `width`/`height`, so `buildSrcSet` can offer it as a srcset
+ * candidate above the named sizes instead of capping resolution at
+ * `medium_large` (T1 fast-follow backlog item).
  */
 export function normalizeAcfImage(value: unknown): WpMediaLike | null {
   if (value == null) {
@@ -126,12 +132,19 @@ export function normalizeAcfImage(value: unknown): WpMediaLike | null {
   }
 
   const id = raw.id ?? raw.ID
+  const hasMediaDetails = Object.keys(sizes).length > 0 || raw.width != null || raw.height != null
 
   return {
     id: asId(id ?? raw.url),
     source_url: raw.url,
     filename: raw.filename,
     alt_text: raw.alt,
-    media_details: Object.keys(sizes).length ? { sizes } : undefined
+    media_details: hasMediaDetails
+      ? {
+          ...(raw.width != null ? { width: raw.width } : {}),
+          ...(raw.height != null ? { height: raw.height } : {}),
+          ...(Object.keys(sizes).length ? { sizes } : {})
+        }
+      : undefined
   }
 }

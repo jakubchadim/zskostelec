@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { getCategoryById, getGalleryPreviewImages, getPostById, getPostsByCategory, type ResolvedRoute } from '@/lib/wp'
+import { getCategoryById, getGalleryPreviewImages, getPostById, getPostPreviews, type ResolvedRoute } from '@/lib/wp'
 import { Container } from '@/components/ui/container'
 import { BlockContent } from '@/components/block/content'
 import { Article, formatArticleDate, isExternalHref } from '@/components/article/article'
@@ -27,7 +27,9 @@ export async function PostTemplate({ data }: TemplateProps) {
   }
 
   const category = await getCategoryById(route.categoryId)
-  const relatedPosts = category ? await getPostsByCategory(category.slug, { limit: 3, excludePostId: post.id }) : []
+  const relatedPosts = category
+    ? (await getPostPreviews(category.id, { limit: 3, excludePostId: post.id })).posts
+    : []
 
   const hasBody = post.blocks.length > 0 || Boolean(post.content)
   const fallbackLink = post.acf.link ?? post.acf.file

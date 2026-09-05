@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { getPostRouteEntries, resolvePostLink } from './post'
+import { getPostPreviews, getPostRouteEntries, resolvePostLink } from './post'
 
 // Ported from web/src/components/article/normalizer.ts's link/file override
 // logic: a post with real content always keeps its own permalink; a
@@ -136,5 +136,76 @@ describe('getPostRouteEntries', () => {
     const [entry] = await getPostRouteEntries()
 
     expect(entry.link).toBe('/aktuality/nazev/')
+  })
+})
+
+describe('getPostPreviews', () => {
+  beforeEach(() => {
+    process.env.WP_URL = 'https://admin.example.test'
+    vi.restoreAllMocks()
+  })
+
+  function jsonResponse(body: unknown, headers: Record<string, string> = {}) {
+    return new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json', ...headers } })
+  }
+
+  it('never fetches `content`/`blocks`/`categories` - only the trimmed preview fields', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(jsonResponse([], { 'X-WP-Total': '0', 'X-WP-TotalPages': '1' }))
+
+    await getPostPreviews('cat-1' as never, { limit: 15 })
+
+    const [url] = fetchMock.mock.calls[0]
+    const fields = new URL(String(url)).searchParams.get('_fields')
+    expect(fields).not.toContain('content')
+    expect(fields).not.toContain('blocks')
+    expect(fields).not.toContain('categories')
+  })
+
+  it('returns title/excerpt/date/link plus the totalCount for pagination', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      jsonResponse(
+        [
+          {
+            id: 1,
+            link: 'https://admin.example.test/aktuality/nazev/',
+            title: { rendered: 'Název' },
+            excerpt: { rendered: 'Krátký popis' },
+            date: '2024-03-01T00:00:00',
+            acf: { link: null }
+          }
+        ],
+        { 'X-WP-Total': '32', 'X-WP-TotalPages': '3' }
+      )
+    )
+
+    const { posts, totalCount } = await getPostPreviews('cat-1' as never, { offset: 0, limit: 15 })
+
+    expect(totalCount).toBe(32)
+    expect(posts).toEqual([
+      {
+        id: '1',
+        title: 'Název',
+        excerpt: 'Krátký popis',
+        date: '2024-03-01T00:00:00',
+        link: '/aktuality/nazev/'
+      }
+    ])
+  })
+
+  it('passes offset/limit/exclude through as request params', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(jsonResponse([], { 'X-WP-Total': '0', 'X-WP-TotalPages': '1' }))
+
+    await getPostPreviews('cat-1' as never, { limit: 3, excludePostId: 'post-5' as never })
+
+    const [url] = fetchMock.mock.calls[0]
+    const params = new URL(String(url)).searchParams
+    expect(params.get('categories')).toBe('cat-1')
+    expect(params.get('per_page')).toBe('3')
+    expect(params.get('exclude')).toBe('post-5')
+    expect(params.get('offset')).toBe('0')
   })
 })

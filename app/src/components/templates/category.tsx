@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { CATEGORY_PAGE_SIZE, getCategories, getCategoryById, getPostsForCategory, type ResolvedRoute } from '@/lib/wp'
+import { CATEGORY_PAGE_SIZE, getCategories, getCategoryById, getPostPreviews, type ResolvedRoute } from '@/lib/wp'
 import { Container } from '@/components/ui/container'
 import { Article } from '@/components/article/article'
 import { ArticlePagination } from '@/components/article/pagination'
@@ -25,7 +25,7 @@ export async function CategoryTemplate({ data }: TemplateProps) {
   }
 
   const [{ posts, totalCount }, allCategories] = await Promise.all([
-    getPostsForCategory(route.id, {
+    getPostPreviews(route.id, {
       offset: (route.pageNumber - 1) * CATEGORY_PAGE_SIZE,
       limit: CATEGORY_PAGE_SIZE
     }),

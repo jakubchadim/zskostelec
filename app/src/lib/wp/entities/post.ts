@@ -78,6 +78,25 @@ export function resolvePostLink(input: {
   return input.acfLink ?? input.fileUrl ?? null
 }
 
+/** Shared by the lean listing fetches (`getPostRouteEntries`, `getPostPreviews`): resolves the ACF file to a URL, then applies `resolvePostLink`. */
+async function resolveListingLink(input: {
+  hasAcf: boolean
+  hasContent: boolean
+  rewrittenLink: string
+  rewrittenAcfLink: Nullable<string>
+  rawAcfFile: unknown
+}): Promise<Nullable<string>> {
+  const fileMedia = input.rawAcfFile != null ? await resolveAcfMedia(input.rawAcfFile) : null
+
+  return resolvePostLink({
+    hasAcf: input.hasAcf,
+    hasContent: input.hasContent,
+    permalink: input.rewrittenLink,
+    acfLink: input.rewrittenAcfLink,
+    fileUrl: fileMedia?.source_url ?? null
+  })
+}
+
 async function normalizePost(raw: RawWpPost): Promise<WpPost> {
   const search = getUrlRewriteConfig()
   // Exclude acf.file from the rewrite: a file download URL must stay
@@ -237,21 +256,104 @@ export async function getPostRouteEntries(): Promise<PostRouteEntry[]> {
 
   return Promise.all(
     raw.map(async (post) => {
-      const search = getUrlRewriteConfig()
-      const rewritten = rewriteAdminUrls({ link: post.link, acf: { link: post.acf?.link ?? null } }, search)
-      const fileMedia = post.acf?.file != null ? await resolveAcfMedia(post.acf.file) : null
+      const rewritten = rewriteAdminUrls(
+        { link: post.link, acf: { link: post.acf?.link ?? null } },
+        getUrlRewriteConfig()
+      )
 
       return {
         id: asId(post.id),
-        link: resolvePostLink({
+        link: await resolveListingLink({
           hasAcf: post.acf != null,
           hasContent: Boolean(post.excerpt.rendered),
-          permalink: rewritten.link,
-          acfLink: rewritten.acf.link,
-          fileUrl: fileMedia?.source_url ?? null
+          rewrittenLink: rewritten.link,
+          rewrittenAcfLink: rewritten.acf.link,
+          rawAcfFile: post.acf?.file
         }),
         categories: post.categories.map(asId)
       }
     })
   )
+}
+
+export type PostPreview = {
+  id: ID
+  title: RawHTML
+  excerpt: RawHTML
+  date: DateString
+  link: Nullable<string>
+}
+
+type RawWpPostPreview = {
+  id: number
+  link: string
+  title: { rendered: string }
+  excerpt: { rendered: string }
+  date: string
+  acf?: { link?: string | null; file?: unknown }
+}
+
+const POST_PREVIEW_FIELDS = ['id', 'link', 'title', 'excerpt', 'date', 'acf']
+
+/**
+ * Lean listing fetch for article preview cards
+ * (`components/article/article.tsx`'s `Article`, which only ever renders
+ * `title`/`excerpt`/`date`/`link` - `id` is used solely as the React key at
+ * call sites). Trims `content`/`blocks`/`categories` entirely, same trick
+ * as `getPostRouteEntries` (including the `excerpt`-as-content-emptiness-
+ * proxy for `resolvePostLink` - see that function's doc comment).
+ * `getPostsForCategory`/`getPostsByCategory` still exist for callers that
+ * need a full post — `home-data.ts` legitimately keeps `getPostsByCategory`,
+ * since its first preview article can be promoted to the full-content
+ * homepage mainPost. The category listing, post sidebar, and
+ * `getStaticRoutes`' count read use this lean fetch instead (T1 fast-follow
+ * backlog item: "getPostsForCategory runs the full block-normalization
+ * pipeline ... for all 15 posts per category page").
+ */
+export async function getPostPreviews(
+  categoryId: ID,
+  opts: { offset?: number; limit: number; excludePostId?: ID }
+): Promise<{ posts: PostPreview[]; totalCount: number }> {
+  const { items, totalCount } = await wpFetchCollection<RawWpPostPreview>('wp/v2/posts', {
+    fields: POST_PREVIEW_FIELDS,
+    params: {
+      categories: categoryId,
+      offset: opts.offset ?? 0,
+      per_page: opts.limit,
+      status: 'publish',
+      exclude: opts.excludePostId
+    },
+    tags: [WP_CACHE_TAGS.posts, `category-${categoryId}`]
+  })
+
+  const posts = await Promise.all(
+    items.map(async (post) => {
+      const rewritten = rewriteAdminUrls(
+        {
+          link: post.link,
+          title: post.title,
+          excerpt: post.excerpt,
+          date: post.date,
+          acf: { link: post.acf?.link ?? null }
+        },
+        getUrlRewriteConfig()
+      )
+
+      return {
+        id: asId(post.id),
+        title: rewritten.title.rendered as RawHTML,
+        excerpt: rewritten.excerpt.rendered as RawHTML,
+        date: rewritten.date as DateString,
+        link: await resolveListingLink({
+          hasAcf: post.acf != null,
+          hasContent: Boolean(post.excerpt.rendered),
+          rewrittenLink: rewritten.link,
+          rewrittenAcfLink: rewritten.acf.link,
+          rawAcfFile: post.acf?.file
+        })
+      }
+    })
+  )
+
+  return { posts, totalCount }
 }

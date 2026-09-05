@@ -1,7 +1,7 @@
 import { getCategories } from '../entities/category'
 import { getGalleries } from '../entities/gallery'
 import { getPages, PageTemplateType } from '../entities/page'
-import { CATEGORY_PAGE_SIZE, getPostRouteEntries, getPostsForCategory } from '../entities/post'
+import { CATEGORY_PAGE_SIZE, getPostPreviews, getPostRouteEntries } from '../entities/post'
 import type { ID } from '../types'
 import type { ResolvedRoute } from './types'
 
@@ -18,6 +18,30 @@ function normalizePath(link: string): string {
   const withoutOrigin = link.replace(/^https?:\/\/[^/]+/, '')
   const withLeadingSlash = withoutOrigin.startsWith('/') ? withoutOrigin : `/${withoutOrigin}`
   return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`
+}
+
+/**
+ * Inserts an entry into the path index, explicit first-wins on collision:
+ * `buildLinkIndex` indexes pages, then categories, then posts, then
+ * galleries, in that order, so an earlier kind always wins a path
+ * collision over a later one (e.g. a content-less "link article" whose
+ * *real* WP permalink happens to alias an existing page's path never
+ * silently shadows that page). First-wins is a deliberate, disclosed
+ * choice, not an accident of insertion order - logged so a genuine
+ * collision in live data surfaces immediately instead of shadowing
+ * content silently (T1 fast-follow backlog item).
+ */
+function setIndexEntry(byPath: Map<string, IndexEntry>, path: string, entry: IndexEntry): void {
+  const existing = byPath.get(path)
+
+  if (existing) {
+    console.warn(
+      `[wp/route] path collision at "${path}": keeping ${existing.kind} (id ${existing.id}), ignoring ${entry.kind} (id ${entry.id})`
+    )
+    return
+  }
+
+  byPath.set(path, entry)
 }
 
 /**
@@ -50,12 +74,12 @@ async function buildLinkIndex(): Promise<Map<string, IndexEntry>> {
   const allGalleryLink = galleriesPage ? normalizePath(galleriesPage.link) : null
 
   for (const page of pages) {
-    byPath.set(normalizePath(page.link), { kind: 'page', id: page.id, templateType: page.template })
+    setIndexEntry(byPath, normalizePath(page.link), { kind: 'page', id: page.id, templateType: page.template })
   }
 
   for (const category of categories) {
     const basePath = normalizePath(category.link)
-    byPath.set(basePath, {
+    setIndexEntry(byPath, basePath, {
       kind: 'category',
       id: category.id,
       rootCategoryId: category.parent?.id ?? category.id,
@@ -78,11 +102,11 @@ async function buildLinkIndex(): Promise<Map<string, IndexEntry>> {
       continue
     }
 
-    byPath.set(normalizePath(post.link), { kind: 'post', id: post.id, categoryId })
+    setIndexEntry(byPath, normalizePath(post.link), { kind: 'post', id: post.id, categoryId })
   }
 
   for (const gallery of galleries) {
-    byPath.set(normalizePath(gallery.link), { kind: 'gallery', id: gallery.id, allGalleryLink })
+    setIndexEntry(byPath, normalizePath(gallery.link), { kind: 'gallery', id: gallery.id, allGalleryLink })
   }
 
   return byPath
@@ -125,7 +149,9 @@ export async function getStaticRoutes(): Promise<{ path: string; route: Resolved
       continue
     }
 
-    const { totalCount } = await getPostsForCategory(entry.id, { offset: 0, limit: CATEGORY_PAGE_SIZE })
+    // Count-only: the lean preview fetch reads totalCount from X-WP-Total
+    // without pulling content/blocks through the normalization pipeline.
+    const { totalCount } = await getPostPreviews(entry.id, { offset: 0, limit: 1 })
     const totalPages = Math.max(Math.ceil(totalCount / CATEGORY_PAGE_SIZE), 1)
 
     for (let page = 1; page <= totalPages; page += 1) {

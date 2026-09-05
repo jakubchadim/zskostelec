@@ -6,13 +6,13 @@ vi.mock('../entities/page', async () => {
 })
 vi.mock('../entities/post', async () => {
   const actual = await vi.importActual<typeof import('../entities/post')>('../entities/post')
-  return { ...actual, getPostRouteEntries: vi.fn(), getPostsForCategory: vi.fn() }
+  return { ...actual, getPostRouteEntries: vi.fn(), getPostPreviews: vi.fn() }
 })
 vi.mock('../entities/category', () => ({ getCategories: vi.fn() }))
 vi.mock('../entities/gallery', () => ({ getGalleries: vi.fn() }))
 
 import { getPages, PageTemplateType } from '../entities/page'
-import { getPostRouteEntries, getPostsForCategory } from '../entities/post'
+import { getPostPreviews, getPostRouteEntries } from '../entities/post'
 import { getCategories } from '../entities/category'
 import { getGalleries } from '../entities/gallery'
 import { getStaticRoutes, resolveRoute } from './resolve'
@@ -100,6 +100,26 @@ describe('resolveRoute', () => {
   it('resolves to null for an unknown path', async () => {
     await expect(resolveRoute(['neexistuje'])).resolves.toBeNull()
   })
+
+  it('first-wins on a path collision (page indexed before post), and logs a warning', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    // A content-less "link article" whose real WP permalink happens to
+    // alias the existing '/o-skole/' page's path.
+    vi.mocked(getPostRouteEntries).mockResolvedValue([
+      { id: 'post-1', link: '/aktuality/nazev/', categories: ['cat-1'] } as never,
+      { id: 'post-collides', link: '/o-skole/', categories: ['cat-1'] } as never
+    ])
+
+    await expect(resolveRoute(['o-skole'])).resolves.toEqual({
+      kind: 'page',
+      id: 'page-1',
+      templateType: PageTemplateType.DEFAULT
+    })
+
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('/o-skole/'))
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('keeping page'))
+  })
 })
 
 describe('getStaticRoutes', () => {
@@ -113,7 +133,7 @@ describe('getStaticRoutes', () => {
   })
 
   it('enumerates every strana-N pagination page for a category', async () => {
-    vi.mocked(getPostsForCategory).mockResolvedValue({ posts: [], totalCount: 32 })
+    vi.mocked(getPostPreviews).mockResolvedValue({ posts: [], totalCount: 32 })
 
     const routes = await getStaticRoutes()
     const categoryRoutes = routes.filter((r) => r.route.kind === 'category')

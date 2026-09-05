@@ -50,6 +50,8 @@ describe('normalizeGallery', () => {
     ID: n,
     url: `https://admin.example.test/wp-content/uploads/photo-${n}.jpg`,
     alt: `Photo ${n}`,
+    width: 1600,
+    height: 1067,
     sizes: {
       medium_large: `https://admin.example.test/wp-content/uploads/photo-${n}-768x512.jpg`,
       'medium_large-width': 768,
@@ -74,6 +76,10 @@ describe('normalizeGallery', () => {
     expect(result.link).toBe('/fotogalerie/vylet/')
     expect(result.acf.preview?.source_url).toBe('https://admin.example.test/wp-content/uploads/photo-1.jpg')
     expect(result.acf.preview?.media_details?.sizes?.medium_large.width).toBe(768)
+    // Full-size original's dimensions carry through too, so buildSrcSet can
+    // offer it as a candidate above medium_large (T1 fast-follow backlog item).
+    expect(result.acf.preview?.media_details?.width).toBe(1600)
+    expect(result.acf.preview?.media_details?.height).toBe(1067)
     expect(result.acf.gallery).toHaveLength(2)
   })
 
