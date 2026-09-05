@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ChevronDown, Menu, X } from 'lucide-react'
@@ -32,16 +33,26 @@ type HeaderProps = {
   menu: NavItem[]
   /** Allows the bar to start transparent and turn solid once scrolled past
    * the top, for pages with a hero image behind the nav (legacy
-   * `Layout transparentNav` / `NavMain transparent`). Off by default. */
+   * `Layout transparentNav` / `NavMain transparent`). An explicit value
+   * always wins; left unset, it defaults to "on for the homepage, off
+   * elsewhere" (see the `pathname` check below) - `app/src/app/layout.tsx`
+   * renders one `<Header>` for every route and can't pass a per-route
+   * prop itself (it's a Server Component that doesn't know the current
+   * route the way a route-level template does), so the homepage is
+   * detected here instead. Legacy only ever used `transparentNav` on the
+   * home template (`web/src/templates/home.tsx`), so gating on the root
+   * path is a faithful port, not a guess. */
   transparent?: boolean
 }
 
 /** Sticky site header: text logo, desktop flyout nav, mobile Dialog menu,
- * and (optionally) transparent-over-hero scroll behavior. Ports the
+ * and transparent-over-hero scroll behavior on the homepage. Ports the
  * behavior of web/src/components/nav/main.tsx + web/src/components/ui/nav/. */
-export default function Header({ menu, transparent = false }: HeaderProps) {
+export default function Header({ menu, transparent }: HeaderProps) {
+  const pathname = usePathname()
+  const isTransparentRoute = transparent ?? pathname === '/'
   const atTop = useSyncExternalStore(subscribeToScroll, isScrolledToTop, isScrolledToTopOnServer)
-  const isTransparent = transparent && atTop
+  const isTransparent = isTransparentRoute && atTop
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
@@ -53,11 +64,12 @@ export default function Header({ menu, transparent = false }: HeaderProps) {
     >
       <Container>
         <div className="flex h-10 items-center md:h-16">
-          <h1 className={cn('m-0 text-title-4 font-normal', isTransparent && 'sm:hidden')}>
+          {/* Deliberately not an <h1> (unlike legacy): page templates carry the semantic h1. */}
+          <p className={cn('m-0 text-title-4 font-normal', isTransparent && 'sm:hidden')}>
             <Link href="/" className="no-underline hover:text-inherit">
               ZŠ Kostelec
             </Link>
-          </h1>
+          </p>
 
           <NavigationMenu.Root className="relative ml-auto hidden md:block">
             <NavigationMenu.List className="m-0 flex list-none items-center gap-4 p-0">

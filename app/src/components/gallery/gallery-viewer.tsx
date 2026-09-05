@@ -1,0 +1,77 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import Lightbox from 'yet-another-react-lightbox'
+import Zoom from 'yet-another-react-lightbox/plugins/zoom'
+import 'yet-another-react-lightbox/styles.css'
+import { WpImage } from '@/components/image/wp-image'
+import type { WpMediaLike } from '@/lib/wp'
+import { buildLightboxSlides } from './build-slides'
+
+const BATCH_SIZE = 24
+const THUMBNAIL_SIZES = '(min-width: 41.75em) 33vw, (min-width: 26em) 50vw, 100vw'
+
+type GalleryViewerProps = {
+  images: WpMediaLike[]
+}
+
+/**
+ * Thumbnail grid with a progressive "load more" reveal + a click-to-open
+ * lightbox. Replaces the legacy site's single unbounded grid (which rendered
+ * every photo in the gallery at once) - the server still sends the full
+ * `images` array in one shot, this just limits how much of it is in the DOM
+ * at a time.
+ */
+export function GalleryViewer({ images }: GalleryViewerProps) {
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+  // Built over the FULL gallery, not just the visible slice, so lightbox
+  // prev/next can browse every photo even before "load more" is clicked.
+  const slides = useMemo(() => buildLightboxSlides(images), [images])
+  const visibleImages = images.slice(0, visibleCount)
+  const hasMore = visibleCount < images.length
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-3">
+        {visibleImages.map((image, index) => (
+          <button
+            key={image.id}
+            type="button"
+            onClick={() => setLightboxIndex(index)}
+            aria-label={`Otevřít fotografii ${index + 1} z ${images.length}`}
+            className="group relative block w-full overflow-hidden rounded-medium bg-gray-3 pb-[100%] shadow-small transition-shadow duration-200 ease-in-out hover:shadow-lift"
+          >
+            <WpImage
+              media={image}
+              sizes={THUMBNAIL_SIZES}
+              alt={image.alt_text || `Fotografie ${index + 1} z galerie`}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-110"
+            />
+          </button>
+        ))}
+      </div>
+
+      {hasMore && (
+        <div className="mt-8 text-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((count) => Math.min(count + BATCH_SIZE, images.length))}
+            className="rounded-medium bg-primary-1 px-8 py-3 text-white-1 transition-colors duration-200 ease-in-out hover:bg-primary-2"
+          >
+            Načíst další fotografie
+          </button>
+        </div>
+      )}
+
+      <Lightbox
+        open={lightboxIndex != null}
+        index={lightboxIndex ?? 0}
+        close={() => setLightboxIndex(null)}
+        slides={slides}
+        plugins={[Zoom]}
+      />
+    </>
+  )
+}

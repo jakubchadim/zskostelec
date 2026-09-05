@@ -1,27 +1,10 @@
-// TODO: replace with lib/wp types (T1) once the WP REST data layer lands.
-// These mirror the shape gatsby-source-wordpress exposed for the
-// wp-api-menus v2 plugin (see web/src/components/nav/utils.ts), which is the
-// closest available reference for what `/wp-json/wp-api-menus/v2/menus`
-// returns. Reconcile field names against T1's real types once it lands.
+import type { WpMenuItem } from '@/lib/wp'
 
-/** A single flat menu item as returned by the WP menus REST endpoint. */
-export type WpMenuItem = {
-  id: number
-  parentId: number
-  title: string
-  url: string
-  target?: string
-  slug?: string
-}
-
-/** A menu item after a flat `WpMenuItem[]` has been assembled into a tree. */
-export type NavItem = {
-  title: string
-  url: string
-  target?: string
-  slug?: string
-  items: NavItem[]
-}
+// Reconciled against T1's real menu types (`lib/wp/entities/menu.ts`) - this
+// used to be a hand-guessed stub. `WpMenuItem` already handles both raw
+// `wp-api-menus` response shapes (a flat list carrying `parent`, or a
+// nested one carrying `children`) and is unit-tested in `entities/menu.test.ts`.
+export type NavItem = WpMenuItem
 
 export type NavMenus = {
   main: NavItem[]

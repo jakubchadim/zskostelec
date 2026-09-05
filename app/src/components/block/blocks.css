@@ -1,0 +1,122 @@
+/*
+ * Gutenberg-content CSS that isn't cleanly expressible as Tailwind utility
+ * classes (deeply-nested HTML-authored descendant selectors, or classes WP
+ * itself writes into rendered content). Imported once by `content.tsx`.
+ * Does NOT touch `app/src/app/globals.css` (out of scope for this task).
+ */
+
+/*
+ * Inline text-color spans, ported verbatim from `web/src/theme/global.ts`'s
+ * bottom (`.has-inline-color.has-*-color`) - the 7 `BlockColor` slugs WP's
+ * block editor writes onto `<mark>`/`<span>` RichText selections. These are
+ * light-mode-only values matching the legacy CSS exactly (not the same as
+ * the `getColorFromPalette` "dark"/hover variant used for backgrounds -
+ * confirmed no `.has-*-background-color` CSS exists in the legacy frontend,
+ * since block backgrounds are always applied via component props, never
+ * class matching).
+ */
+.has-inline-color.has-primary-color {
+  color: var(--color-primary-1);
+}
+.has-inline-color.has-secondary-color {
+  color: var(--color-secondary-1);
+}
+.has-inline-color.has-white-color {
+  color: var(--color-white-1);
+}
+.has-inline-color.has-black-color {
+  color: var(--color-black-1);
+}
+.has-inline-color.has-dark-gray-color {
+  color: var(--color-gray-5);
+}
+.has-inline-color.has-medium-gray-color {
+  color: var(--color-gray-3);
+}
+.has-inline-color.has-light-gray-color {
+  color: var(--color-gray-1);
+}
+
+/*
+ * core/list bullet styling, ported from `web/src/components/block/core/list/list.tsx`.
+ * `em`/unitless values are root-independent and carried over unchanged; the
+ * one `rem` value (`ul ul { margin: 1rem 0 }`, legacy 10px-root = 10px real)
+ * is converted to a literal `10px`. Scoped under `.wp-block-list` (applied
+ * by `core/list/list.tsx`) rather than legacy's global scope, since a plain
+ * CSS file needs manual scoping that styled-components' auto-generated
+ * class names gave for free.
+ */
+.wp-block-list ul {
+  padding-left: 1em;
+  list-style: none;
+}
+
+.wp-block-list ul > li {
+  position: relative;
+  line-height: 1.4;
+}
+
+.wp-block-list ul > li::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0.35em;
+  left: -1em;
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--color-secondary-1);
+}
+
+.wp-block-list ul > li + li {
+  margin-top: 0.3em;
+}
+
+.wp-block-list ul ul {
+  margin: 10px 0;
+}
+
+.wp-block-list ul ul > li::before {
+  background: var(--color-primary-1);
+}
+
+.wp-block-list ul ul ul > li::before {
+  background: var(--color-gray-6);
+}
+
+/*
+ * core/table styling, ported from `web/src/components/block/core/table/table.tsx`.
+ * Scoped under `.block-table` (applied by `core/table/table.tsx`'s
+ * `<figure>` wrapper). Cell padding (`spacing(4)` = 20px) matches this
+ * app's `p-4`; border color reuses `--color-gray-2`.
+ */
+.block-table > table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.block-table > table thead {
+  text-align: left;
+  font-size: 1.1em;
+}
+
+.block-table > table td,
+.block-table > table th {
+  padding: 20px;
+}
+
+.block-table:not(.block-table--stripes) > table td,
+.block-table:not(.block-table--stripes) > table th {
+  border-bottom: 1px solid var(--color-gray-2);
+}
+
+.block-table--stripes > table tr {
+  border-bottom: 1px solid var(--color-gray-2);
+}
+
+.block-table--stripes > table tbody tr:nth-child(odd) {
+  background: var(--color-gray-2);
+}
+
+.block-table--fixed > table {
+  table-layout: fixed;
+}

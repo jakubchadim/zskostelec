@@ -1,38 +1,32 @@
+import { getMenuBySlug, LEGACY_MENU_SLUGS } from '@/lib/wp'
 import type { NavItem, NavMenus } from './types'
 
-// TODO: replace with lib/wp types (T1). This placeholder stands in for a
-// future fetch against `/wp-json/wp-api-menus/v2/menus` (legacy menu slugs
-// `top-menu`, `fast-menu-1`, `fast-menu-2` — see
-// web/src/components/nav/main.query.tsx, fastFirst.query.tsx,
-// fastSecond.query.tsx), with the flat response assembled into a NavItem[]
-// tree the same way web/src/components/nav/utils.ts `parseNavItems` did.
-// Swap the body of this function for a real call into T1's data layer once
-// it lands; callers (layout.tsx) already treat it as async.
+/** A menu fetch failing (WP unreachable, menu deleted, etc.) degrades to an
+ * empty menu rather than throwing - every route renders `<Header>`/
+ * `<Footer>` via `app/src/app/layout.tsx`, so one bad menu can't take down
+ * the whole site shell. `getMenuBySlug` throws (not `wpFetchOrNull`) on
+ * both its list-lookup and detail-lookup requests, so this is what makes
+ * "WP unreachable -> empty menus, no crash" actually true. */
+async function safeMenu(slug: string): Promise<NavItem[]> {
+  try {
+    const menu = await getMenuBySlug(slug)
+    return menu?.items ?? []
+  } catch (error) {
+    console.warn(`[nav] failed to fetch menu "${slug}":`, error)
+    return []
+  }
+}
+
+/**
+ * Real nav data, replacing the Wave-1 stub. Menu slugs are the legacy
+ * `wp-api-menus` ones (`LEGACY_MENU_SLUGS` in `lib/wp/entities/menu.ts`),
+ * verified against `web/src/components/nav/{main,fastFirst,fastSecond}.query.tsx`
+ * (`top-menu`, `fast-menu-1`, `fast-menu-2`) and `admin/theme/inc/menu.php`.
+ */
 export async function getNavData(): Promise<NavMenus> {
-  const main: NavItem[] = [
-    { title: 'Domů', url: '/', items: [] },
-    {
-      title: 'O škole',
-      url: '/o-skole/',
-      items: [
-        { title: 'Zaměstnanci', url: '/o-skole/zamestnanci/', items: [] },
-        { title: 'Dokumenty', url: '/o-skole/dokumenty/', items: [] }
-      ]
-    },
-    { title: 'Aktuality', url: '/aktuality/', items: [] },
-    { title: 'Fotogalerie', url: '/fotogalerie/', items: [] },
-    { title: 'Kontakt', url: '/kontakt/', items: [] }
-  ]
-
-  const fastFirst: NavItem[] = [
-    { title: 'Jídelníček', url: '/jidelnicek/', items: [] },
-    { title: 'Externí odkaz', url: 'https://example.com/', target: '_blank', items: [] }
-  ]
-
-  const fastSecond: NavItem[] = [
-    { title: 'GDPR', url: '/gdpr/', items: [] },
-    { title: 'Úřední deska', url: '/uredni-deska/', items: [] }
-  ]
+  const [main, fastFirst, fastSecond] = await Promise.all(
+    [LEGACY_MENU_SLUGS.main, LEGACY_MENU_SLUGS.fastFirst, LEGACY_MENU_SLUGS.fastSecond].map(safeMenu)
+  )
 
   return { main, fastFirst, fastSecond }
 }

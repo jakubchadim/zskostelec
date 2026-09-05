@@ -96,15 +96,20 @@ dispatches to the right template component. `generateStaticParams` prebuilds kno
 - `normalizeAcfImage` drops the raw ACF top-level `width`/`height`, so `buildSrcSet` never
   includes the true full-resolution variant for ACF-sourced images — carry them into
   `media_details.width/height`.
-- Header logo renders as `<h1>` on every route (faithful legacy port) — will duplicate `<h1>`s
-  once T4/T7 templates add their own; decide h1-vs-div per route.
-- `Header`'s `transparent` prop is implemented but not wired to any route — homepage (T7) needs
-  a client Context or `usePathname()` check since Header lives in the persistent root layout.
+- ~~Header logo `<h1>`~~ — resolved in Wave 2: logo is a `<p>`, page templates carry the h1.
+- ~~Header `transparent` wiring~~ — resolved in Wave 2 (T7): `usePathname() === '/'` default.
 - Route classification proxies content-emptiness via `excerpt` (10-word cap) — misclassifies
   only a manually-excerpted content-less link article; verify against live data once WP is up.
 - Live-host verification pass (blocks field anonymous access, wp-api-menus raw shape, ACF
   file-field shapes, permalink bases) — first thing once `zskostelec.tode.cz` responds.
 - Unused create-next-app assets `app/public/{file,globe,next,vercel,window}.svg` — delete.
+- `getPostsForCategory` runs the full block-normalization pipeline (JSDOM) for all 15 posts per
+  category page, though listing cards need only preview fields — add a lean `getPostPreviews`
+  fetch in lib/wp (T1 fast-follow).
+- `buildLinkIndex` indexes pages before posts, so a content-less "link article" aliased to
+  another entity's path can shadow it silently — tighten collision handling in resolve.ts.
+- `block/core/table/table.normalize.ts` ports a legacy stripes-detection quirk verbatim
+  (no-className tables default to stripes on) — decide fix-or-keep with the site owner.
 
 ## Orchestration protocol
 
