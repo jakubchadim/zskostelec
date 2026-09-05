@@ -1,26 +1,212 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
+/*
+ * Design tokens ported from the legacy Gatsby site's styled-components theme
+ * (web/src/theme/theme.ts, web/src/theme/intent.ts) and global styles
+ * (web/src/theme/global.ts).
+ *
+ * IMPORTANT — root font-size: the legacy theme set `html { font-size: 10px }`
+ * and measured every rem value in `theme.ts` against that 10px root, not the
+ * browser's real 16px root. We do NOT carry that hack forward here — every
+ * value below has been pre-converted to a real (16px-root) rem so Tailwind's
+ * own tooling (arbitrary values, defaults, anything pasted from docs/AI
+ * output) stays correct.
+ *
+ * IMPORTANT — spacing unit: as part of that conversion, `--spacing` below is
+ * overridden from Tailwind's default 4px unit to 5px (0.3125rem) — this is
+ * the exact unit the legacy `theme.spacing(n)` function used (`n * 0.5rem`
+ * against the 10px root = `n * 5px`). That means every numbered spacing
+ * utility in this app (p-4, gap-2, w-8, -mt-4, ...) is `5px * n`, NOT
+ * Tailwind's usual `4px * n`. See app/README.md for the same note.
+ */
+@theme {
+  /* Breakpoints — reset Tailwind's stock scale first so unrelated xl/2xl
+     values (1280px/1536px) don't linger alongside this design's 4-tier
+     scale, which is keyed to the legacy `theme.media` breakpoints. */
+  --breakpoint-*: initial;
+  --breakpoint-xs: 26em; /* 416px */
+  --breakpoint-sm: 41.75em; /* 668px */
+  --breakpoint-md: 55.125em; /* 882px */
+  --breakpoint-lg: 81.9375em; /* 1311px */
+
+  /* Spacing unit — see comment above. */
+  --spacing: 0.3125rem; /* 5px */
+
+  /* Colors — verbatim from theme.ts `color`. Numeric suffixes are kept for
+     1:1 traceability back to the legacy names; this is NOT a 50-950
+     lightness scale like Tailwind's stock grays, so don't assume gray-9 is
+     "darker" in the same proportional sense stock gray-900 is. */
+  --color-primary-1: #ff9800;
+  --color-primary-2: #e78800;
+  --color-secondary-1: #009688;
+  --color-secondary-2: #00867a;
+  --color-secondary-3: #00786c;
+  --color-success-1: #4caf50;
+  --color-warning-1: #ff9800;
+  --color-danger-1: #f44336;
+  --color-black-1: #191919;
+  --color-black-2: #111111;
+  --color-white-1: #ffffff;
+  --color-gray-1: #f9fbfd;
+  --color-gray-2: #f1f4f8;
+  --color-gray-3: #d9e2ef;
+  --color-gray-4: #c6d3e6;
+  --color-gray-5: #abbcd5;
+  --color-gray-6: #869ab8;
+  --color-gray-7: #506690;
+  --color-gray-8: #384c74;
+  --color-gray-9: #1b2a4e;
+
+  /* Radius — converted from theme.ts `radius` (10px root) to real rem. */
+  --radius-small: 0.1875rem; /* 3px */
+  --radius-medium: 0.3125rem; /* 5px */
+  --radius-large: 0.5rem; /* 8px */
+
+  /* Font size — converted from theme.ts `fontSize` (10px root) to real rem. */
+  --text-1: 0.625rem; /* 10px */
+  --text-2: 0.75rem; /* 12px */
+  --text-3: 0.9375rem; /* 15px */
+  --text-4: 1rem; /* 16px — body copy size */
+  --text-5: 1.125rem; /* 18px */
+  --text-title-1: 2.5rem; /* 40px */
+  --text-title-2: 2rem; /* 32px */
+  --text-title-3: 1.875rem; /* 30px */
+  --text-title-4: 1.5rem; /* 24px */
+  --text-title-5: 1.25rem; /* 20px */
+
+  /* Shadows — verbatim from theme.ts `shadow` (unitless rgba, no conversion
+     needed regardless of root font-size). */
+  --shadow-small: 0 0.125rem 0.25rem rgba(22, 28, 45, 0.075);
+  --shadow-medium: 0 0.5rem 1.5rem rgba(22, 28, 45, 0.1);
+  --shadow-large: 0 1.5rem 4rem rgba(22, 28, 45, 0.1);
+  --shadow-light-medium: 0 0.5rem 1.5rem rgba(22, 28, 45, 0.05);
+  --shadow-light-large: 0 1.5rem 4rem rgba(22, 28, 45, 0.05);
+  --shadow-dark-medium: 0 0.5rem 1.5rem rgba(22, 28, 45, 0.15);
+  --shadow-dark-large: 0 1.5rem 4rem rgba(22, 28, 45, 0.15);
+  --shadow-lift:
+    0 1rem 2.5rem rgba(22, 28, 45, 0.1), 0 0.5rem 1rem -0.75rem rgba(22, 28, 45, 0.1);
+
+  /* Fonts — `primary`/`secondary` in the legacy theme were both Roboto;
+     collapsed to one token. The `--font-roboto` variable is set by
+     `next/font/google` in app/src/app/layout.tsx. */
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+
+  /* Container — legacy `UiContainer` max-width (100rem @ 10px root = 1000px). */
+  --container-site: 62.5rem;
+}
+
+/*
+ * Base layer — ported from web/src/theme/global.ts `GlobalStyle`.
+ * The Gutenberg block color-palette classes (.has-primary-color etc.) are
+ * intentionally NOT ported here — they belong to the block-rendering system
+ * (T3), not the app shell.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  margin: 0;
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-black-1);
+  background: var(--color-gray-1);
+  font-family: var(--font-sans);
+  font-size: var(--text-4);
+  line-height: 1.4;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-primary-1);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.5625rem 0; /* legacy theme.spacing(5, 0) */
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+h1.top,
+h2.top,
+h3.top,
+h4.top,
+h5.top,
+h6.top {
+  margin-top: 0.3125rem; /* legacy theme.spacing(1) */
+}
+
+h1 {
+  font-size: 1.75rem; /* 28px */
+}
+
+h2 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.1875rem; /* 19px */
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 700;
+}
+
+h5 {
+  font-size: 1.0625rem; /* 17px */
+  font-weight: 700;
+}
+
+h6 {
+  font-size: 0.75rem; /* 12px */
+  font-weight: 700;
+}
+
+@media (min-width: 41.75em) {
+  h1 {
+    font-size: 2rem; /* 32px */
+  }
+
+  h2 {
+    font-size: 1.5625rem; /* 25px */
+    font-weight: 300;
+  }
+
+  h3 {
+    font-size: 1.3125rem; /* 21px */
+  }
+
+  h4 {
+    font-size: 1.1875rem; /* 19px */
+  }
+}
+
+@media (min-width: 55.125em) {
+  h1 {
+    font-size: 2.3125rem; /* 37px */
+  }
+
+  h2 {
+    font-size: 1.9375rem; /* 31px */
+  }
 }

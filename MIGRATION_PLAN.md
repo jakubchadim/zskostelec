@@ -91,6 +91,21 @@ dispatches to the right template component. `generateStaticParams` prebuilds kno
 - **T11 — WP/PHP/MySQL Docker stack upgrade** (EOL fix; now decoupled from rewrite).
 - **T12 — Vercel deploy + cutover**: envs, deploy, DNS, retire `web/`.
 
+## Backlog / fast-follows (from Wave 1 reviews)
+
+- `normalizeAcfImage` drops the raw ACF top-level `width`/`height`, so `buildSrcSet` never
+  includes the true full-resolution variant for ACF-sourced images — carry them into
+  `media_details.width/height`.
+- Header logo renders as `<h1>` on every route (faithful legacy port) — will duplicate `<h1>`s
+  once T4/T7 templates add their own; decide h1-vs-div per route.
+- `Header`'s `transparent` prop is implemented but not wired to any route — homepage (T7) needs
+  a client Context or `usePathname()` check since Header lives in the persistent root layout.
+- Route classification proxies content-emptiness via `excerpt` (10-word cap) — misclassifies
+  only a manually-excerpted content-less link article; verify against live data once WP is up.
+- Live-host verification pass (blocks field anonymous access, wp-api-menus raw shape, ACF
+  file-field shapes, permalink bases) — first thing once `zskostelec.tode.cz` responds.
+- Unused create-next-app assets `app/public/{file,globe,next,vercel,window}.svg` — delete.
+
 ## Orchestration protocol
 
 Sonnet developer agents, one per task. Each dev: ① reads this plan + its task spec + the `web/`

@@ -1,0 +1,138 @@
+import { getCategories } from '../entities/category'
+import { getGalleries } from '../entities/gallery'
+import { getPages, PageTemplateType } from '../entities/page'
+import { CATEGORY_PAGE_SIZE, getPostRouteEntries, getPostsForCategory } from '../entities/post'
+import type { ID } from '../types'
+import type { ResolvedRoute } from './types'
+
+type IndexEntry =
+  | { kind: 'page'; id: ID; templateType: PageTemplateType }
+  | { kind: 'post'; id: ID; categoryId: ID }
+  | { kind: 'category'; id: ID; rootCategoryId: ID; basePath: string }
+  | { kind: 'gallery'; id: ID; allGalleryLink: string | null }
+
+const PAGINATION_SUFFIX = /^(.*\/)strana-(\d+)\/?$/
+
+/** WP `link` fields are already site-relative after `rewriteAdminUrls`; this just normalizes any stray absolute origin and slashes. */
+function normalizePath(link: string): string {
+  const withoutOrigin = link.replace(/^https?:\/\/[^/]+/, '')
+  const withLeadingSlash = withoutOrigin.startsWith('/') ? withoutOrigin : `/${withoutOrigin}`
+  return withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`
+}
+
+/**
+ * Builds a lightweight path -> entry index by fetching every page/post/
+ * category/gallery (each independently cached/deduped by Next's fetch
+ * cache, per their own tags) and keying on each entity's own `link` field -
+ * the same "URL parity is automatic if we key routing on `link`" approach
+ * `web/.gatsby/gatsby-node.ts`'s `createPages` used. Not memoized beyond
+ * that per-entity fetch caching, so it always reflects the current
+ * revalidation window rather than freezing at server-process start.
+ *
+ * Posts use `getPostRouteEntries()` rather than the full `getPosts()` -
+ * classification only needs `id`/`link`/`categories` (plus enough ACF to
+ * detect an external effective link), never `content`/`blocks`, so this
+ * skips running the block pipeline over every post just to classify one
+ * URL (T1 review finding 2).
+ */
+async function buildLinkIndex(): Promise<Map<string, IndexEntry>> {
+  const [pages, posts, categories, galleries] = await Promise.all([
+    getPages(),
+    getPostRouteEntries(),
+    getCategories(),
+    getGalleries()
+  ])
+
+  const byPath = new Map<string, IndexEntry>()
+  const defaultCategoryId = categories[0]?.id
+
+  const galleriesPage = pages.find((page) => page.template === PageTemplateType.GALLERIES)
+  const allGalleryLink = galleriesPage ? normalizePath(galleriesPage.link) : null
+
+  for (const page of pages) {
+    byPath.set(normalizePath(page.link), { kind: 'page', id: page.id, templateType: page.template })
+  }
+
+  for (const category of categories) {
+    const basePath = normalizePath(category.link)
+    byPath.set(basePath, {
+      kind: 'category',
+      id: category.id,
+      rootCategoryId: category.parent?.id ?? category.id,
+      basePath
+    })
+  }
+
+  for (const post of posts) {
+    // A content-less "article" post's effective link can point at a
+    // genuinely external URL (see resolvePostLink in entities/post.ts) -
+    // those are never locally routable, matching the explicit skip in
+    // web/.gatsby/gatsby-node.ts (`post.link.startsWith('http')`).
+    if (!post.link || post.link.startsWith('http')) {
+      continue
+    }
+
+    const categoryId = post.categories[0] ?? defaultCategoryId
+
+    if (!categoryId) {
+      continue
+    }
+
+    byPath.set(normalizePath(post.link), { kind: 'post', id: post.id, categoryId })
+  }
+
+  for (const gallery of galleries) {
+    byPath.set(normalizePath(gallery.link), { kind: 'gallery', id: gallery.id, allGalleryLink })
+  }
+
+  return byPath
+}
+
+function toResolvedRoute(entry: IndexEntry, pageNumber: number): ResolvedRoute {
+  return entry.kind === 'category' ? { ...entry, pageNumber } : entry
+}
+
+export async function resolveRoute(slugSegments: string[]): Promise<ResolvedRoute | null> {
+  const path = normalizePath(`/${slugSegments.join('/')}`)
+  const index = await buildLinkIndex()
+
+  const exact = index.get(path)
+  if (exact) {
+    return toResolvedRoute(exact, 1)
+  }
+
+  const paginationMatch = path.match(PAGINATION_SUFFIX)
+  if (paginationMatch) {
+    const [, basePath, pageNumberRaw] = paginationMatch
+    const category = index.get(basePath)
+
+    if (category?.kind === 'category') {
+      return toResolvedRoute(category, Number(pageNumberRaw))
+    }
+  }
+
+  return null
+}
+
+/** Every statically known route, including all `strana-N` category pagination pages - for `generateStaticParams`. */
+export async function getStaticRoutes(): Promise<{ path: string; route: ResolvedRoute }[]> {
+  const index = await buildLinkIndex()
+  const routes: { path: string; route: ResolvedRoute }[] = []
+
+  for (const [path, entry] of index) {
+    if (entry.kind !== 'category') {
+      routes.push({ path, route: entry })
+      continue
+    }
+
+    const { totalCount } = await getPostsForCategory(entry.id, { offset: 0, limit: CATEGORY_PAGE_SIZE })
+    const totalPages = Math.max(Math.ceil(totalCount / CATEGORY_PAGE_SIZE), 1)
+
+    for (let page = 1; page <= totalPages; page += 1) {
+      const pagePath = page === 1 ? path : `${entry.basePath}strana-${page}/`
+      routes.push({ path: pagePath, route: toResolvedRoute(entry, page) })
+    }
+  }
+
+  return routes
+}
