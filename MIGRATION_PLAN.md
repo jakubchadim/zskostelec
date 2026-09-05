@@ -91,25 +91,34 @@ dispatches to the right template component. `generateStaticParams` prebuilds kno
 - **T11 — WP/PHP/MySQL Docker stack upgrade** (EOL fix; now decoupled from rewrite).
 - **T12 — Vercel deploy + cutover**: envs, deploy, DNS, retire `web/`.
 
-## Backlog / fast-follows (from Wave 1 reviews)
+## Backlog / fast-follows
 
-- `normalizeAcfImage` drops the raw ACF top-level `width`/`height`, so `buildSrcSet` never
-  includes the true full-resolution variant for ACF-sourced images — carry them into
-  `media_details.width/height`.
-- ~~Header logo `<h1>`~~ — resolved in Wave 2: logo is a `<p>`, page templates carry the h1.
-- ~~Header `transparent` wiring~~ — resolved in Wave 2 (T7): `usePathname() === '/'` default.
-- Route classification proxies content-emptiness via `excerpt` (10-word cap) — misclassifies
-  only a manually-excerpted content-less link article; verify against live data once WP is up.
-- Live-host verification pass (blocks field anonymous access, wp-api-menus raw shape, ACF
-  file-field shapes, permalink bases) — first thing once `zskostelec.tode.cz` responds.
-- Unused create-next-app assets `app/public/{file,globe,next,vercel,window}.svg` — delete.
-- `getPostsForCategory` runs the full block-normalization pipeline (JSDOM) for all 15 posts per
-  category page, though listing cards need only preview fields — add a lean `getPostPreviews`
-  fetch in lib/wp (T1 fast-follow).
-- `buildLinkIndex` indexes pages before posts, so a content-less "link article" aliased to
-  another entity's path can shadow it silently — tighten collision handling in resolve.ts.
-- `block/core/table/table.normalize.ts` ports a legacy stripes-detection quirk verbatim
-  (no-className tables default to stripes on) — decide fix-or-keep with the site owner.
+Resolved during the rewrite (kept here for the record, not for action):
+- ~~Header logo `<h1>`~~ — Wave 2 (T7): logo is a `<p>`, page templates carry the h1.
+- ~~Header `transparent` wiring~~ — Wave 2 (T7): `usePathname() === '/'` default.
+- ~~Unused create-next-app assets~~ — removed during the Wave 2 integration pass.
+- ~~`normalizeAcfImage` missing width/height~~ — Wave 3 (T1 fast-follow): ACF's top-level
+  `width`/`height` now flow into `media_details`, so galleries/employees/gutak reach full
+  resolution in `buildSrcSet`.
+- ~~`getPostsForCategory` running the full block pipeline for listings~~ — Wave 3 (T1
+  fast-follow): lean `getPostPreviews` now powers category listings, the post-sidebar related
+  list, and `getStaticRoutes`' pagination count — no listing fetch touches `content`/`blocks`.
+- ~~`buildLinkIndex` silent collisions~~ — Wave 3 (T1 fast-follow): `setIndexEntry` makes
+  first-wins explicit (pages > categories > posts > galleries) and `console.warn`s on collision.
+
+Still open, in priority order:
+1. **Live-host verification pass** — blocked entirely on `zskostelec.tode.cz` responding (last
+   checked 2026-09-05, still unreachable at the TCP level — this is also an outage affecting the
+   live site's actual visitors, worth escalating with hosting independent of this migration).
+   Checklist once it's up: anonymous access to the `blocks` REST field, `wp-api-menus` raw JSON
+   shape (`top-menu`/`fast-menu-1`/`fast-menu-2`), ACF file-field shape on document/gutak/post,
+   permalink/category base, and the excerpt-as-content-emptiness routing proxy below.
+2. **`resolvePostLink`'s excerpt proxy** — content-emptiness is inferred from a 10-word-capped
+   excerpt; only misclassifies a manually-excerpted, content-less "link article" post. Re-check
+   once real content is reachable.
+3. **`table.normalize.ts` stripes quirk** — a legacy bug (tables with no className default to
+   `stripes: true`) was ported verbatim and pinned by a test rather than fixed. Decide fix-or-keep
+   — this is a real behavior call for the site owner, not something to resolve unilaterally.
 
 ## Orchestration protocol
 
