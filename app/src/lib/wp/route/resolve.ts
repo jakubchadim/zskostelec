@@ -1,5 +1,5 @@
 import { getCategories } from '../entities/category'
-import { getGalleries } from '../entities/gallery'
+import { getGalleryRouteEntries } from '../entities/gallery'
 import { getPages, PageTemplateType } from '../entities/page'
 import { CATEGORY_PAGE_SIZE, getPostPreviews, getPostRouteEntries } from '../entities/post'
 import type { ID } from '../types'
@@ -57,14 +57,18 @@ function setIndexEntry(byPath: Map<string, IndexEntry>, path: string, entry: Ind
  * classification only needs `id`/`link`/`categories` (plus enough ACF to
  * detect an external effective link), never `content`/`blocks`, so this
  * skips running the block pipeline over every post just to classify one
- * URL (T1 review finding 2).
+ * URL (T1 review finding 2). Galleries use the equivalent
+ * `getGalleryRouteEntries()` for the same reason - classification only
+ * needs `id`/`link`, never the full `acf.gallery` image array (which is
+ * what pushed the full gallery listing fetch past Next's 2MB data-cache
+ * entry limit).
  */
 async function buildLinkIndex(): Promise<Map<string, IndexEntry>> {
   const [pages, posts, categories, galleries] = await Promise.all([
     getPages(),
     getPostRouteEntries(),
     getCategories(),
-    getGalleries()
+    getGalleryRouteEntries()
   ])
 
   const byPath = new Map<string, IndexEntry>()

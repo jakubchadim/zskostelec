@@ -62,7 +62,7 @@ export async function PostTemplate({ data }: TemplateProps) {
                   href={fallbackLink}
                   target={isExternalHref(fallbackLink) ? '_blank' : undefined}
                   rel={isExternalHref(fallbackLink) ? 'noopener noreferrer' : undefined}
-                  className="inline-block rounded-small border border-black-1 px-3 py-2 font-medium hover:bg-gray-2"
+                  className="inline-block rounded-small border border-black-1 px-3 py-2 font-medium hover:bg-gray-1"
                 >
                   Zobrazit
                 </a>

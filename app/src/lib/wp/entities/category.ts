@@ -1,4 +1,6 @@
 import { wpFetchAllPages, WP_CACHE_TAGS } from '../client'
+import { getUrlRewriteConfig } from '../env'
+import { rewriteAdminUrls } from '../blocks/urls'
 import { asId, type ID, type Nullable } from '../types'
 
 type RawWpCategory = {
@@ -21,13 +23,17 @@ const CATEGORY_FIELDS = ['id', 'slug', 'name', 'link', 'parent']
 
 export function normalizeCategory(raw: RawWpCategory, byId: Map<number, RawWpCategory>): WpCategory {
   const parentRaw = raw.parent ? byId.get(raw.parent) : undefined
+  const search = getUrlRewriteConfig()
+  const link = rewriteAdminUrls(raw.link, search)
 
   return {
     id: asId(raw.id),
     slug: raw.slug,
     name: raw.name,
-    link: raw.link,
-    parent: parentRaw ? { id: asId(parentRaw.id), name: parentRaw.name, link: parentRaw.link } : null
+    link,
+    parent: parentRaw
+      ? { id: asId(parentRaw.id), name: parentRaw.name, link: rewriteAdminUrls(parentRaw.link, search) }
+      : null
   }
 }
 

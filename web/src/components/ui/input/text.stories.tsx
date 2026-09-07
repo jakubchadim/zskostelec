@@ -12,8 +12,6 @@ export default {
 
 export const Text = () => (
   <Offset>
-    <UiInputText
-      placeholder='Text'
-    />
+    <UiInputText placeholder='Text' />
   </Offset>
 )

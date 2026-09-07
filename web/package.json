@@ -36,6 +36,8 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
+    "crawl-api": "node scripts/crawl-api.js",
+    "mock-server": "node scripts/mock-server.js",
     "generate": "graphql-codegen --config codegen.yml",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --ignore-pattern 'public/*' --ignore-pattern '__mocks__/*'",
     "format": "eslint '*/**/*.{js,ts,tsx}' --ignore-pattern 'public/*' --ignore-pattern '__mocks__/*' --quiet --fix",

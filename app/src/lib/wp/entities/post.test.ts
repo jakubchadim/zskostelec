@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { getPostPreviews, getPostRouteEntries, resolvePostLink } from './post'
+import { getPostBySlug, getPostPreviews, getPostRouteEntries, resolvePostLink } from './post'
 
 // Ported from web/src/components/article/normalizer.ts's link/file override
 // logic: a post with real content always keeps its own permalink; a
@@ -136,6 +136,45 @@ describe('getPostRouteEntries', () => {
     const [entry] = await getPostRouteEntries()
 
     expect(entry.link).toBe('/aktuality/nazev/')
+  })
+})
+
+describe('getPostBySlug', () => {
+  beforeEach(() => {
+    process.env.WP_URL = 'https://admin.example.test'
+    vi.restoreAllMocks()
+  })
+
+  function jsonResponse(body: unknown) {
+    return new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } })
+  }
+
+  // acf-to-rest-api serializes an empty relationship/repeater field (no
+  // gallery attached to the post) as the boolean `false`, not `null`/`[]` -
+  // confirmed against live data, where most posts hit this. `?? []` alone
+  // doesn't catch it and previously crashed with
+  // "TypeError: ((intermediate value) ?? []).map is not a function".
+  it('treats an empty acf.gallery serialized as `false` as no embedded galleries', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      jsonResponse([
+        {
+          id: 1,
+          slug: 'nazev',
+          link: 'https://admin.example.test/aktuality/nazev/',
+          title: { rendered: 'Název' },
+          excerpt: { rendered: 'Popis' },
+          content: { rendered: '<p>Obsah</p>' },
+          date: '2024-03-01T00:00:00',
+          categories: [3],
+          acf: { link: null, file: false, gallery: false }
+        }
+      ])
+    )
+
+    const post = await getPostBySlug('nazev')
+
+    expect(post?.acf.gallery).toEqual([])
+    expect(post?.galleries).toBeUndefined()
   })
 })
 

@@ -41,14 +41,14 @@ function ArrowButton({
 
   if (disabled) {
     return (
-      <span className={cn(pageButtonClass, 'cursor-not-allowed bg-gray-7 opacity-50')} aria-disabled="true">
+      <span className={cn(pageButtonClass, 'cursor-not-allowed bg-gray-5 opacity-50')} aria-disabled="true">
         <Icon className="size-5" aria-hidden />
       </span>
     )
   }
 
   return (
-    <Link href={href} className={cn(pageButtonClass, 'bg-gray-7 hover:bg-gray-8')}>
+    <Link href={href} className={cn(pageButtonClass, 'bg-gray-5 hover:bg-gray-6')}>
       <Icon className="size-5" aria-hidden />
     </Link>
   )
@@ -72,7 +72,7 @@ export function ArticlePagination({ totalPages, current, generateLink }: Article
           href={generateLink(page)}
           className={cn(
             pageButtonClass,
-            page === current ? 'bg-secondary-1 hover:bg-secondary-2' : 'bg-gray-7 hover:bg-gray-8'
+            page === current ? 'bg-secondary-1 hover:bg-secondary-2' : 'bg-gray-5 hover:bg-gray-6'
           )}
         >
           {page}

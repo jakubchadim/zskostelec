@@ -9,12 +9,12 @@ vi.mock('../entities/post', async () => {
   return { ...actual, getPostRouteEntries: vi.fn(), getPostPreviews: vi.fn() }
 })
 vi.mock('../entities/category', () => ({ getCategories: vi.fn() }))
-vi.mock('../entities/gallery', () => ({ getGalleries: vi.fn() }))
+vi.mock('../entities/gallery', () => ({ getGalleryRouteEntries: vi.fn() }))
 
 import { getPages, PageTemplateType } from '../entities/page'
 import { getPostPreviews, getPostRouteEntries } from '../entities/post'
 import { getCategories } from '../entities/category'
-import { getGalleries } from '../entities/gallery'
+import { getGalleryRouteEntries } from '../entities/gallery'
 import { getStaticRoutes, resolveRoute } from './resolve'
 
 // These fixtures stand in for the fully-normalized WpPage/WpPost/WpCategory/
@@ -46,7 +46,7 @@ describe('resolveRoute', () => {
       { id: 'post-1', link: '/aktuality/nazev/', categories: ['cat-1'] } as never,
       { id: 'post-external', link: 'https://partner.example/event', categories: ['cat-1'] } as never
     ])
-    vi.mocked(getGalleries).mockResolvedValue([{ id: 'gallery-1', link: '/fotogalerie/vylet/' } as never])
+    vi.mocked(getGalleryRouteEntries).mockResolvedValue([{ id: 'gallery-1', link: '/fotogalerie/vylet/' } as never])
   })
 
   it('resolves a page path', async () => {
@@ -126,7 +126,7 @@ describe('getStaticRoutes', () => {
   beforeEach(() => {
     vi.mocked(getPages).mockResolvedValue([])
     vi.mocked(getPostRouteEntries).mockResolvedValue([])
-    vi.mocked(getGalleries).mockResolvedValue([])
+    vi.mocked(getGalleryRouteEntries).mockResolvedValue([])
     vi.mocked(getCategories).mockResolvedValue([
       { id: 'cat-1', slug: 'aktuality', name: 'Aktuality', link: '/aktuality/', parent: null } as never
     ])

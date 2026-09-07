@@ -24,7 +24,7 @@ export function isExternalHref(href: string): boolean {
   return href.startsWith('http')
 }
 
-const buttonClass = 'inline-block rounded-small border border-black-1 px-3 py-2 text-sm font-medium hover:bg-gray-2'
+const buttonClass = 'inline-block rounded-small border border-black-1 px-3 py-2 text-sm font-medium hover:bg-gray-1'
 
 type ArticlePost = {
   title: RawHTML

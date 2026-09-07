@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { getGalleryPreviewImages, normalizeGallery, type WpGallery } from './gallery'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { getGalleries, getGalleryPreviewImages, getGalleryRouteEntries, normalizeGallery, type WpGallery } from './gallery'
 import type { WpMediaLike } from '../types'
 
 function image(id: string): WpMediaLike {
@@ -107,5 +107,84 @@ describe('normalizeGallery', () => {
     })
 
     expect(result.acf.preview?.source_url).toBe('https://admin.example.test/wp-content/uploads/photo-1.jpg')
+  })
+
+  // acf-to-rest-api serializes an empty ACF repeater/gallery field as the
+  // boolean `false`, not `null`/`[]` - confirmed against live data (~6 of
+  // 900 galleries on this WP install). `?? []` alone doesn't catch it and
+  // previously crashed with "TypeError: ((intermediate value) ?? []).map is
+  // not a function".
+  it('treats acf.gallery serialized as `false` (empty repeater) as an empty array', () => {
+    const result = normalizeGallery({
+      id: 1,
+      slug: 'prazdna',
+      link: 'https://admin.example.test/fotogalerie/prazdna/',
+      title: { rendered: 'Prázdná' },
+      date: '2024-01-01',
+      acf: { preview: false, gallery: false }
+    })
+
+    expect(result.acf.gallery).toEqual([])
+    expect(result.acf.preview).toBeNull()
+  })
+})
+
+function jsonResponse(body: unknown, headers: Record<string, string> = {}) {
+  return new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json', ...headers } })
+}
+
+describe('getGalleries', () => {
+  beforeEach(() => {
+    process.env.WP_URL = 'https://admin.example.test'
+    vi.restoreAllMocks()
+  })
+
+  // The full `acf.gallery` image repeater (every image, every size, across
+  // every gallery) was what pushed this listing fetch past Next's 2MB
+  // data-cache entry limit - the index page/cards only ever read
+  // `acf.preview`, so trimming to that is what fixes the overflow.
+  it('requests only `acf.preview`, never the full `acf.gallery` image repeater', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(jsonResponse([], { 'X-WP-Total': '0', 'X-WP-TotalPages': '1' }))
+
+    await getGalleries()
+
+    const [url] = fetchMock.mock.calls[0]
+    const fields = new URL(String(url)).searchParams.get('_fields')
+    expect(fields).toContain('acf.preview')
+    expect(fields).not.toContain('acf.gallery')
+  })
+})
+
+describe('getGalleryRouteEntries', () => {
+  beforeEach(() => {
+    process.env.WP_URL = 'https://admin.example.test'
+    vi.restoreAllMocks()
+  })
+
+  it('requests only `id`/`link`, never `acf`', async () => {
+    const fetchMock = vi
+      .spyOn(global, 'fetch')
+      .mockResolvedValue(jsonResponse([], { 'X-WP-Total': '0', 'X-WP-TotalPages': '1' }))
+
+    await getGalleryRouteEntries()
+
+    const [url] = fetchMock.mock.calls[0]
+    const fields = new URL(String(url)).searchParams.get('_fields')
+    expect(fields).not.toContain('acf')
+  })
+
+  it('relative-izes the link the same way normalizeGallery does', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+      jsonResponse([{ id: 1, link: 'https://admin.example.test/fotogalerie/vylet/' }], {
+        'X-WP-Total': '1',
+        'X-WP-TotalPages': '1'
+      })
+    )
+
+    const [entry] = await getGalleryRouteEntries()
+
+    expect(entry).toEqual({ id: '1', link: '/fotogalerie/vylet/' })
   })
 })

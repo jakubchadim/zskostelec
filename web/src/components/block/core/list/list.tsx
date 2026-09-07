@@ -49,7 +49,7 @@ const BlockList = styled.div`
   }
 `
 
-type BlockCoreGroupAttrs = {}
+type BlockCoreGroupAttrs = Record<string, unknown>
 
 const BlockCoreList: BlockFC<BlockCoreGroupAttrs> = ({ block, nested }) => {
   const list = (

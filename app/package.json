@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "crawl-api": "node scripts/crawl-api.js",
+    "mock-server": "node scripts/mock-server.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

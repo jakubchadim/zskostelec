@@ -26,7 +26,7 @@ type RawWpPost = {
   acf?: {
     link?: string | null
     file?: unknown
-    gallery?: RawGalleryRef[] | null
+    gallery?: RawGalleryRef[] | false | null
   }
 }
 
@@ -112,7 +112,13 @@ async function normalizePost(raw: RawWpPost): Promise<WpPost> {
   const fileMedia = raw.acf?.file != null ? await resolveAcfMedia(raw.acf.file) : null
   const fileLink = fileMedia?.source_url ?? null
 
-  const galleryIds = (rewritten.acf?.gallery ?? [])
+  // acf-to-rest-api serializes this empty relationship/repeater field as the
+  // boolean `false`, not `null`/`[]` (same quirk as `acf.gallery` on the
+  // gallery post type itself - see entities/gallery.ts's normalizeGallery;
+  // confirmed against live data - most posts have no embedded gallery), so
+  // `?? []` alone doesn't catch it.
+  const rawGalleryRefs = rewritten.acf?.gallery
+  const galleryIds = (Array.isArray(rawGalleryRefs) ? rawGalleryRefs : [])
     .map((ref) => ref.ID ?? ref.id)
     .filter((id): id is number => id != null)
     .map((id) => asId(id))

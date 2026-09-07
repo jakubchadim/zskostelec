@@ -10,7 +10,7 @@ type RawWpGallery = {
   link: string
   title: { rendered: string }
   date: string
-  acf?: { preview?: unknown; gallery?: unknown[] | null }
+  acf?: { preview?: unknown; gallery?: unknown[] | false | null }
 }
 
 export type WpGalleryAcf = {
@@ -28,6 +28,9 @@ export type WpGallery = {
 }
 
 const GALLERY_FIELDS = ['id', 'slug', 'link', 'title', 'date', 'acf']
+/** Trims the (potentially huge) `acf.gallery` image repeater - for listing fetches that only ever read `acf.preview`. */
+const GALLERY_LISTING_FIELDS = ['id', 'slug', 'link', 'title', 'date', 'acf.preview']
+const GALLERY_ROUTE_FIELDS = ['id', 'link']
 
 export function normalizeGallery(raw: RawWpGallery): WpGallery {
   // Only rewrite the non-media fields (link/slug/title/date) - image URLs
@@ -39,7 +42,11 @@ export function normalizeGallery(raw: RawWpGallery): WpGallery {
     getUrlRewriteConfig()
   )
 
-  const galleryImages = (raw.acf?.gallery ?? [])
+  // acf-to-rest-api serializes an empty ACF repeater/gallery field as the
+  // boolean `false`, not `null`/`[]` (confirmed against live data - ~6 of
+  // 900 galleries on this WP install), so `?? []` alone doesn't catch it.
+  const rawGalleryImages = raw.acf?.gallery
+  const galleryImages = (Array.isArray(rawGalleryImages) ? rawGalleryImages : [])
     .map((image) => normalizeAcfImage(image))
     .filter((image): image is WpMediaLike => image != null)
 
@@ -87,12 +94,41 @@ export async function getGalleryBySlug(slug: string): Promise<WpGallery | null> 
  * galleries by filtering them out at render time).
  */
 export async function getGalleries(): Promise<WpGallery[]> {
+  // Listing-only: the galleries index (`GalleryCard`) and `hasPreview` only
+  // ever read `acf.preview`, never the full `acf.gallery` image array - and
+  // that array is what was pushing this fetch (all galleries, all pages)
+  // past Next's 2MB-per-entry data-cache limit. `getGalleryById`/
+  // `getGalleryBySlug` keep the full `GALLERY_FIELDS` for the single-gallery
+  // detail page, which does need every image.
   const raw = await wpFetchAllPages<RawWpGallery>('wp/v2/gallery', {
-    fields: GALLERY_FIELDS,
+    fields: GALLERY_LISTING_FIELDS,
     tags: [WP_CACHE_TAGS.gallery]
   })
 
   return raw.map(normalizeGallery).filter((gallery) => gallery.acf.preview != null)
+}
+
+export type GalleryRouteEntry = { id: ID; link: string }
+
+type RawWpGalleryRouteEntry = { id: number; link: string }
+
+/**
+ * Cheap listing for route classification only, same rationale as
+ * `getPostRouteEntries` in `entities/post.ts`: `buildLinkIndex` only keys on
+ * `id`/`link` and runs on every route resolution (every page render), so
+ * pulling the full `acf` gallery/image data there was both needless and the
+ * main source of the 2MB data-cache overflow warnings.
+ */
+export async function getGalleryRouteEntries(): Promise<GalleryRouteEntry[]> {
+  const raw = await wpFetchAllPages<RawWpGalleryRouteEntry>('wp/v2/gallery', {
+    fields: GALLERY_ROUTE_FIELDS,
+    tags: [WP_CACHE_TAGS.gallery]
+  })
+
+  return raw.map((entry) => ({
+    id: asId(entry.id),
+    link: rewriteAdminUrls({ link: entry.link }, getUrlRewriteConfig()).link
+  }))
 }
 
 /** Ported from web/src/components/gallery/normalizer.ts: preview image first, then the gallery array, deduped, capped at `limit`. */

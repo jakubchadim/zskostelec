@@ -1,4 +1,6 @@
 import { wpFetch, WP_CACHE_TAGS } from '../client'
+import { getUrlRewriteConfig } from '../env'
+import { rewriteAdminUrls } from '../blocks/urls'
 
 /** The legacy Gatsby-era menu slugs, kept for callers migrating web/src/components/nav/*.query.tsx. */
 export const LEGACY_MENU_SLUGS = {
@@ -92,5 +94,13 @@ export async function getMenuBySlug(slug: string): Promise<WpMenu | null> {
     tags: [WP_CACHE_TAGS.menus, `menu-${slug}`]
   })
 
-  return { slug, items: normalizeMenuTree(detail.items) }
+  // wp-api-menus returns absolute admin-origin URLs for every internal menu
+  // item (confirmed against live data), not the site-relative paths every
+  // other entity's `link` field already gets via `rewriteAdminUrls` - left
+  // unrewritten, `NavLink`'s `isExternalLink` (`url.startsWith('http')`)
+  // misclassifies every internal item as external and links straight to the
+  // API-only WP backend instead of routing within this app.
+  const items = rewriteAdminUrls(detail.items, getUrlRewriteConfig())
+
+  return { slug, items: normalizeMenuTree(items) }
 }
