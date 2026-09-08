@@ -27,6 +27,14 @@ export type WpGallery = {
   acf: WpGalleryAcf
 }
 
+/**
+ * Galleries per page on the galleries index. Legacy rendered every gallery
+ * on one page; with ~900 of them that's a huge document and a huge image
+ * payload, so the index paginates on the same `strana-N` scheme as
+ * categories. 12 divides evenly into the 1/2/3-column grid.
+ */
+export const GALLERY_PAGE_SIZE = 12
+
 const GALLERY_FIELDS = ['id', 'slug', 'link', 'title', 'date', 'acf']
 /** Trims the (potentially huge) `acf.gallery` image repeater - for listing fetches that only ever read `acf.preview`. */
 const GALLERY_LISTING_FIELDS = ['id', 'slug', 'link', 'title', 'date', 'acf.preview']

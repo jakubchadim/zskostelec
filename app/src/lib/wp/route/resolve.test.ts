@@ -9,12 +9,15 @@ vi.mock('../entities/post', async () => {
   return { ...actual, getPostRouteEntries: vi.fn(), getPostPreviews: vi.fn() }
 })
 vi.mock('../entities/category', () => ({ getCategories: vi.fn() }))
-vi.mock('../entities/gallery', () => ({ getGalleryRouteEntries: vi.fn() }))
+vi.mock('../entities/gallery', async () => {
+  const actual = await vi.importActual<typeof import('../entities/gallery')>('../entities/gallery')
+  return { ...actual, getGalleryRouteEntries: vi.fn(), getGalleries: vi.fn() }
+})
 
 import { getPages, PageTemplateType } from '../entities/page'
 import { getPostPreviews, getPostRouteEntries } from '../entities/post'
 import { getCategories } from '../entities/category'
-import { getGalleryRouteEntries } from '../entities/gallery'
+import { getGalleries, getGalleryRouteEntries, GALLERY_PAGE_SIZE } from '../entities/gallery'
 import { getStaticRoutes, resolveRoute } from './resolve'
 
 // These fixtures stand in for the fully-normalized WpPage/WpPost/WpCategory/
@@ -47,14 +50,31 @@ describe('resolveRoute', () => {
       { id: 'post-external', link: 'https://partner.example/event', categories: ['cat-1'] } as never
     ])
     vi.mocked(getGalleryRouteEntries).mockResolvedValue([{ id: 'gallery-1', link: '/fotogalerie/vylet/' } as never])
+    vi.mocked(getGalleries).mockResolvedValue([])
   })
 
   it('resolves a page path', async () => {
     await expect(resolveRoute(['o-skole'])).resolves.toEqual({
       kind: 'page',
       id: 'page-1',
-      templateType: PageTemplateType.DEFAULT
+      templateType: PageTemplateType.DEFAULT,
+      pageNumber: 1,
+      basePath: '/o-skole/'
     })
+  })
+
+  it('resolves a strana-N path on the galleries index', async () => {
+    await expect(resolveRoute(['fotogalerie', 'strana-3'])).resolves.toEqual({
+      kind: 'page',
+      id: 'page-2',
+      templateType: PageTemplateType.GALLERIES,
+      pageNumber: 3,
+      basePath: '/fotogalerie/'
+    })
+  })
+
+  it('does not paginate page templates that have no listing of their own', async () => {
+    await expect(resolveRoute(['o-skole', 'strana-2'])).resolves.toBeNull()
   })
 
   it('resolves a post path with its first category', async () => {
@@ -114,7 +134,9 @@ describe('resolveRoute', () => {
     await expect(resolveRoute(['o-skole'])).resolves.toEqual({
       kind: 'page',
       id: 'page-1',
-      templateType: PageTemplateType.DEFAULT
+      templateType: PageTemplateType.DEFAULT,
+      pageNumber: 1,
+      basePath: '/o-skole/'
     })
 
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('/o-skole/'))
@@ -141,5 +163,36 @@ describe('getStaticRoutes', () => {
     // ceil(32 / 15) = 3 pages
     expect(categoryRoutes).toHaveLength(3)
     expect(categoryRoutes.map((r) => r.path)).toEqual(['/aktuality/', '/aktuality/strana-2/', '/aktuality/strana-3/'])
+  })
+
+  it('enumerates every strana-N pagination page for the galleries index', async () => {
+    vi.mocked(getPostPreviews).mockResolvedValue({ posts: [], totalCount: 0 })
+    vi.mocked(getPages).mockResolvedValue([
+      page({ id: 'page-2', link: '/fotogalerie/', template: PageTemplateType.GALLERIES })
+    ])
+    vi.mocked(getGalleries).mockResolvedValue(
+      Array.from({ length: GALLERY_PAGE_SIZE * 2 + 1 }, (_, i) => ({ id: `gallery-${i}` }) as never)
+    )
+
+    const routes = await getStaticRoutes()
+    const galleryIndexRoutes = routes.filter((r) => r.path.startsWith('/fotogalerie/'))
+
+    expect(galleryIndexRoutes.map((r) => r.path)).toEqual([
+      '/fotogalerie/',
+      '/fotogalerie/strana-2/',
+      '/fotogalerie/strana-3/'
+    ])
+    expect(galleryIndexRoutes.map((r) => (r.route.kind === 'page' ? r.route.pageNumber : null))).toEqual([1, 2, 3])
+  })
+
+  it('does not paginate a non-listing page template', async () => {
+    vi.mocked(getPostPreviews).mockResolvedValue({ posts: [], totalCount: 0 })
+    vi.mocked(getPages).mockResolvedValue([
+      page({ id: 'page-1', link: '/o-skole/', template: PageTemplateType.DEFAULT })
+    ])
+
+    const routes = await getStaticRoutes()
+
+    expect(routes.filter((r) => r.path.startsWith('/o-skole/')).map((r) => r.path)).toEqual(['/o-skole/'])
   })
 })

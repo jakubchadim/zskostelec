@@ -115,6 +115,10 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
   })
 
   for (const page of pages) {
+    if (page.templateType === TemplateType.GALLERIES) {
+      continue
+    }
+
     const template = templateByType[page.templateType] || pageTemplate
 
     createPage({
@@ -163,6 +167,27 @@ export async function createPages ({ graphql, actions, reporter }): Promise<void
       }
     })
   })
+
+  // Create paginated gallery listing page
+  if (galleryPage) {
+    const galleryPaginationLimit = 12
+    const totalGalleryCount = allGallery.data.allWordpressWpGallery.edges.length
+    const numberOfGalleryPages = Math.max(Math.ceil(totalGalleryCount / galleryPaginationLimit), 1)
+
+    for (let i = 0; i < numberOfGalleryPages; i++) {
+      createPage({
+        path: i === 0 ? galleryPage.link : `${galleryPage.link}strana-${i + 1}/`,
+        component: templateByType[TemplateType.GALLERIES],
+        context: {
+          id: galleryPage.id,
+          offset: i * galleryPaginationLimit,
+          limit: galleryPaginationLimit,
+          totalCount: totalGalleryCount,
+          basePath: galleryPage.link
+        }
+      })
+    }
+  }
 }
 
 exports.createSchemaCustomization = ({ actions }) => {

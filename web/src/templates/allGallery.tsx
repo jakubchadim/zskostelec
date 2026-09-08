@@ -6,6 +6,7 @@ import { TransformedBlock } from '../components/block/types'
 import { parseBlocks } from '../components/block/utils'
 import Content from '../components/content/content'
 import Layout from '../components/layout/layout'
+import UiNavPagination from '../components/nav/pagination'
 import SEO from '../components/seo/seo'
 import UiContainer from '../components/ui/container/container'
 import UiGallery from '../components/ui/gallery/gallery'
@@ -46,7 +47,7 @@ type WordpressAllGalleryData = {
 }
 
 export const query = graphql`
-  query allGalleryQuery($id: String!) {
+  query allGalleryQuery($id: String!, $offset: Int!, $limit: Int!) {
     wordpressPage(id: { eq: $id }) {
       title
       content
@@ -61,6 +62,8 @@ export const query = graphql`
     allWordpressWpGallery(
       filter: { acf: { preview: { link: { ne: null } } } }
       sort: { fields: date, order: DESC }
+      skip: $offset
+      limit: $limit
     ) {
       edges {
         node {
@@ -87,10 +90,19 @@ export const query = graphql`
   }
 `
 
-type AllGalleryProps = PageProps<WordpressAllGalleryData>
+type AllGalleryProps = PageProps<
+  WordpressAllGalleryData,
+  {
+    limit: number
+    offset: number
+    totalCount: number
+    basePath: string
+  }
+>
 
 const AllGallery: React.FC<AllGalleryProps> = ({
-  data: { wordpressPage, allWordpressWpGallery }
+  data: { wordpressPage, allWordpressWpGallery },
+  pageContext
 }) => {
   const parsedBlocks = React.useMemo(
     () => parseBlocks(wordpressPage.blocks || []),
@@ -133,6 +145,19 @@ const AllGallery: React.FC<AllGalleryProps> = ({
           })}
         </UiGrid>
       </UiSectionOffset>
+      {pageContext.totalCount > pageContext.limit && (
+        <UiSection.Pagination>
+          <UiNavPagination
+            totalCount={Math.ceil(pageContext.totalCount / pageContext.limit)}
+            current={pageContext.offset / pageContext.limit + 1}
+            generateLink={(page) =>
+              page === 1
+                ? pageContext.basePath
+                : `${pageContext.basePath}strana-${page}/`
+            }
+          />
+        </UiSection.Pagination>
+      )}
     </UiContainer>
   )
 

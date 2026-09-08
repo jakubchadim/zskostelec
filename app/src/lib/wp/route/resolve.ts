@@ -1,12 +1,12 @@
 import { getCategories } from '../entities/category'
-import { getGalleryRouteEntries } from '../entities/gallery'
+import { getGalleries, getGalleryRouteEntries, GALLERY_PAGE_SIZE } from '../entities/gallery'
 import { getPages, PageTemplateType } from '../entities/page'
 import { CATEGORY_PAGE_SIZE, getPostPreviews, getPostRouteEntries } from '../entities/post'
 import type { ID } from '../types'
 import type { ResolvedRoute } from './types'
 
 type IndexEntry =
-  | { kind: 'page'; id: ID; templateType: PageTemplateType }
+  | { kind: 'page'; id: ID; templateType: PageTemplateType; basePath: string }
   | { kind: 'post'; id: ID; categoryId: ID }
   | { kind: 'category'; id: ID; rootCategoryId: ID; basePath: string }
   | { kind: 'gallery'; id: ID; allGalleryLink: string | null }
@@ -78,7 +78,8 @@ async function buildLinkIndex(): Promise<Map<string, IndexEntry>> {
   const allGalleryLink = galleriesPage ? normalizePath(galleriesPage.link) : null
 
   for (const page of pages) {
-    setIndexEntry(byPath, normalizePath(page.link), { kind: 'page', id: page.id, templateType: page.template })
+    const basePath = normalizePath(page.link)
+    setIndexEntry(byPath, basePath, { kind: 'page', id: page.id, templateType: page.template, basePath })
   }
 
   for (const category of categories) {
@@ -117,7 +118,14 @@ async function buildLinkIndex(): Promise<Map<string, IndexEntry>> {
 }
 
 function toResolvedRoute(entry: IndexEntry, pageNumber: number): ResolvedRoute {
-  return entry.kind === 'category' ? { ...entry, pageNumber } : entry
+  return entry.kind === 'category' || entry.kind === 'page' ? { ...entry, pageNumber } : entry
+}
+
+type PaginatedEntry = Extract<IndexEntry, { kind: 'category' } | { kind: 'page' }>
+
+/** The listings that serve `…/strana-N/` pages of their own content. */
+function isPaginatedEntry(entry: IndexEntry): entry is PaginatedEntry {
+  return entry.kind === 'category' || (entry.kind === 'page' && entry.templateType === PageTemplateType.GALLERIES)
 }
 
 export async function resolveRoute(slugSegments: string[]): Promise<ResolvedRoute | null> {
@@ -132,10 +140,10 @@ export async function resolveRoute(slugSegments: string[]): Promise<ResolvedRout
   const paginationMatch = path.match(PAGINATION_SUFFIX)
   if (paginationMatch) {
     const [, basePath, pageNumberRaw] = paginationMatch
-    const category = index.get(basePath)
+    const entry = index.get(basePath)
 
-    if (category?.kind === 'category') {
-      return toResolvedRoute(category, Number(pageNumberRaw))
+    if (entry && isPaginatedEntry(entry)) {
+      return toResolvedRoute(entry, Number(pageNumberRaw))
     }
   }
 
@@ -148,15 +156,12 @@ export async function getStaticRoutes(): Promise<{ path: string; route: Resolved
   const routes: { path: string; route: ResolvedRoute }[] = []
 
   for (const [path, entry] of index) {
-    if (entry.kind !== 'category') {
-      routes.push({ path, route: entry })
+    if (!isPaginatedEntry(entry)) {
+      routes.push({ path, route: toResolvedRoute(entry, 1) })
       continue
     }
 
-    // Count-only: the lean preview fetch reads totalCount from X-WP-Total
-    // without pulling content/blocks through the normalization pipeline.
-    const { totalCount } = await getPostPreviews(entry.id, { offset: 0, limit: 1 })
-    const totalPages = Math.max(Math.ceil(totalCount / CATEGORY_PAGE_SIZE), 1)
+    const totalPages = await countListingPages(entry)
 
     for (let page = 1; page <= totalPages; page += 1) {
       const pagePath = page === 1 ? path : `${entry.basePath}strana-${page}/`
@@ -165,4 +170,19 @@ export async function getStaticRoutes(): Promise<{ path: string; route: Resolved
   }
 
   return routes
+}
+
+/** How many `strana-N` pages a paginated listing has. */
+async function countListingPages(entry: PaginatedEntry): Promise<number> {
+  if (entry.kind === 'category') {
+    // Count-only: the lean preview fetch reads totalCount from X-WP-Total
+    // without pulling content/blocks through the normalization pipeline.
+    const { totalCount } = await getPostPreviews(entry.id, { offset: 0, limit: 1 })
+    return Math.max(Math.ceil(totalCount / CATEGORY_PAGE_SIZE), 1)
+  }
+
+  // Galleries index. `getGalleries()` applies the preview filter that decides
+  // what the index actually shows, so its length is the count to paginate on.
+  const galleries = await getGalleries()
+  return Math.max(Math.ceil(galleries.length / GALLERY_PAGE_SIZE), 1)
 }
