@@ -24,7 +24,6 @@ const url = require('url');
 
 const PORT = process.env.MOCK_PORT || 8765;
 const SNAPSHOT_DIR = path.join(__dirname, '..', 'api-snapshot');
-const PRODUCTION_URL = 'https://zskostelec.tode.cz';
 const LOCAL_URL = `http://localhost:${PORT}`;
 
 // --- Load manifest ---
@@ -36,6 +35,16 @@ if (fs.existsSync(manifestPath)) {
   console.warn('WARNING: api-snapshot/manifest.json not found. Run "npm run crawl-api" first.');
 }
 
+// The origin the snapshot was crawled from — recorded in the manifest by
+// crawl-api.js; the fallback keeps pre-existing snapshots working. Every
+// absolute URL inside the snapshot uses this origin, so it has to be swapped
+// for ours on the way out (see rewriteUrls).
+const SOURCE_URL = (
+  process.env.MOCK_SOURCE_URL ||
+  manifest.baseUrl ||
+  'https://zskostelec.tode.cz'
+).replace(/\/+$/, '');
+
 function routeToSlug(route) {
   return route.replace(/^\//, '').replace(/\//g, '-') || 'root';
 }
@@ -46,15 +55,39 @@ function loadSnapshot(slug) {
   return JSON.parse(fs.readFileSync(fp, 'utf8'));
 }
 
+const SOURCE_HOST = SOURCE_URL.replace(/^https?:\/\//, '');
+const SOURCE_ORIGIN_RE = new RegExp(
+  `https?://${SOURCE_HOST.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(/[^\\s"'<>\\\\]*)?`,
+  'g'
+);
+const MEDIA_PATH_RE = /^\/wp-(?:content|includes)\//;
+
+/**
+ * Swaps the crawled origin for this server's own origin.
+ *
+ * This has to happen on every response, not just the root index: the app
+ * derives "which origin to strip out of WP data" from WP_URL (see
+ * src/lib/wp/env.ts), so with WP_URL=http://localhost:8765 a snapshot that
+ * still says https://zskostelec.tode.cz gets nothing stripped, and every
+ * internal link renders as an absolute link back to the real site.
+ *
+ * Both schemes are matched, because WP keeps whichever one a link was
+ * authored under and older content still carries http:// URLs — the app
+ * can't fix those itself here, since in mock mode it has no idea the
+ * snapshot's origin is "itself".
+ *
+ * Media is the exception and keeps its absolute URL: nothing under
+ * wp-content is mirrored into the snapshot, so those requests need to stay
+ * pointed at a real host (this server 302s them back, see below).
+ */
 function rewriteUrls(str) {
-  return str.replace(
-    new RegExp(PRODUCTION_URL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-    LOCAL_URL
+  return str.replace(SOURCE_ORIGIN_RE, (match, path) =>
+    path && MEDIA_PATH_RE.test(path) ? match : `${LOCAL_URL}${path ?? ''}`
   );
 }
 
 function sendJson(res, status, data, extraHeaders) {
-  const body = JSON.stringify(data);
+  const body = rewriteUrls(JSON.stringify(data));
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
@@ -130,6 +163,17 @@ const server = http.createServer((req, res) => {
     const raw = fs.readFileSync(rootPath, 'utf8');
     res.writeHead(200, { 'Content-Type': 'application/json; charset=UTF-8', 'Access-Control-Allow-Origin': '*' });
     res.end(rewriteUrls(raw));
+    return;
+  }
+
+  // --- Media passthrough ---
+  // Nothing under wp-content is mirrored into the snapshot, and the entities
+  // that keep their media URLs absolute on purpose (gallery previews, ACF
+  // file fields) now point at this server after the origin swap. Send those
+  // on to the real files instead of 404ing them.
+  if (pathname.startsWith('/wp-content') || pathname.startsWith('/wp-includes')) {
+    res.writeHead(302, { Location: `${SOURCE_URL}${req.url}`, 'Access-Control-Allow-Origin': '*' });
+    res.end();
     return;
   }
 
@@ -221,6 +265,7 @@ server.listen(PORT, () => {
   console.log(`  Listening: http://localhost:${PORT}`);
   console.log(`  Snapshots: ${SNAPSHOT_DIR}`);
   console.log(`  Routes:    ${manifest.routes.length} loaded`);
+  console.log(`  Rewriting: ${SOURCE_URL} -> ${LOCAL_URL} (media 302s back to ${SOURCE_URL})`);
   if (!ready) {
     console.log('');
     console.log('  WARNING: No snapshot found. Run "npm run crawl-api" first.');

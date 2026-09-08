@@ -25,6 +25,11 @@ describe('rewriteBlockLinks', () => {
     expect(rewriteBlockLinks(block(html), search).content).toBe(html)
   })
 
+  it('rewrites a link stored under the other scheme', () => {
+    const result = rewriteBlockLinks(block('<p><a href="http://admin.example.test/o-skole/">O škole</a></p>'), search)
+    expect(result.content).toBe('<p><a href="/o-skole/">O škole</a></p>')
+  })
+
   it('leaves an unrelated external link untouched', () => {
     const html = '<p><a href="https://example.com/">Example</a></p>'
     expect(rewriteBlockLinks(block(html), search).content).toBe(html)
@@ -49,6 +54,21 @@ describe('rewriteAdminUrls', () => {
     expect(result.link).toBe('/aktuality/nazev/')
     expect(result.acf.file.url).toBe('/wp-content/uploads/a.pdf')
     expect(result.items).toEqual(['/x/', 'https://other.test/y/'])
+  })
+
+  it('rewrites the same origin spelled with the other scheme', () => {
+    // WP keeps the scheme a link was authored under, so an https site still
+    // has http:// links recorded in older content.
+    expect(rewriteAdminUrls('http://admin.example.test/dokumenty/', search)).toBe('/dokumenty/')
+  })
+
+  it('leaves other-scheme media absolute, so images and files still resolve', () => {
+    const mediaUrl = 'http://admin.example.test/wp-content/uploads/2021/01/a.jpg'
+    expect(rewriteAdminUrls(mediaUrl, search)).toBe(mediaUrl)
+  })
+
+  it('leaves an unrelated origin untouched whichever scheme it uses', () => {
+    expect(rewriteAdminUrls('http://other.test/x/', search)).toBe('http://other.test/x/')
   })
 
   it('fixes the &#8211; entity', () => {

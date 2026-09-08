@@ -19,7 +19,6 @@ const url = require('url');
 
 const PORT = process.env.MOCK_PORT || 8765;
 const SNAPSHOT_DIR = path.join(__dirname, '..', 'api-snapshot');
-const PRODUCTION_URL = 'https://zskostelec.tode.cz';
 const LOCAL_URL = `http://localhost:${PORT}`;
 
 // --- Load manifest & build route lookup ---
@@ -42,10 +41,18 @@ for (const route of manifest.routes) {
   slugToRoute[routeToSlug(route)] = route;
 }
 
+// The origin the snapshot was crawled from — recorded in the manifest by
+// crawl-api.js; the fallback keeps pre-existing snapshots working.
+const SOURCE_URL = (
+  process.env.MOCK_SOURCE_URL ||
+  manifest.baseUrl ||
+  'https://zskostelec.tode.cz'
+).replace(/\/+$/, '');
+
 // --- Helpers ---
 
 function sendJson(res, status, data, extraHeaders) {
-  const body = JSON.stringify(data);
+  const body = rewriteUrls(JSON.stringify(data));
   const headers = {
     'Content-Type': 'application/json; charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
@@ -62,11 +69,28 @@ function loadSnapshot(slug) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
-// Rewrite production URLs → localhost in a JSON string (used for root response)
+const SOURCE_HOST = SOURCE_URL.replace(/^https?:\/\//, '');
+const SOURCE_ORIGIN_RE = new RegExp(
+  `https?://${SOURCE_HOST.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(/[^\\s"'<>\\\\]*)?`,
+  'g'
+);
+const MEDIA_PATH_RE = /^\/wp-(?:content|includes)\//;
+
+/**
+ * Swaps the crawled origin for this server's own origin, on every response.
+ *
+ * gatsby-source-wordpress strips ADMIN_PROTOCOL://ADMIN_URL out of the data
+ * (see searchReplaceContentUrls in .gatsby/gatsby-config.ts), so pointing it
+ * at localhost while the snapshot still says zskostelec.tode.cz leaves every
+ * internal link absolute — i.e. pointing back at the real site. Both schemes
+ * are matched, because WP keeps whichever one a link was authored under.
+ *
+ * Media keeps its absolute URL: nothing under wp-content is mirrored into
+ * the snapshot, so those requests need to stay pointed at a real host.
+ */
 function rewriteUrls(str) {
-  return str.replace(
-    new RegExp(PRODUCTION_URL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-    LOCAL_URL
+  return str.replace(SOURCE_ORIGIN_RE, (match, path) =>
+    path && MEDIA_PATH_RE.test(path) ? match : `${LOCAL_URL}${path ?? ''}`
   );
 }
 
@@ -108,6 +132,15 @@ const server = http.createServer((req, res) => {
       'Access-Control-Allow-Origin': '*',
     });
     res.end(rewritten);
+    return;
+  }
+
+  // --- Media passthrough ---
+  // Nothing under wp-content is mirrored into the snapshot, so any media URL
+  // that did get rewritten to this origin is sent on to the real file.
+  if (pathname.startsWith('/wp-content') || pathname.startsWith('/wp-includes')) {
+    res.writeHead(302, { Location: `${SOURCE_URL}${req.url}`, 'Access-Control-Allow-Origin': '*' });
+    res.end();
     return;
   }
 

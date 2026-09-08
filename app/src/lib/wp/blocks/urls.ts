@@ -4,6 +4,56 @@ import type { TransformedBlock } from './types'
 
 export type SearchAndReplace = { sourceUrl: string; replacementUrl: string }
 
+/** Media/asset paths, the one thing that must keep an absolute URL: nothing serves wp-content from this app. */
+const MEDIA_PATH = /^\/wp-(?:content|includes)\//
+
+/**
+ * The configured origin with the opposite scheme, e.g. `http://host` for a
+ * `https://host` source.
+ *
+ * WP content stores some URLs under the scheme that was configured when the
+ * link was authored, so a site now served over https still has `http://`
+ * links (and image/file URLs) recorded in older content. Those miss the
+ * exact-origin match, which leaves an internal link rendering as an external
+ * one straight back to the API-only WP backend.
+ */
+function alternateSchemeOrigin(sourceUrl: string): string | null {
+  if (sourceUrl.startsWith('https://')) {
+    return `http://${sourceUrl.slice('https://'.length)}`
+  }
+
+  if (sourceUrl.startsWith('http://')) {
+    return `https://${sourceUrl.slice('http://'.length)}`
+  }
+
+  return null
+}
+
+/**
+ * Applies the same origin -> `replacementUrl` swap to the opposite-scheme
+ * spelling of the source origin, but only for non-media URLs.
+ *
+ * Deliberately narrower than the exact-origin replacement it complements:
+ * that one is a plain substring swap over every URL including media (its
+ * long-standing behavior, which `normalizeGallery` and `normalizePost` work
+ * around by carving media out before calling it), whereas this only ever
+ * touches URLs that would otherwise be left absolute entirely. Media keeps
+ * its absolute URL so images and file downloads still resolve.
+ */
+function replaceAlternateScheme(value: string, search: SearchAndReplace): string {
+  const alternate = alternateSchemeOrigin(search.sourceUrl)
+
+  if (!alternate || !value.includes(alternate)) {
+    return value
+  }
+
+  const escaped = alternate.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+  return value.replace(new RegExp(`${escaped}(/[^\\s"'<>\\\\]*)?`, 'g'), (match, path?: string) =>
+    path && MEDIA_PATH.test(path) ? match : `${search.replacementUrl}${path ?? ''}`
+  )
+}
+
 /**
  * Rewrites absolute admin-origin links back to site-relative paths inside a
  * single block's rendered HTML content. Only touches `<a href>` values that
@@ -21,8 +71,19 @@ export function rewriteBlockLinks(rawBlock: TransformedBlock, search: SearchAndR
   fragment.querySelectorAll('a').forEach((link) => {
     const href = link.getAttribute('href')
 
-    if (href && href.endsWith('/') && href.includes(search.sourceUrl)) {
+    if (!href || !href.endsWith('/')) {
+      return
+    }
+
+    if (href.includes(search.sourceUrl)) {
       link.setAttribute('href', href.replace(search.sourceUrl, search.replacementUrl))
+      return
+    }
+
+    const alternate = replaceAlternateScheme(href, search)
+
+    if (alternate !== href) {
+      link.setAttribute('href', alternate)
     }
   })
 
@@ -52,7 +113,8 @@ export function rewriteBlockLinks(rawBlock: TransformedBlock, search: SearchAndR
  */
 export function rewriteAdminUrls<T>(value: T, search: SearchAndReplace): T {
   if (typeof value === 'string') {
-    return value.split(search.sourceUrl).join(search.replacementUrl).split('&#8211;').join('-') as unknown as T
+    const exact = value.split(search.sourceUrl).join(search.replacementUrl)
+    return replaceAlternateScheme(exact, search).split('&#8211;').join('-') as unknown as T
   }
 
   if (Array.isArray(value)) {

@@ -3,8 +3,7 @@ import React from 'react'
 import { OpenInNew } from '@styled-icons/material/OpenInNew'
 import UiNav from '../ui/nav/nav'
 import UiIcon from '../ui/icon/icon'
-import { NavItem } from './nav.query'
-import { isExternalLink } from './utils'
+import { isExternalLink, NavItem } from './utils'
 
 export function renderMenuItem(
   item: NavItem,
