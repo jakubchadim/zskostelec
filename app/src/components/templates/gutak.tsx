@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { BlockContent } from '@/components/block/content'
+import { Section } from '@/components/block/section'
 import { WpImage } from '@/components/image/wp-image'
 import { Container } from '@/components/ui/container'
 import { getGutaky, getPageById, type ResolvedRoute, type WpGutak } from '@/lib/wp'
@@ -47,18 +48,24 @@ export async function GutakTemplate({ data }: TemplateProps) {
     notFound()
   }
 
+  const title = (
+    <Container>
+      <h1 className="top">{page.title}</h1>
+    </Container>
+  )
+
   return (
     <>
-      <Container>
-        <h1 className="top">{page.title}</h1>
-      </Container>
       {page.blocks.length > 0 ? (
-        <BlockContent blocks={page.blocks} />
+        <BlockContent blocks={page.blocks} title={title} />
       ) : (
-        <Container>
-          {/* See templates/page.tsx for why this is plain dangerouslySetInnerHTML. */}
-          <div dangerouslySetInnerHTML={{ __html: page.content }} />
-        </Container>
+        <Section>
+          {title}
+          <Container>
+            {/* See templates/page.tsx for why this is plain dangerouslySetInnerHTML. */}
+            <div dangerouslySetInnerHTML={{ __html: page.content }} />
+          </Container>
+        </Section>
       )}
       <Container>
         <div className="grid grid-cols-1 gap-4 pt-1 pb-4 xs:grid-cols-2 sm:grid-cols-3 sm:py-4 md:pt-8 md:pb-4">

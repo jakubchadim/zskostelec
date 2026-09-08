@@ -31,7 +31,7 @@ export function Box({ children, className, fullHeight }: BoxProps) {
 }
 
 export function BoxHeader({ children }: { children: ReactNode }) {
-  return <div className="px-4 pt-3 xs:px-6 xs:pt-5">{children}</div>
+  return <div className="px-4 pt-3 mb-2 xs:px-6 xs:pt-5 xs:mb-4">{children}</div>
 }
 
 export function BoxContent({ children }: { children: ReactNode }) {

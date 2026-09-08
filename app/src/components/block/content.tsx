@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import './blocks.css'
 import { normalizeBlocks, parseBlocks, type Block, type TransformedBlock } from '@/lib/wp'
 import type { BlockColorPalette } from './color/color'
@@ -8,6 +9,10 @@ import { getBlockSections } from './utils'
 
 export type BlockContentProps = {
   blocks: TransformedBlock[]
+  /** Rendered inside the first section, ahead of its blocks - e.g. the page's `<h1>`. */
+  title?: ReactNode
+  /** Rendered inside the last section, after its blocks. */
+  footer?: ReactNode
 }
 
 /**
@@ -30,7 +35,7 @@ export type BlockContentProps = {
  * non-`BlockContent` consumer of raw `post.blocks`/`page.blocks` needs to
  * know per-type normalization hasn't happened yet at that point.
  */
-export function BlockContent({ blocks }: BlockContentProps) {
+export function BlockContent({ blocks, title, footer }: BlockContentProps) {
   registerCoreBlockNormalizers()
 
   const normalized = normalizeBlocks(blocks)
@@ -45,7 +50,9 @@ export function BlockContent({ blocks }: BlockContentProps) {
     <>
       {sections.map((section, index) => (
         <Section key={index} backgroundColor={section.backgroundColor} textColor={section.textColor}>
+          {index === 0 && title}
           <BlockList blocks={section.blocks} />
+          {index === sections.length - 1 && footer}
         </Section>
       ))}
     </>

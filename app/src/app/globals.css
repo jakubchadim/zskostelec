@@ -74,17 +74,19 @@
   --text-title-4: 1.5rem; /* 24px */
   --text-title-5: 1.25rem; /* 20px */
 
-  /* Shadows — verbatim from theme.ts `shadow` (unitless rgba, no conversion
-     needed regardless of root font-size). */
-  --shadow-small: 0 0.125rem 0.25rem rgba(22, 28, 45, 0.075);
-  --shadow-medium: 0 0.5rem 1.5rem rgba(22, 28, 45, 0.1);
-  --shadow-large: 0 1.5rem 4rem rgba(22, 28, 45, 0.1);
-  --shadow-light-medium: 0 0.5rem 1.5rem rgba(22, 28, 45, 0.05);
-  --shadow-light-large: 0 1.5rem 4rem rgba(22, 28, 45, 0.05);
-  --shadow-dark-medium: 0 0.5rem 1.5rem rgba(22, 28, 45, 0.15);
-  --shadow-dark-large: 0 1.5rem 4rem rgba(22, 28, 45, 0.15);
+  /* Shadows — converted from theme.ts `shadow` (10px root) to real rem, same
+     as radius/font-size above. The rgba() colors are unitless and unaffected,
+     but the offset/blur/spread lengths are `rem` and DO scale with root
+     font-size, so each value here is the legacy one × 10/16. */
+  --shadow-small: 0 0.078125rem 0.15625rem rgba(22, 28, 45, 0.075);
+  --shadow-medium: 0 0.3125rem 0.9375rem rgba(22, 28, 45, 0.1);
+  --shadow-large: 0 0.9375rem 2.5rem rgba(22, 28, 45, 0.1);
+  --shadow-light-medium: 0 0.3125rem 0.9375rem rgba(22, 28, 45, 0.05);
+  --shadow-light-large: 0 0.9375rem 2.5rem rgba(22, 28, 45, 0.05);
+  --shadow-dark-medium: 0 0.3125rem 0.9375rem rgba(22, 28, 45, 0.15);
+  --shadow-dark-large: 0 0.9375rem 2.5rem rgba(22, 28, 45, 0.15);
   --shadow-lift:
-    0 1rem 2.5rem rgba(22, 28, 45, 0.1), 0 0.5rem 1rem -0.75rem rgba(22, 28, 45, 0.1);
+    0 0.625rem 1.5625rem rgba(22, 28, 45, 0.1), 0 0.3125rem 0.625rem -0.46875rem rgba(22, 28, 45, 0.1);
 
   /* Fonts — `primary`/`secondary` in the legacy theme were both Roboto;
      collapsed to one token. The `--font-roboto` variable is set by
