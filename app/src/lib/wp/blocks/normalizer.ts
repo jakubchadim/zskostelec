@@ -59,20 +59,37 @@ export function registerBlockNormalizer(blockName: string, normalize: NormalizeF
 }
 
 /**
+ * Blocks that have already been through their per-type normalizer. The
+ * per-type normalizers are NOT idempotent (e.g. `core/image` clears
+ * `content` and returns `null` for a block without content, `core/button`
+ * and `core/file` look for an `<a>` they've already unwrapped), and the
+ * pipeline runs twice: once at fetch time in the entity layer and again in
+ * `BlockContent`. Once the registry is populated (after the first render
+ * in a long-lived server process), the fetch-time pass normalizes too, so
+ * without this guard the render-time pass silently dropped every image,
+ * button and file block.
+ */
+const typeNormalized = new WeakSet<TransformedBlock>()
+
+/**
  * Applies link rewriting (when `search` is given) and per-block-type
  * normalization (via whatever's in the `registerBlockNormalizer` registry)
  * to a flat block array. A block whose normalizer returns `null` is
- * dropped.
+ * dropped. Each block goes through its per-type normalizer at most once.
  */
 export function normalizeBlocks(rawBlocks: TransformedBlock[], search?: SearchAndReplace): TransformedBlock[] {
   const results: TransformedBlock[] = []
 
   for (const rawBlock of rawBlocks) {
+    const alreadyNormalized = typeNormalized.has(rawBlock)
     const linked = search ? rewriteBlockLinks(rawBlock, search) : rawBlock
-    const normalize = linked.type != null ? registry.get(linked.type) : undefined
+    const normalize = !alreadyNormalized && linked.type != null ? registry.get(linked.type) : undefined
     const normalized = normalize ? normalize(linked) : linked
 
     if (normalized != null) {
+      if (normalize || alreadyNormalized) {
+        typeNormalized.add(normalized)
+      }
       results.push(normalized)
     }
   }

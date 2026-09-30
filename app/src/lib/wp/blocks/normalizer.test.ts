@@ -79,6 +79,18 @@ describe('registerBlockNormalizer + normalizeBlocks', () => {
     expect(normalized.content).toBeNull()
   })
 
+  it('runs a per-type normalizer at most once per block (fetch-time + render-time passes)', () => {
+    // Mirrors core/image: drops blocks without content, clears content once normalized.
+    registerBlockNormalizer('test/once-block', (block) => (block.content ? { ...block, content: null } : null))
+    const search = { sourceUrl: 'https://admin.example.com', replacementUrl: '' }
+
+    const fetchTimePass = normalizeBlocks([{ ...raw, type: 'test/once-block' }], search)
+    const renderTimePass = normalizeBlocks(fetchTimePass)
+
+    expect(renderTimePass).toHaveLength(1)
+    expect(renderTimePass[0].content).toBeNull()
+  })
+
   it('passes unregistered block types through unchanged', () => {
     const [normalized] = normalizeBlocks([{ ...raw, type: 'test/unregistered' }])
     expect(normalized).toEqual({ ...raw, type: 'test/unregistered' })
