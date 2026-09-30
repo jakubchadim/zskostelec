@@ -1,4 +1,4 @@
-import { Container } from '@/components/ui/container'
+import { BlockContainer as Container } from '../../block-container'
 import { WpImage } from '@/components/image/wp-image'
 import { cn } from '@/lib/utils'
 import type { Nullable, RawHTML } from '@/lib/wp'
@@ -15,18 +15,10 @@ type BlockCoreImageAttrs = {
 }
 
 /**
- * Ported from `web/src/components/block/core/image/image.tsx`, rendering
- * via `<WpImage>` (`@/components/image/wp-image`) instead of a bare `<img>`
- * - see the T3 plan's image-block note for why a minimal constructed
- * media-like object is safe here (no real `media_details.sizes` exist for
- * an in-content image parsed out of raw HTML either way, so `WpImage`
- * degrades to the same single-source `<img>` legacy always rendered).
- *
- * `rounded` (`is-style-rounded`) forces full width with `!important` in
- * legacy (`img { width: 100% !important; border-radius: radius.large }`) -
- * ported as Tailwind's `w-full!` important-modifier + `rounded-large`
- * (legacy `radius.large` = 8px, matching this app's existing `rounded-large`
- * token exactly).
+ * Gutenberg image rendered via `<WpImage>` with an outlined, rounded frame.
+ * A minimal media-like object is constructed from the block attrs (an
+ * in-content image has no `media_details.sizes`), so `WpImage` degrades to
+ * a single-source `<img>`.
  */
 export const BlockCoreImage: BlockFC<BlockCoreImageAttrs> = ({ block, nested }) => {
   const { attrs } = block
@@ -41,11 +33,11 @@ export const BlockCoreImage: BlockFC<BlockCoreImageAttrs> = ({ block, nested }) 
   }
 
   const image = (
-    <div className={cn('max-w-full', alignClass)} style={attrs.width ? { width: `${attrs.width}px` } : undefined}>
+    <div className={cn('my-6 max-w-full', alignClass, attrs.align === 'left' && 'mr-6', attrs.align === 'right' && 'ml-6')} style={attrs.width ? { width: `${attrs.width}px` } : undefined}>
       <div className="inline-block">
-        <WpImage media={media} className={cn('max-w-full', attrs.rounded && 'w-full! rounded-large')} />
+        <WpImage media={media} className={cn('max-w-full rounded-[1.25rem] border-[2.5px] border-ink shadow-pop', attrs.rounded && 'w-full! rounded-[2rem]')} />
         {attrs.fig != null && (
-          <figcaption className="text-center text-[12px] text-gray-6">
+          <figcaption className="mt-2 text-center text-sm text-gray-7 italic">
             <Content content={attrs.fig} />
           </figcaption>
         )}

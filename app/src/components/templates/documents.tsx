@@ -1,15 +1,14 @@
 import { notFound } from 'next/navigation'
-import { BlockContent } from '@/components/block/content'
-import { Section } from '@/components/block/section'
 import { DocumentsExplorer } from '@/components/file/documents-explorer'
 import { Container } from '@/components/ui/container'
+import { PageHero } from '@/components/ui/page-hero'
 import { getDocumentCategories, getDocuments, getPageById, type ResolvedRoute } from '@/lib/wp'
+import { PageBody } from './page-body'
 import type { TemplateProps } from './registry'
 
 type PageRouteData = Extract<ResolvedRoute, { kind: 'page' }>
 
-/** Documents page (page.template === DOCUMENTS) - port of web/src/templates/allDocument.tsx:
- * page intro + a filterable, category-grouped document listing (see DocumentsExplorer). */
+/** Documents: hero + page intro + searchable, category-grouped downloads. */
 export async function DocumentsTemplate({ data }: TemplateProps) {
   const route = data as PageRouteData
   const [page, documents, categories] = await Promise.all([
@@ -22,29 +21,12 @@ export async function DocumentsTemplate({ data }: TemplateProps) {
     notFound()
   }
 
-  const title = (
-    <Container>
-      <h1 className="top">{page.title}</h1>
-    </Container>
-  )
-
   return (
     <>
-      {page.blocks.length > 0 ? (
-        <BlockContent blocks={page.blocks} title={title} />
-      ) : (
-        <Section>
-          {title}
-          <Container>
-            {/* See templates/page.tsx for why this is plain dangerouslySetInnerHTML. */}
-            <div dangerouslySetInnerHTML={{ __html: page.content }} />
-          </Container>
-        </Section>
-      )}
-      <Container>
-        <div className="pt-1 pb-4 sm:py-4 md:pt-8 md:pb-4">
-          <DocumentsExplorer documents={documents} categories={categories} />
-        </div>
+      <PageHero title={null} titleHtml={page.title} colorKey="dokumenty" eyebrow="Ke stažení" />
+      <PageBody page={page} intro />
+      <Container className="pt-4">
+        <DocumentsExplorer documents={documents} categories={categories} />
       </Container>
     </>
   )

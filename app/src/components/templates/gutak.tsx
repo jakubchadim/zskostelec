@@ -1,45 +1,53 @@
 import { notFound } from 'next/navigation'
-import { BlockContent } from '@/components/block/content'
-import { Section } from '@/components/block/section'
 import { WpImage } from '@/components/image/wp-image'
+import { tiltAt } from '@/components/ui/accent'
 import { Container } from '@/components/ui/container'
+import { PageHero } from '@/components/ui/page-hero'
+import { Reveal } from '@/components/ui/reveal'
+import { cn } from '@/lib/utils'
 import { getGutaky, getPageById, type ResolvedRoute, type WpGutak } from '@/lib/wp'
+import { PageBody } from './page-body'
 import type { TemplateProps } from './registry'
 
 type PageRouteData = Extract<ResolvedRoute, { kind: 'page' }>
 
-function GutakCard({ gutak }: { gutak: WpGutak }) {
+function GutakCard({ gutak, index }: { gutak: WpGutak; index: number }) {
   return (
     <a
       href={gutak.fileUrl}
       target="_blank"
       rel="noreferrer"
-      className="group block overflow-hidden rounded-medium bg-white-1 shadow-small hover:shadow-lift"
+      className={cn(
+        'group block rounded-lg border-[2.5px] border-ink bg-paper p-2 shadow-pop transition-transform duration-300 hover:z-10 hover:scale-105 hover:rotate-0',
+        tiltAt(index)
+      )}
     >
-      <div className="relative aspect-4/5 overflow-hidden bg-gray-3">
+      <span className="relative block aspect-[3/4] overflow-hidden rounded-md border-2 border-ink/10 bg-sun-tint">
         {gutak.preview ? (
           <WpImage
             media={gutak.preview}
-            alt={gutak.title}
-            sizes="(min-width: 41.75em) 33vw, 50vw"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-200 group-hover:scale-110"
+            alt=""
+            sizes="(min-width: 55.125em) 25vw, (min-width: 26em) 50vw, 100vw"
+            className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element -- static placeholder asset, not WP media
+          // eslint-disable-next-line @next/next/no-img-element -- bundled magazine logo used as a cover placeholder
           <img
             src="/gutak-placeholder.png"
-            alt={gutak.title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-200 group-hover:scale-110"
+            alt=""
+            className="absolute inset-0 h-full w-full object-contain p-3 mix-blend-multiply transition-transform duration-300 group-hover:-rotate-3"
           />
         )}
-      </div>
-      <h4 className="m-0 bg-white-1 p-5 font-light">{gutak.title}</h4>
+      </span>
+      <span className="flex items-center justify-between gap-2 px-1 pt-3 pb-1">
+        <span className="font-display text-lg font-bold">{gutak.title}</span>
+        <span className="rounded-full border-2 border-ink bg-sun px-2 text-xs font-extrabold">Číst</span>
+      </span>
     </a>
   )
 }
 
-/** Guťák (school magazine) issues page (page.template === GUTAKY) - port of
- * web/src/templates/allGutak.tsx: page intro + a grid of issue covers linking to their file. */
+/** Guťák (school magazine): hero + intro + a wall of tilted magazine covers. */
 export async function GutakTemplate({ data }: TemplateProps) {
   const route = data as PageRouteData
   const [page, gutaky] = await Promise.all([getPageById(route.id), getGutaky()])
@@ -48,31 +56,20 @@ export async function GutakTemplate({ data }: TemplateProps) {
     notFound()
   }
 
-  const title = (
-    <Container>
-      <h1 className="top">{page.title}</h1>
-    </Container>
-  )
-
   return (
     <>
-      {page.blocks.length > 0 ? (
-        <BlockContent blocks={page.blocks} title={title} />
-      ) : (
-        <Section>
-          {title}
-          <Container>
-            {/* See templates/page.tsx for why this is plain dangerouslySetInnerHTML. */}
-            <div dangerouslySetInnerHTML={{ __html: page.content }} />
-          </Container>
-        </Section>
-      )}
-      <Container>
-        <div className="grid grid-cols-1 gap-4 pt-1 pb-4 xs:grid-cols-2 sm:grid-cols-3 sm:py-4 md:pt-8 md:pb-4">
-          {gutaky.map((gutak) => (
-            <GutakCard key={gutak.id} gutak={gutak} />
+      <PageHero title={null} titleHtml={page.title} colorKey="gutak" eyebrow="Píšou žáci" />
+      <PageBody page={page} intro />
+      <Container className="pt-4">
+        <ul className="m-0 grid list-none grid-cols-2 gap-6 p-0 sm:grid-cols-3 md:grid-cols-4 md:gap-8">
+          {gutaky.map((gutak, idx) => (
+            <li key={gutak.id}>
+              <Reveal delay={(idx % 4) * 70}>
+                <GutakCard gutak={gutak} index={idx} />
+              </Reveal>
+            </li>
           ))}
-        </div>
+        </ul>
       </Container>
     </>
   )

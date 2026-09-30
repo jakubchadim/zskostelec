@@ -1,4 +1,5 @@
 import type { ID } from '@/lib/wp'
+import { foldText } from '@/lib/utils'
 import type { WpEmployee } from '@/lib/wp'
 
 export type EmployeeFilters = {
@@ -14,17 +15,16 @@ export const EMPTY_EMPLOYEE_FILTERS: EmployeeFilters = {
 }
 
 /**
- * Port of the inline filter predicate in web/src/templates/allEmployee.tsx: a
- * plain case-insensitive substring match on the name (no diacritics folding -
- * the legacy filter didn't do any, confirmed against web/src/components/filter/*
- * and web/src/utils), and an "any of the selected ids" match for position/building.
+ * Case- and diacritics-insensitive substring match on the name (legacy did
+ * no folding, so "nemec" didn't find "Němec" - a real annoyance on phone
+ * keyboards), and an "any of the selected ids" match for position/building.
  * An empty `positionIds`/`buildingIds` selection matches everything (filter not applied).
  */
 export function filterEmployees(employees: WpEmployee[], filters: EmployeeFilters): WpEmployee[] {
-  const name = filters.name.trim().toLowerCase()
+  const name = foldText(filters.name)
 
   return employees.filter((employee) => {
-    if (name && !employee.name.toLowerCase().includes(name)) {
+    if (name && !foldText(employee.name).includes(name)) {
       return false
     }
 

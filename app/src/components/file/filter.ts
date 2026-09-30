@@ -1,4 +1,5 @@
 import type { ID, WpDocument, WpDocumentCategory } from '@/lib/wp'
+import { foldText } from '@/lib/utils'
 
 export type DocumentGroup = {
   /** `null` = the trailing "Ostatní" bucket for documents matching no known category. */
@@ -13,15 +14,14 @@ export type DocumentFilters = {
 
 export const EMPTY_DOCUMENT_FILTERS: DocumentFilters = { name: '', categoryIds: [] }
 
-/** Port of the inline name predicate in web/src/templates/allDocument.tsx: a case-insensitive
- * substring match against `${title}||${filename}` (no diacritics folding, matching legacy). */
+/** Case- and diacritics-insensitive substring match against `${title}||${filename}`. */
 export function matchesDocumentName(document: WpDocument, name: string): boolean {
-  const query = name.trim().toLowerCase()
+  const query = foldText(name)
   if (!query) {
     return true
   }
 
-  return `${document.title}||${document.filename}`.toLowerCase().includes(query)
+  return foldText(`${document.title}||${document.filename}`).includes(query)
 }
 
 /**

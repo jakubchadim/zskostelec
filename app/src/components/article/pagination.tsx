@@ -26,7 +26,7 @@ type ArticlePaginationProps = {
 }
 
 const pageButtonClass =
-  'inline-flex min-w-[6em] items-center justify-center rounded-small px-3 py-2 text-sm font-medium text-white-1'
+  'inline-grid size-11 place-items-center rounded-full border-[2.5px] border-ink font-display text-lg font-bold transition-all'
 
 function ArrowButton({
   direction,
@@ -41,14 +41,18 @@ function ArrowButton({
 
   if (disabled) {
     return (
-      <span className={cn(pageButtonClass, 'cursor-not-allowed bg-gray-5 opacity-50')} aria-disabled="true">
+      <span className={cn(pageButtonClass, 'cursor-not-allowed bg-paper opacity-30')} aria-disabled="true">
         <Icon className="size-5" aria-hidden />
       </span>
     )
   }
 
   return (
-    <Link href={href} className={cn(pageButtonClass, 'bg-gray-5 hover:bg-gray-6')}>
+    <Link
+      href={href}
+      aria-label={direction === 'prev' ? 'Předchozí strana' : 'Další strana'}
+      className={cn(pageButtonClass, 'bg-sun shadow-pop-sm hover:-translate-y-0.5 hover:shadow-pop')}
+    >
       <Icon className="size-5" aria-hidden />
     </Link>
   )
@@ -64,15 +68,17 @@ export function ArticlePagination({ totalPages, current, generateLink }: Article
   const pages = getPageNumbers(totalPages, current)
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
+    <nav aria-label="Stránkování" className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
       <ArrowButton direction="prev" href={generateLink(Math.max(1, current - 1))} disabled={current === 1} />
       {pages.map((page) => (
         <Link
           key={page}
           href={generateLink(page)}
+          aria-current={page === current ? 'page' : undefined}
+          aria-label={`Strana ${page}`}
           className={cn(
             pageButtonClass,
-            page === current ? 'bg-secondary-1 hover:bg-secondary-2' : 'bg-gray-5 hover:bg-gray-6'
+            page === current ? 'scale-110 bg-ink text-white-1' : 'bg-paper shadow-pop-sm hover:-translate-y-0.5 hover:shadow-pop'
           )}
         >
           {page}
@@ -83,6 +89,6 @@ export function ArticlePagination({ totalPages, current, generateLink }: Article
         href={generateLink(Math.min(totalPages, current + 1))}
         disabled={current === totalPages}
       />
-    </div>
+    </nav>
   )
 }

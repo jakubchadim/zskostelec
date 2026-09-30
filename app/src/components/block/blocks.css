@@ -38,49 +38,51 @@
 }
 
 /*
- * core/list bullet styling, ported from `web/src/components/block/core/list/list.tsx`.
- * `em`/unitless values are root-independent and carried over unchanged; the
- * one `rem` value (`ul ul { margin: 1rem 0 }`, legacy 10px-root = 10px real)
- * is converted to a literal `10px`. Scoped under `.wp-block-list` (applied
- * by `core/list/list.tsx`) rather than legacy's global scope, since a plain
- * CSS file needs manual scoping that styled-components' auto-generated
- * class names gave for free.
+ * core/list: colourful rounded bullets, a different colour per nesting level.
+ * Scoped under `.wp-block-list` (applied by `core/list/list.tsx`).
  */
 .wp-block-list ul {
-  padding-left: 1em;
+  padding-left: 1.5em;
+  margin: 0 0 1.1em;
   list-style: none;
 }
 
 .wp-block-list ul > li {
   position: relative;
-  line-height: 1.4;
 }
 
 .wp-block-list ul > li::before {
   content: '';
-  display: block;
   position: absolute;
-  top: 0.35em;
-  left: -1em;
-  width: 0.5em;
-  height: 0.5em;
-  background: var(--color-secondary-1);
+  top: 0.5em;
+  left: -1.25em;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 999px;
+  border: 2px solid var(--color-ink);
+  background: var(--color-sun);
+}
+
+.wp-block-list ul > li:nth-child(3n + 2)::before {
+  background: var(--color-sky);
+}
+
+.wp-block-list ul > li:nth-child(3n + 3)::before {
+  background: var(--color-berry);
 }
 
 .wp-block-list ul > li + li {
-  margin-top: 0.3em;
+  margin-top: 0.4em;
 }
 
 .wp-block-list ul ul {
-  margin: 10px 0;
+  margin: 0.4em 0;
 }
 
 .wp-block-list ul ul > li::before {
-  background: var(--color-primary-1);
-}
-
-.wp-block-list ul ul ul > li::before {
-  background: var(--color-gray-6);
+  border-radius: 3px;
+  transform: rotate(45deg) scale(0.85);
+  background: var(--color-grass);
 }
 
 /*
@@ -101,20 +103,26 @@
 
 .block-table > table td,
 .block-table > table th {
-  padding: 20px;
+  padding: 14px 18px;
+}
+
+.block-table > table thead th,
+.block-table > table thead td {
+  background: var(--color-sun-tint);
+  font-family: var(--font-display);
 }
 
 .block-table:not(.block-table--stripes) > table td,
 .block-table:not(.block-table--stripes) > table th {
-  border-bottom: 1px solid var(--color-gray-2);
+  border-bottom: 1.5px solid var(--color-gray-3);
 }
 
 .block-table--stripes > table tr {
-  border-bottom: 1px solid var(--color-gray-2);
+  border-bottom: 1.5px solid var(--color-gray-3);
 }
 
 .block-table--stripes > table tbody tr:nth-child(odd) {
-  background: var(--color-gray-2);
+  background: var(--color-cream);
 }
 
 .block-table--fixed > table {

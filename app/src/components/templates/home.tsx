@@ -1,28 +1,45 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArticlePreviewBox } from '@/components/home/article-preview-box'
-import { FastMenuBox } from '@/components/home/fast-menu-box'
-import { Hero } from '@/components/home/hero'
+import { Article, ArticleRow } from '@/components/article/article'
+import { Hero, type HeroPhoto } from '@/components/home/hero'
 import { getHomeData } from '@/components/home/home-data'
+import { NoticeBoard } from '@/components/home/notice-board'
+import { PhotoStrip } from '@/components/home/photo-strip'
+import { QuickLinks } from '@/components/home/quick-links'
 import { SecondSection } from '@/components/home/second-section'
+import { allLabel, SectionHeading } from '@/components/home/section-heading'
 import { getNavData } from '@/components/nav/data'
+import { sortByDateDesc } from '@/components/gallery/sort-by-date'
 import { Container } from '@/components/ui/container'
-import { getPageById, type ResolvedRoute } from '@/lib/wp'
+import { Sparkle, Star } from '@/components/ui/doodles'
+import { Reveal } from '@/components/ui/reveal'
+import { getLatestGalleries, getPageById, type ResolvedRoute } from '@/lib/wp'
+import { Trophy } from 'lucide-react'
 import type { TemplateProps } from './registry'
 
 type HomeRoute = Extract<ResolvedRoute, { kind: 'page' }>
 
+const PHOTO_COUNT = 10
+
+/** Latest gallery previews for the hero collage + photo strip. Never fails the homepage. */
+async function getLatestPhotos(): Promise<HeroPhoto[]> {
+  try {
+    const galleries = sortByDateDesc(await getLatestGalleries(PHOTO_COUNT))
+    return galleries.map((gallery) => ({ media: gallery.acf.preview!, title: gallery.title, link: gallery.link }))
+  } catch (error) {
+    console.warn('[home] galleries unavailable:', error)
+    return []
+  }
+}
+
 /**
- * Homepage template - ports `web/src/templates/home.tsx`. The `data` prop
- * carries the *resolved route* (`{kind:'page', id, templateType:'page-home'}`
- * from `resolveRoute`), not the page entity itself: `registry.tsx`'s
- * `TemplateProps<T = unknown>` is one shared shape across every Wave-2
- * template, so each template fetches and narrows its own data instead of
- * `registry.tsx` growing a per-key generic.
+ * Homepage. The page's own `content`/`blocks` are never read - the whole
+ * page is built from ACF fields (main post, three categories, fast menus,
+ * section link) plus the latest galleries for photos.
  *
- * Per `admin/theme/inc/page-types/homepage.json` and the legacy GraphQL
- * query in `web/src/templates/home.tsx`, the home page's `content`/`blocks`
- * are never read - the whole page is hand-built from ACF fields only, so
- * there's no generic block content to render here.
+ * Section order follows what visitors come for: quick links first
+ * (parents - EduPage, documents, staff), then time-sensitive notices,
+ * news, achievements, photos, and finally the "where to find us" block.
  */
 export async function HomeTemplate({ data }: TemplateProps) {
   const { id } = data as HomeRoute
@@ -32,51 +49,107 @@ export async function HomeTemplate({ data }: TemplateProps) {
     notFound()
   }
 
-  // getNavData() is also called once already in app/src/app/layout.tsx;
-  // calling it again here for fastFirst/fastSecond is safe rather than a
-  // double network hit - Next dedupes identical `fetch()` calls (same URL
-  // + options) across a single server-rendered request via automatic
-  // request memoization, and `getMenuBySlug` issues the same URLs both
-  // times. This was the cleanest way to get the two "fast menu" lists into
-  // the homepage without registry.tsx or layout.tsx growing extra plumbing.
-  const [{ mainPost, previews }, menus] = await Promise.all([getHomeData(page), getNavData()])
+  // getNavData() is deduped with the call in layout.tsx (same fetch URLs).
+  const [{ mainPost, previews }, menus, photos] = await Promise.all([getHomeData(page), getNavData(), getLatestPhotos()])
 
-  const [warnings, additionalFirst, additionalSecond] = previews
+  const [notices, news, achievements] = previews
+  const quickLinks = [...menus.fastFirst, ...menus.fastSecond]
 
   return (
     <>
-      <Hero mainPost={mainPost} />
-      <section className="bg-gray-1 py-8 sm:py-10 md:py-12">
+      <Hero mainPost={mainPost} photos={photos.slice(0, 3)} />
+
+      <section aria-labelledby="rychle" className="relative -mt-6 pb-16">
         <Container>
-          <div className="relative z-10 -mt-24">
-            <div className="mx-auto max-w-[21.875rem] [&>*]:mt-2 sm:grid sm:max-w-none sm:grid-cols-2 sm:grid-rows-3 sm:gap-3 sm:[&>*]:mt-0 md:grid-cols-3 md:grid-rows-2">
-              {warnings && (
-                <ArticlePreviewBox preview={warnings} className="sm:col-start-1 sm:row-start-1 sm:row-span-2" />
+          <h2 id="rychle" className="sr-only">
+            Rychlé odkazy
+          </h2>
+          <QuickLinks items={quickLinks} />
+        </Container>
+      </section>
+
+      {notices && notices.articles.length > 0 && (
+        <section aria-labelledby="nastenka" className="pb-20">
+          <Container>
+            <SectionHeading id="nastenka" eyebrow="Nástěnka" title={notices.category.name} color="text-berry" />
+            <NoticeBoard preview={notices} />
+          </Container>
+        </section>
+      )}
+
+      {(news || achievements) && (
+        <section id="aktuality" aria-labelledby="aktuality-nadpis" className="relative pb-20">
+          <Container>
+            <div className="grid gap-12 lg:grid-cols-[2fr_1fr] lg:gap-10">
+              {news && (
+                <div>
+                  <SectionHeading
+                    id="aktuality-nadpis"
+                    eyebrow="Ze školy"
+                    title={news.category.name}
+                    color="text-sky"
+                    action={{ href: news.category.link, label: allLabel(news.category.name) }}
+                  />
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    {news.articles.map((article, idx) => (
+                      <Reveal key={article.id} delay={idx * 90} className={idx === 0 ? 'sm:col-span-2' : undefined}>
+                        <Article post={article} index={idx + 1} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </div>
               )}
-              <FastMenuBox
-                title={page.acf.fastMenu}
-                items={menus.fastFirst}
-                className="sm:col-start-2 sm:row-start-1"
-              />
-              <FastMenuBox
-                title={page.acf.fastMenuSecond}
-                items={menus.fastSecond}
-                className="sm:col-start-2 sm:row-start-2 md:col-start-3 md:row-start-1"
-              />
-              {additionalFirst && (
-                <ArticlePreviewBox
-                  preview={additionalFirst}
-                  className="sm:col-start-1 sm:row-start-3 md:col-start-2 md:row-start-2"
-                />
-              )}
-              {additionalSecond && (
-                <ArticlePreviewBox
-                  preview={additionalSecond}
-                  className="sm:col-start-2 sm:row-start-3 md:col-start-3 md:row-start-2"
-                />
+
+              {achievements && (
+                <aside aria-labelledby="uspechy">
+                  <Reveal className="sticker relative h-full bg-grape-tint p-6">
+                    <Star className="absolute -top-5 -right-3 w-12 rotate-12 text-sun animate-float" />
+                    <Sparkle className="absolute top-16 -left-4 w-7 text-berry animate-float-slow" />
+                    <div className="flex items-center gap-3">
+                      <span className="grid size-12 place-items-center rounded-2xl border-[2.5px] border-ink bg-sun">
+                        <Trophy className="size-6" aria-hidden />
+                      </span>
+                      <h2 id="uspechy" className="text-2xl">
+                        {achievements.category.name}
+                      </h2>
+                    </div>
+                    <p className="mt-3 text-gray-8">Na naše žáky jsme hrdí. Tohle se jim povedlo:</p>
+                    <ul className="m-0 mt-4 list-none space-y-1 rounded-2xl border-2 border-ink bg-paper p-2">
+                      {achievements.articles.map((article, idx) => (
+                        <li key={article.id}>
+                          <ArticleRow post={article} index={idx + 4} />
+                        </li>
+                      ))}
+                    </ul>
+                    <Link href={achievements.category.link} className="btn mt-5 w-full bg-grape text-white-1">
+                      {allLabel(achievements.category.name)}
+                    </Link>
+                  </Reveal>
+                </aside>
               )}
             </div>
-          </div>
+          </Container>
+        </section>
+      )}
+
+      {photos.length > 0 && (
+        <section aria-labelledby="fotky" className="pb-20">
+          <Container>
+            <SectionHeading
+              id="fotky"
+              eyebrow="Fotogalerie"
+              title="Jak to u nás vypadá"
+              color="text-grass"
+              action={{ href: '/fotogalerie/', label: 'Všechny fotky' }}
+              className="mb-2"
+            />
+          </Container>
+          <PhotoStrip photos={photos} />
+        </section>
+      )}
+
+      <section className="pb-8">
+        <Container>
           <SecondSection sectionLink={page.acf.sectionLink} />
         </Container>
       </section>

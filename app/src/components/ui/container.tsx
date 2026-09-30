@@ -6,7 +6,7 @@ type ContainerProps = {
   className?: string
 }
 
-/** Centered max-width wrapper, ported from web/src/components/ui/container/container.tsx. */
+/** Centered max-width wrapper with a comfortable phone gutter. */
 export function Container({ children, className }: ContainerProps) {
-  return <div className={cn('mx-auto w-full max-w-site px-2', className)}>{children}</div>
+  return <div className={cn('mx-auto w-full max-w-site px-4 sm:px-6', className)}>{children}</div>
 }

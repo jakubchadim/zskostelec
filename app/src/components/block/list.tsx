@@ -1,4 +1,4 @@
-import { Container } from '@/components/ui/container'
+import { BlockContainer as Container } from './block-container'
 import type { Block } from '@/lib/wp'
 import type { BlockType } from './constants'
 import { Content } from './html-content'

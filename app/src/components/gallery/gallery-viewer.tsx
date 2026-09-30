@@ -9,7 +9,7 @@ import type { WpMediaLike } from '@/lib/wp'
 import { buildLightboxSlides } from './build-slides'
 
 const BATCH_SIZE = 24
-const THUMBNAIL_SIZES = '(min-width: 41.75em) 33vw, (min-width: 26em) 50vw, 100vw'
+const THUMBNAIL_SIZES = '(min-width: 55.125em) 25vw, (min-width: 41.75em) 33vw, 50vw'
 
 type GalleryViewerProps = {
   images: WpMediaLike[]
@@ -34,33 +34,33 @@ export function GalleryViewer({ images }: GalleryViewerProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 md:grid-cols-4">
         {visibleImages.map((image, index) => (
           <button
             key={image.id}
             type="button"
             onClick={() => setLightboxIndex(index)}
             aria-label={`Otevřít fotografii ${index + 1} z ${images.length}`}
-            className="group relative block w-full overflow-hidden rounded-medium bg-gray-3 pb-[100%] shadow-small transition-shadow duration-200 ease-in-out hover:shadow-lift"
+            className="group relative block w-full cursor-zoom-in overflow-hidden rounded-2xl border-[2.5px] border-ink bg-gray-3 pb-[100%] shadow-pop-sm transition-all duration-200 hover:-translate-y-1 hover:rotate-1 hover:shadow-pop"
           >
             <WpImage
               media={image}
               sizes={THUMBNAIL_SIZES}
               alt={image.alt_text || `Fotografie ${index + 1} z galerie`}
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-110"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
           </button>
         ))}
       </div>
 
       {hasMore && (
-        <div className="mt-8 text-center">
+        <div className="mt-10 text-center">
           <button
             type="button"
             onClick={() => setVisibleCount((count) => Math.min(count + BATCH_SIZE, images.length))}
-            className="rounded-medium bg-primary-1 px-8 py-3 text-white-1 transition-colors duration-200 ease-in-out hover:bg-primary-2"
+            className="btn bg-sun text-lg"
           >
-            Načíst další fotografie
+            Načíst další fotky ({images.length - visibleCount})
           </button>
         </div>
       )}

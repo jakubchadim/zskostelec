@@ -33,8 +33,9 @@ describe('matchesDocumentName', () => {
     expect(matchesDocumentName(doc, 'SKOLNI-RAD')).toBe(true)
   })
 
-  it('does not fold diacritics (matches legacy behavior)', () => {
-    expect(matchesDocumentName(doc, 'skolni rad')).toBe(false)
+  it('ignores diacritics', () => {
+    expect(matchesDocumentName(doc, 'skolni rad')).toBe(true)
+    expect(matchesDocumentName(doc, 'ŠKOLNÍ ŘÁD')).toBe(true)
   })
 
   it('matches everything when the query is empty', () => {

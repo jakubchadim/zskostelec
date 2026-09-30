@@ -116,6 +116,25 @@ export async function getGalleries(): Promise<WpGallery[]> {
   return raw.map(normalizeGallery).filter((gallery) => gallery.acf.preview != null)
 }
 
+/**
+ * The newest `limit` galleries that have a preview image - one small
+ * request instead of paging through every gallery, for the homepage
+ * collage/photo strip. Over-fetches a little so preview-less galleries
+ * don't leave the strip short.
+ */
+export async function getLatestGalleries(limit: number): Promise<WpGallery[]> {
+  const raw = await wpFetch<RawWpGallery[]>('wp/v2/gallery', {
+    fields: GALLERY_LISTING_FIELDS,
+    params: { per_page: Math.min(limit * 2, 100), orderby: 'date', order: 'desc' },
+    tags: [WP_CACHE_TAGS.gallery]
+  })
+
+  return raw
+    .map(normalizeGallery)
+    .filter((gallery) => gallery.acf.preview != null)
+    .slice(0, limit)
+}
+
 export type GalleryRouteEntry = { id: ID; link: string }
 
 type RawWpGalleryRouteEntry = { id: number; link: string }

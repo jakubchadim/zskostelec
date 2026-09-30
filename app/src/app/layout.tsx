@@ -1,20 +1,25 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import { Roboto } from 'next/font/google'
+import { Baloo_2, Nunito } from 'next/font/google'
 import Header from '@/components/nav/header'
 import Footer from '@/components/footer/footer'
 import { getNavData } from '@/components/nav/data'
 import { getSiteUrl, SITE_DEFAULT_DESCRIPTION, SITE_NAME } from '@/lib/seo'
 import './globals.css'
 
-// Replaces gatsby-plugin-google-fonts (`roboto:300,400,400i,700`, external
-// fonts.googleapis.com <link>) with next/font/google: self-hosted at build
-// time, no external request, no layout shift. `latin-ext` is required (not
-// just `latin`) for Czech diacritics — Google's own <link> served it via
-// automatic unicode-range subsetting, but next/font needs it listed.
-const roboto = Roboto({
-  variable: '--font-roboto',
-  weight: ['300', '400', '700'],
+// Self-hosted at build time via next/font. `latin-ext` is required for
+// Czech diacritics. Baloo 2 = rounded, friendly display face for headings;
+// Nunito = rounded-terminal body face that stays very legible at small sizes.
+const display = Baloo_2({
+  variable: '--font-display-face',
+  weight: ['500', '600', '700', '800'],
+  subsets: ['latin', 'latin-ext'],
+  display: 'swap'
+})
+
+const body = Nunito({
+  variable: '--font-body',
+  weight: ['400', '600', '700', '800'],
   style: ['normal', 'italic'],
   subsets: ['latin', 'latin-ext'],
   display: 'swap'
@@ -28,6 +33,10 @@ export const metadata: Metadata = {
   metadataBase: siteUrl ? new URL(siteUrl) : undefined
 }
 
+export const viewport: Viewport = {
+  themeColor: '#ff8a00'
+}
+
 type RootLayoutProps = {
   children: ReactNode
 }
@@ -36,10 +45,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const menus = await getNavData()
 
   return (
-    <html lang="cs" className={`${roboto.variable} h-full antialiased`}>
+    <html lang="cs" className={`${display.variable} ${body.variable} h-full`}>
       <body className="flex min-h-full flex-col">
+        <a
+          href="#obsah"
+          className="sr-only z-[100] rounded-full bg-ink px-4 py-2 font-bold text-white-1 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          Přeskočit na obsah
+        </a>
         <Header menu={menus.main} />
-        <main className="flex-1">{children}</main>
+        <main id="obsah" className="flex-1">
+          {children}
+        </main>
         <Footer fastFirst={menus.fastFirst} fastSecond={menus.fastSecond} />
       </body>
     </html>

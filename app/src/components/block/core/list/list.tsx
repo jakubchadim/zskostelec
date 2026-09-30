@@ -1,4 +1,4 @@
-import { Container } from '@/components/ui/container'
+import { BlockContainer as Container } from '../../block-container'
 import { Content } from '../../html-content'
 import type { BlockFC } from '../../types'
 

@@ -1,4 +1,4 @@
-import { Container } from '@/components/ui/container'
+import { BlockContainer as Container } from '../../block-container'
 import { cn } from '@/lib/utils'
 import type { Nullable, RawHTML } from '@/lib/wp'
 import { Content } from '../../html-content'
@@ -11,23 +11,14 @@ type BlockCoreTableAttrs = {
 }
 
 /**
- * Ported from `web/src/components/block/core/table/table.tsx`. The
- * white-card wrapper replicates legacy's `UiBox` (background/shadow/radius/
- * offset margins) inline rather than via a shared primitive - see the T3
- * plan (no new `ui/` components are in scope for this task). Cell
- * padding/border rules that need descendant selectors (`td`/`th`, striped
- * `tbody tr:nth-child(odd)`) live in `../../blocks.css` under the
- * `block-table`/`block-table--stripes`/`block-table--fixed` classes applied
- * here - not cleanly expressible as Tailwind utilities.
- *
- * Pixel conversions: `UiBox`'s `spacing(2)` offset margins = 10px = `my-2`;
- * cell padding `spacing(4)` = 20px = `p-4` (both clean 5px-unit multiples,
- * see `blocks.css`); figcaption `1.2rem`/`spacing(2)` = 12px/10px real.
+ * Gutenberg table inside an outlined sticker card (horizontal scroll on
+ * narrow screens). Cell/stripe rules that need descendant selectors live in
+ * `../../blocks.css` under the `block-table*` classes applied here.
  */
 export const BlockCoreTable: BlockFC<BlockCoreTableAttrs> = ({ block, nested }) => {
   const table = (
-    <div className="inline-block max-w-full">
-      <div className="my-2 rounded-medium bg-white-1 text-black-1 shadow-lift">
+    <div className="max-w-full">
+      <div className="my-6 overflow-hidden rounded-[1.25rem] border-[2.5px] border-ink bg-paper text-ink shadow-pop">
         <figure
           className={cn(
             'block-table m-0 overflow-x-auto',
@@ -37,7 +28,7 @@ export const BlockCoreTable: BlockFC<BlockCoreTableAttrs> = ({ block, nested }) 
         >
           <Content content={block.content} />
           {block.attrs.fig != null && (
-            <figcaption className="p-2 text-center text-[12px] text-gray-6">
+            <figcaption className="border-t-2 border-ink/10 p-3 text-center text-sm text-gray-7">
               <Content content={block.attrs.fig} />
             </figcaption>
           )}

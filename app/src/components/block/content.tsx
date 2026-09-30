@@ -13,6 +13,12 @@ export type BlockContentProps = {
   title?: ReactNode
   /** Rendered inside the last section, after its blocks. */
   footer?: ReactNode
+  /**
+   * Render the blocks as one flowing column (no full-width colour sections,
+   * no per-block containers) - for content placed inside an existing
+   * layout column, e.g. a post body next to a sidebar.
+   */
+  inline?: boolean
 }
 
 /**
@@ -35,11 +41,22 @@ export type BlockContentProps = {
  * non-`BlockContent` consumer of raw `post.blocks`/`page.blocks` needs to
  * know per-type normalization hasn't happened yet at that point.
  */
-export function BlockContent({ blocks, title, footer }: BlockContentProps) {
+export function BlockContent({ blocks, title, footer, inline }: BlockContentProps) {
   registerCoreBlockNormalizers()
 
   const normalized = normalizeBlocks(blocks)
   const tree = parseBlocks(normalized) as Block<BlockColorPalette>[]
+
+  if (inline) {
+    return (
+      <div className="wp-prose">
+        {title}
+        <BlockList blocks={tree} nested />
+        {footer}
+      </div>
+    )
+  }
+
   const sections = getBlockSections(tree)
 
   if (!sections.length) {

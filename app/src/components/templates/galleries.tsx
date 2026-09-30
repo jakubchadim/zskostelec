@@ -3,8 +3,9 @@ import { getGalleries, getPageById, GALLERY_PAGE_SIZE, type ResolvedRoute } from
 import type { TemplateProps } from './registry'
 import { Container } from '@/components/ui/container'
 import { ArticlePagination } from '@/components/article/pagination'
-import { BlockContent } from '@/components/block/content'
-import { Section } from '@/components/block/section'
+import { PageHero } from '@/components/ui/page-hero'
+import { Reveal } from '@/components/ui/reveal'
+import { PageBody } from './page-body'
 import { GalleryCard } from '@/components/gallery/gallery-card'
 import { hasPreview } from '@/components/gallery/has-preview'
 import { sortByDateDesc } from '@/components/gallery/sort-by-date'
@@ -41,37 +42,29 @@ export async function GalleriesTemplate({ data }: TemplateProps) {
   const offset = (route.pageNumber - 1) * GALLERY_PAGE_SIZE
   const galleries = allGalleries.slice(offset, offset + GALLERY_PAGE_SIZE)
 
-  const title = (
-    <Container>
-      <h1 className="top" dangerouslySetInnerHTML={{ __html: page.title }} />
-    </Container>
-  )
-
   return (
     <>
-      {page.blocks.length > 0 ? (
-        <BlockContent blocks={page.blocks} title={title} />
-      ) : (
-        <Section>
-          {title}
-          {page.content && (
-            <Container>
-              <div dangerouslySetInnerHTML={{ __html: page.content }} />
-            </Container>
-          )}
-        </Section>
-      )}
+      <PageHero
+        title={null}
+        titleHtml={page.title}
+        colorKey="fotogalerie"
+        eyebrow={route.pageNumber > 1 ? `Strana ${route.pageNumber} z ${totalPages}` : 'Momentky ze školy'}
+        lead={route.pageNumber === 1 ? 'Výlety, soutěže, besídky i obyčejné dny ve třídách. Klikněte na fotku a prohlížejte.' : undefined}
+      />
+      {route.pageNumber === 1 && <PageBody page={page} intro />}
 
-      <Container>
-        <div className="pt-1 pb-4 sm:pt-4 md:pt-8">
-          <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-3">
-            {galleries.map((gallery) => (
-              <GalleryCard key={gallery.id} gallery={gallery} />
-            ))}
-          </div>
-        </div>
+      <Container className="pt-6">
+        <ul className="m-0 grid list-none grid-cols-1 gap-x-8 gap-y-10 p-0 xs:grid-cols-2 md:grid-cols-3">
+          {galleries.map((gallery, idx) => (
+            <li key={gallery.id}>
+              <Reveal delay={(idx % 3) * 80}>
+                <GalleryCard gallery={gallery} index={idx} />
+              </Reveal>
+            </li>
+          ))}
+        </ul>
         {totalPages > 1 && (
-          <div className="pt-8 pb-2 sm:pt-10 sm:pb-8 md:pt-12">
+          <div className="pt-14">
             <ArticlePagination
               totalPages={totalPages}
               current={route.pageNumber}

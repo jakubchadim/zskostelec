@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { Camera } from 'lucide-react'
 import { getGalleryPreviewImages, type WpGallery } from '@/lib/wp'
 import { WpImage } from '@/components/image/wp-image'
+import { tiltAt } from '@/components/ui/accent'
 import { cn } from '@/lib/utils'
 
 type GalleryPreviewProps = {
@@ -8,14 +10,9 @@ type GalleryPreviewProps = {
 }
 
 /**
- * Embedded gallery preview grid for a post body. Ports the legacy
- * `GalleryView` (web/src/templates/post.tsx), minus the lightbox: every
- * tile — including the last "more photos" tile — links straight to the
- * gallery's own page instead of opening a modal, since the lightbox
- * (yet-another-react-lightbox) is T5's Galleries task to wire up. Images
- * come from the already-ported `getGalleryPreviewImages` (preview + gallery
- * array, deduped, capped at 4 — the same computed field the legacy
- * Gatsby normalizer produced).
+ * A post's embedded gallery as a row of tilted polaroids; the last one is a
+ * "more photos" tile. Every tile links to the gallery page (lightbox lives
+ * there).
  */
 export function GalleryPreview({ gallery }: GalleryPreviewProps) {
   const images = getGalleryPreviewImages(gallery)
@@ -25,32 +22,43 @@ export function GalleryPreview({ gallery }: GalleryPreviewProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-      {images.map((image, idx) => {
-        const isLast = idx === images.length - 1
+    <section>
+      <h2 className="mb-6 flex items-center gap-3 text-2xl">
+        <span className="grid size-10 place-items-center rounded-xl border-2 border-ink bg-grass-tint">
+          <Camera className="size-5" aria-hidden />
+        </span>
+        <span dangerouslySetInnerHTML={{ __html: gallery.title }} />
+      </h2>
+      <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+        {images.map((image, idx) => {
+          const isLast = idx === images.length - 1
 
-        return (
-          <Link
-            key={image.id}
-            href={gallery.link}
-            className="group relative block aspect-square overflow-hidden rounded-medium bg-gray-3 shadow-small hover:shadow-lift"
-          >
-            <WpImage
-              media={image}
-              sizes="(min-width: 41.75em) 25vw, 50vw"
+          return (
+            <Link
+              key={image.id}
+              href={gallery.link}
+              aria-label={isLast ? 'Zobrazit všechny fotografie' : `Fotografie ${idx + 1}`}
               className={cn(
-                'absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-in-out group-hover:scale-110',
-                isLast && 'opacity-50 blur-[2px]'
+                'group relative block rounded-md border-[2.5px] border-ink bg-paper p-1.5 pb-5 shadow-pop transition-transform duration-300 hover:z-10 hover:scale-105 hover:rotate-0',
+                tiltAt(idx)
               )}
-            />
-            {isLast && (
-              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg whitespace-nowrap opacity-80">
-                Více fotografií
+            >
+              <span className="relative block aspect-square overflow-hidden rounded-sm bg-gray-3">
+                <WpImage
+                  media={image}
+                  sizes="(min-width: 41.75em) 25vw, 50vw"
+                  className={cn('absolute inset-0 h-full w-full object-cover', isLast && 'scale-110 blur-[3px] brightness-75')}
+                />
+                {isLast && (
+                  <span className="absolute inset-0 grid place-items-center p-2 text-center font-display text-lg font-bold text-white-1">
+                    Další fotky →
+                  </span>
+                )}
               </span>
-            )}
-          </Link>
-        )
-      })}
-    </div>
+            </Link>
+          )
+        })}
+      </div>
+    </section>
   )
 }

@@ -1,38 +1,47 @@
 import Link from 'next/link'
+import { MapPin } from 'lucide-react'
 import type { WpAcfLink } from '@/lib/wp'
+import { Cloud, Star } from '@/components/ui/doodles'
+import { Reveal } from '@/components/ui/reveal'
 
 type SecondSectionProps = { sectionLink: WpAcfLink | null }
 
-/**
- * The "Najdete nás na pracovištích" CTA block - ports `SecondSection` in
- * `web/src/templates/home.tsx`. `school.png` is a bundled marketing image
- * (no WP-media equivalent), copied from `web/src/images/school@2x.png`.
- */
+/** "Najdete nás na pracovištích" block - the bundled school illustration under drifting clouds. */
 export function SecondSection({ sectionLink }: SecondSectionProps) {
   return (
-    <div className="mx-auto mt-8 flex max-w-[21.875rem] flex-col items-center text-center sm:mt-10 sm:max-w-none sm:flex-row sm:text-left md:mt-12">
-      <div className="mt-2 sm:mt-0 sm:w-1/2">
-        <h2 className="top text-[1.75rem] font-light sm:text-[2rem] md:text-[2.3125rem]">
-          Najdete nás na pracovištích v <b className="text-primary-1">Kostelci nad Orlicí</b>
-        </h2>
-        <h3 className="text-title-5 font-light">Podívejte se kde všude</h3>
-        {sectionLink?.url && (
-          <Link
-            href={sectionLink.url}
-            className="mt-4 inline-block min-w-[6em] rounded-small bg-primary-1 px-3 py-2 text-center text-4 font-medium text-white-1 hover:bg-primary-2"
-          >
-            Zobrazit pracoviště
-          </Link>
-        )}
+    <div className="relative overflow-hidden rounded-[2rem] border-[2.5px] border-ink bg-sky-tint shadow-pop-lg">
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <Cloud className="absolute top-6 w-28 text-white-1 animate-drift" />
+        <Cloud className="absolute top-24 w-16 text-white-1 animate-drift [animation-delay:-18s]" />
+        <Star className="absolute right-8 bottom-8 w-8 text-sun animate-float" />
       </div>
-      <div className="mt-2 sm:mt-0 sm:w-1/2">
-        <img
-          src="/school.png"
-          alt=""
-          width={1600}
-          height={1020}
-          className="mx-auto block w-[90%] sm:ml-auto sm:w-[95%]"
-        />
+      <div className="relative grid items-center gap-6 p-6 sm:p-10 md:grid-cols-2">
+        <Reveal>
+          <span className="font-display text-base font-extrabold tracking-wider text-[#0f5fb3] uppercase">Kde nás najdete</span>
+          <h2 className="mt-1">
+            Učíme na několika <span className="highlight">pracovištích</span> v&nbsp;Kostelci nad Orlicí
+          </h2>
+          <p className="mt-4 max-w-md text-lg text-gray-8">
+            Každá budova má svou atmosféru. Podívejte se, kde všude nás potkáte.
+          </p>
+          {sectionLink?.url && (
+            <Link href={sectionLink.url} className="btn mt-6 bg-sky text-white-1">
+              <MapPin className="size-5" aria-hidden />
+              Zobrazit pracoviště
+            </Link>
+          )}
+        </Reveal>
+        <Reveal delay={150}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- bundled illustration */}
+          <img
+            src="/school.png"
+            alt="Ilustrace školní budovy"
+            width={1600}
+            height={1020}
+            loading="lazy"
+            className="mx-auto block w-full max-w-lg transition-transform duration-500 hover:scale-105 hover:-rotate-1"
+          />
+        </Reveal>
       </div>
     </div>
   )

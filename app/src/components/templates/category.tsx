@@ -1,21 +1,15 @@
 import { notFound } from 'next/navigation'
 import { CATEGORY_PAGE_SIZE, getCategories, getCategoryById, getPostPreviews, type ResolvedRoute } from '@/lib/wp'
 import { Container } from '@/components/ui/container'
+import { PageHero } from '@/components/ui/page-hero'
+import { Reveal } from '@/components/ui/reveal'
 import { Article } from '@/components/article/article'
 import { ArticlePagination } from '@/components/article/pagination'
 import { ArticleEmptyState } from '@/components/article/empty-state'
 import { CategorySwitcher } from '@/components/filter/category-switcher'
 import type { TemplateProps } from '@/components/templates/registry'
 
-/**
- * Paginated category listing: heading (+ sibling-category switcher when
- * there are any), a grid of article preview cards or an empty state, and
- * `strana-N` pagination. Ports `web/src/templates/category.tsx`.
- *
- * Typed against plain `TemplateProps` (not the narrowed route variant) and
- * narrowed internally, so this stays assignable to
- * `ComponentType<TemplateProps>` in the registry without a cast there.
- */
+/** Paginated category listing: hero (+ sub-category chips), card grid or empty state, `strana-N` pagination. */
 export async function CategoryTemplate({ data }: TemplateProps) {
   const route = data as Extract<ResolvedRoute, { kind: 'category' }>
   const category = await getCategoryById(route.id)
@@ -35,27 +29,31 @@ export async function CategoryTemplate({ data }: TemplateProps) {
   const siblings = allCategories.filter((sibling) => sibling.parent?.id === route.rootCategoryId)
   const heading = category.parent ? category.parent.name : category.name
   const totalPages = Math.max(Math.ceil(totalCount / CATEGORY_PAGE_SIZE), 1)
+  const rootLink = category.parent?.link ?? category.link
 
   return (
-    <section className="py-8 sm:py-10 md:py-12">
-      <Container>
-        <h1 className="top flex flex-wrap items-baseline gap-1">
-          {heading}
-          {siblings.length > 0 && (
-            <CategorySwitcher current={category} siblings={siblings} rootLink={category.parent?.link ?? null} />
-          )}
-        </h1>
+    <>
+      <PageHero
+        title={heading}
+        colorKey={heading}
+        eyebrow={route.pageNumber > 1 ? `Strana ${route.pageNumber} z ${totalPages}` : `${totalCount} ${totalCount === 1 ? 'článek' : totalCount < 5 && totalCount > 0 ? 'články' : 'článků'}`}
+      >
+        {siblings.length > 0 && <CategorySwitcher current={category} siblings={siblings} rootLink={rootLink} />}
+      </PageHero>
+      <Container className="pt-4">
         {posts.length === 0 ? (
           <ArticleEmptyState parentCategoryLink={category.parent?.link ?? null} />
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
-            {posts.map((post) => (
-              <Article key={post.id} post={post} />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+            {posts.map((post, idx) => (
+              <Reveal key={post.id} delay={(idx % 3) * 80}>
+                <Article post={post} index={idx} />
+              </Reveal>
             ))}
           </div>
         )}
-        {posts.length > 0 && (
-          <div className="pt-8 pb-2 sm:pt-10 sm:pb-8 md:pt-12">
+        {totalPages > 1 && (
+          <div className="pt-12">
             <ArticlePagination
               totalPages={totalPages}
               current={route.pageNumber}
@@ -64,6 +62,6 @@ export async function CategoryTemplate({ data }: TemplateProps) {
           </div>
         )}
       </Container>
-    </section>
+    </>
   )
 }

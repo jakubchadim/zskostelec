@@ -35,10 +35,10 @@ describe('filterEmployees', () => {
     ])
   })
 
-  it('does not fold diacritics (matches legacy behavior)', () => {
-    // 'nováková' has an accented á/á; searching the unaccented form should NOT match,
-    // matching legacy's plain toLowerCase().indexOf() with no normalization step.
-    expect(filterEmployees(employees, { ...EMPTY_EMPLOYEE_FILTERS, name: 'novakova' })).toEqual([])
+  it('ignores diacritics in both directions', () => {
+    expect(filterEmployees(employees, { ...EMPTY_EMPLOYEE_FILTERS, name: 'novakova' }).map((e) => e.id)).toEqual([
+      asId(1)
+    ])
     expect(filterEmployees(employees, { ...EMPTY_EMPLOYEE_FILTERS, name: 'nováková' }).map((e) => e.id)).toEqual([
       asId(1)
     ])
