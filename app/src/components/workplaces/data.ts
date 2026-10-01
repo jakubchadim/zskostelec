@@ -125,7 +125,7 @@ export const WORKPLACES: Workplace[] = [
     name: 'Budova Komenského',
     address: 'Komenského 80',
     mapX: 53,
-    mapY: 24,
+    mapY: 20.8,
     roles: ['1. stupeň', 'Vzdělávání cizinců'],
     facts: [
       'Prostorná budova s velkými okny, kterou obklopují vysoké smrky.',
