@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { PageHero } from '@/components/ui/page-hero'
 import { getPageById, type ResolvedRoute } from '@/lib/wp'
 import { PageBody } from './page-body'
+import { WORKPLACES_SLUG, WorkplacesTemplate } from './workplaces'
 import type { TemplateProps } from './registry'
 
 type PageRouteData = Extract<ResolvedRoute, { kind: 'page' }>
@@ -13,6 +14,11 @@ export async function PageTemplate({ data }: TemplateProps) {
 
   if (!page) {
     notFound()
+  }
+
+  // A plain WP page with a bespoke interactive layout (no WP template needed).
+  if (page.slug === WORKPLACES_SLUG) {
+    return <WorkplacesTemplate page={page} />
   }
 
   return (

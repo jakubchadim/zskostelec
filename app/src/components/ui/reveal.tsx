@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 type RevealProps = {
@@ -8,7 +8,6 @@ type RevealProps = {
   className?: string
   /** Stagger delay in ms. */
   delay?: number
-  as?: ElementType
 }
 
 /**
@@ -17,8 +16,8 @@ type RevealProps = {
  * mount), so without JS - or for crawlers - the content is simply visible.
  * `prefers-reduced-motion` is handled in globals.css.
  */
-export function Reveal({ children, className, delay = 0, as: Tag = 'div' }: RevealProps) {
-  const ref = useRef<HTMLElement>(null)
+export function Reveal({ children, className, delay = 0 }: RevealProps) {
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const node = ref.current
@@ -50,8 +49,8 @@ export function Reveal({ children, className, delay = 0, as: Tag = 'div' }: Reve
   }, [])
 
   return (
-    <Tag ref={ref} className={cn(className)} style={delay ? ({ '--reveal-delay': `${delay}ms` } as CSSProperties) : undefined}>
+    <div ref={ref} className={cn(className)} style={delay ? ({ '--reveal-delay': `${delay}ms` } as CSSProperties) : undefined}>
       {children}
-    </Tag>
+    </div>
   )
 }

@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { EmployeesExplorer } from '@/components/employee/employees-explorer'
 import { Container } from '@/components/ui/container'
@@ -33,7 +34,10 @@ export async function EmployeesTemplate({ data }: TemplateProps) {
       />
       <PageBody page={page} intro />
       <Container className="pt-4">
-        <EmployeesExplorer employees={employees} positions={positions} buildings={buildings} />
+        {/* Suspense: the explorer reads `?pracoviste=` via useSearchParams. */}
+        <Suspense>
+          <EmployeesExplorer employees={employees} positions={positions} buildings={buildings} />
+        </Suspense>
       </Container>
     </>
   )

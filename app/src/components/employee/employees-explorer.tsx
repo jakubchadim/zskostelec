@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import type { ID, WpBuilding, WpEmployee, WpPosition } from '@/lib/wp'
 import { ChipGroup } from '@/components/filter/chip-group'
 import { SearchField } from '@/components/filter/search-field'
@@ -33,7 +34,12 @@ function peopleLabel(count: number): string {
 export function EmployeesExplorer({ employees, positions, buildings }: EmployeesExplorerProps) {
   const [name, setName] = useState('')
   const [positionIds, setPositionIds] = useState<ID[]>([])
-  const [buildingIds, setBuildingIds] = useState<ID[]>([])
+  // `?pracoviste=<building id>` (linked from the Pracoviště map) pre-selects a building.
+  const searchParams = useSearchParams()
+  const [buildingIds, setBuildingIds] = useState<ID[]>(() => {
+    const fromUrl = searchParams.get('pracoviste')
+    return buildings.filter((building) => String(building.id) === fromUrl).map((building) => building.id)
+  })
 
   const filtered = useMemo(
     () => filterEmployees(employees, { name, positionIds, buildingIds }),
