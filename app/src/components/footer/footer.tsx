@@ -47,9 +47,9 @@ export default function Footer({ fastFirst, fastSecond }: FooterProps) {
           <div className="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr_1.3fr] md:gap-8 md:py-16">
             <div>
               <div className="flex items-center gap-3">
-                <span className="grid size-16 shrink-0 place-items-center rounded-full border-[2.5px] border-white-1 bg-tangerine">
+                <span className="block size-16 shrink-0 rounded-[26%] border-[2.5px] border-white-1">
                   {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
-                  <img src="/logo.svg" alt="" className="size-[82%]" />
+                  <img src="/logo.svg" alt="" className="block size-full rounded-[22%]" />
                 </span>
                 <p className="m-0 font-display text-xl leading-tight font-bold">
                   ZŠ Gutha-Jarkovského

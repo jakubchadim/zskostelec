@@ -45,12 +45,13 @@ export function Logo({ compact }: { compact?: boolean }) {
     <Link href="/" className="group flex items-center gap-3" aria-label="ZŠ Kostelec nad Orlicí – úvodní stránka">
       <span
         className={cn(
-          'relative grid shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-tangerine shadow-pop-sm transition-all duration-300 group-hover:rotate-[-8deg]',
+          'relative block shrink-0 rounded-[26%] border-[2.5px] border-ink shadow-pop-sm transition-transform duration-300 group-hover:-rotate-6',
           compact ? 'size-10' : 'size-11 md:size-12'
         )}
       >
+        {/* Logo: Jiří Guth-Jarkovský, the school's patron (see design/logo). */}
         {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
-        <img src="/logo.svg" alt="" className="size-[82%]" />
+        <img src="/logo.svg" alt="" className="block size-full rounded-[22%]" />
         <Star className="absolute -top-2 -right-2 w-5 text-sun transition-transform duration-500 group-hover:rotate-180" />
       </span>
       <span className="leading-none">
