@@ -135,8 +135,8 @@ export const WORKPLACES: Workplace[] = [
     key: 'erbenova',
     name: 'Družina Erbenova',
     address: 'Erbenova 891',
-    mapX: 49.6,
-    mapY: 29.5,
+    mapX: 49.8,
+    mapY: 26,
     roles: ['Školní družina'],
     facts: [
       'Funkcionalistická vila s terasami – hlavní pracoviště školní družiny.',
