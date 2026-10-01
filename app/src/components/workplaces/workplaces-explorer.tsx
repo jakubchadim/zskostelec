@@ -41,6 +41,26 @@ function subscribeMotion(cb: () => void) {
   return () => mq.removeEventListener('change', cb)
 }
 
+// The selected building lives in the URL hash (#palackeho), so a building can be linked/shared.
+// replaceState doesn't fire `hashchange`, so local subscribers are notified by hand.
+const hashListeners = new Set<() => void>()
+function subscribeHash(cb: () => void) {
+  hashListeners.add(cb)
+  window.addEventListener('hashchange', cb)
+  return () => {
+    hashListeners.delete(cb)
+    window.removeEventListener('hashchange', cb)
+  }
+}
+function readHash(): string {
+  return decodeURIComponent(window.location.hash.slice(1))
+}
+function writeHash(key: string | null) {
+  const url = key ? `#${key}` : window.location.pathname + window.location.search
+  window.history.replaceState(window.history.state, '', url)
+  hashListeners.forEach((cb) => cb())
+}
+
 const ACCENT_TINT: Record<WorkplaceWithLive['accent'], string> = {
   berry: 'bg-berry-tint',
   sky: 'bg-sky-tint',
@@ -210,7 +230,9 @@ function InfoPanel({
  * browse the buildings).
  */
 export function WorkplacesExplorer({ workplaces, mapUrl }: { workplaces: WorkplaceWithLive[]; mapUrl: string | null }) {
-  const [selected, setSelected] = useState<WorkplaceKey | null>(null)
+  const hash = useSyncExternalStore(subscribeHash, readHash, () => '')
+  const selected = workplaces.some((w) => w.key === hash) ? (hash as WorkplaceKey) : null
+  const setSelected = (key: WorkplaceKey | null) => writeHash(key)
   const [showMap, setShowMap] = useState(false)
   const stage = useRef<HTMLDivElement>(null)
   const webgl = useSyncExternalStore(subscribeNoop, hasWebGL, () => true)

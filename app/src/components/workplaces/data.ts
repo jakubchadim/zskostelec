@@ -11,7 +11,7 @@
  */
 export type WorkplaceKey = 'palackeho' | 'komenskeho' | 'drtinova' | 'erbenova'
 
-export type WorkplaceShape = {
+export type BuildingPart = {
   /** Footprint in world units (x = width, z = depth). */
   width: number
   depth: number
@@ -20,10 +20,27 @@ export type WorkplaceShape = {
   wall: string
   /** Lower-floor band colour (Palackého has a darker plinth). */
   plinth?: string
-  roof: 'gable' | 'flat'
+  roof: 'gable' | 'hip' | 'flat'
   roofColor: string
-  /** Rotation around Y in radians, roughly following its street. */
+  /** Position inside the building group, in local units (+z = front/entrance side). */
+  offset?: [number, number]
+}
+
+export type WorkplaceShape = BuildingPart & {
+  /** Rotation around Y in radians (positive = counter-clockwise seen from above). */
   rotation: number
+  /** Extra connected buildings (e.g. the back wing + link at Palackého náměstí). */
+  annexes?: BuildingPart[]
+}
+
+/** Radius (local units) that encloses every part of the building - for the lot circle and keeping houses away. */
+export function footprintRadius(shape: WorkplaceShape): number {
+  return Math.max(
+    ...[shape, ...(shape.annexes ?? [])].map((part) => {
+      const [ox, oz] = part.offset ?? [0, 0]
+      return Math.hypot(ox, oz) + Math.hypot(part.width, part.depth) / 2
+    })
+  )
 }
 
 export type Workplace = {
@@ -48,6 +65,8 @@ export type Workplace = {
   contentMatch: string
   /** Which way the map pin's label flies out (Komenského and Erbenova stand close together). */
   pinSide?: 'left' | 'right'
+  /** Close-up camera stands front-right of the entrance by default; 'left' avoids a neighbour in the way. */
+  cameraFrom?: 'left' | 'right'
 }
 
 export const WORKPLACES: Workplace[] = [
@@ -56,7 +75,7 @@ export const WORKPLACES: Workplace[] = [
     name: 'Budova na náměstí',
     address: 'Palackého náměstí 45',
     mapX: 62.4,
-    mapY: 50.7,
+    mapY: 52.6,
     roles: ['2. stupeň', 'Sídlo a ředitelství školy', 'Vzdělávání cizinců'],
     facts: [
       'Dům postavili v 70. letech 19. století pro hraběcí odborníky, kteří stavěli cukrovar a železnici.',
@@ -67,14 +86,37 @@ export const WORKPLACES: Workplace[] = [
     buildingMatch: 'Palackého',
     accent: 'berry',
     shape: {
+      // Two buildings joined by a flat-roofed link: the main one faces the square,
+      // the back wing with the hipped orange roof faces Na Lávkách.
       width: 1.6,
-      depth: 0.8,
+      depth: 0.5,
       floors: 3,
       wall: '#e3a24a',
       plinth: '#c4692c',
       roof: 'gable',
       roofColor: '#8a3b22',
-      rotation: -0.12
+      offset: [0, 0.33],
+      rotation: -0.12 + Math.PI,
+      annexes: [
+        {
+          width: 0.75,
+          depth: 0.4,
+          floors: 2,
+          wall: '#d9d1c4',
+          roof: 'flat',
+          roofColor: '#cdc6ba',
+          offset: [0.12, -0.05]
+        },
+        {
+          width: 1.15,
+          depth: 0.45,
+          floors: 3,
+          wall: '#f0c8a2',
+          roof: 'hip',
+          roofColor: '#e0784a',
+          offset: [-0.08, -0.45]
+        }
+      ]
     },
     contentMatch: 'Palackého'
   },
@@ -100,10 +142,11 @@ export const WORKPLACES: Workplace[] = [
       plinth: '#b08a63',
       roof: 'flat',
       roofColor: '#7b6a55',
-      rotation: 0.08
+      rotation: 0.08 - Math.PI / 2
     },
     contentMatch: 'Komenského',
-    pinSide: 'right'
+    pinSide: 'right',
+    cameraFrom: 'left'
   },
   {
     key: 'drtinova',

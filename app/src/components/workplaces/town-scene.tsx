@@ -5,7 +5,7 @@ import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { CameraControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { cn } from '@/lib/utils'
-import { ACCENT_HEX, type WorkplaceKey, type WorkplaceWithLive } from './data'
+import { ACCENT_HEX, footprintRadius, type BuildingPart, type WorkplaceKey, type WorkplaceWithLive } from './data'
 import {
   INDUSTRY,
   LANDMARKS,
@@ -509,10 +509,61 @@ type SchoolProps = {
   onHover: (key: WorkplaceKey | null) => void
 }
 
+/** One block of a school: walls, optional plinth, windows and a gable / hipped / flat roof. */
+function Part({ part, gable }: { part: BuildingPart; gable: THREE.BufferGeometry }) {
+  const height = part.floors * FLOOR_H
+  const [ox, oz] = part.offset ?? [0, 0]
+
+  return (
+    <group position={[ox, 0, oz]}>
+      <mesh position={[0, height / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[part.width, height, part.depth]} />
+        <meshStandardMaterial color={part.wall} />
+      </mesh>
+      {part.plinth && (
+        <mesh position={[0, FLOOR_H / 2, 0]} castShadow>
+          <boxGeometry args={[part.width + 0.02, FLOOR_H, part.depth + 0.02]} />
+          <meshStandardMaterial color={part.plinth} />
+        </mesh>
+      )}
+      <Windows width={part.width} depth={part.depth} floors={part.floors} rows={part.floors} />
+      {part.roof === 'gable' && (
+        <mesh
+          geometry={gable}
+          position={[0, height, 0]}
+          scale={[part.width + 0.06, 0.32, part.depth + 0.08]}
+          castShadow
+        >
+          <meshStandardMaterial color={part.roofColor} />
+        </mesh>
+      )}
+      {part.roof === 'hip' && (
+        // 4-sided cone rotated 45° = a pyramid with a square base of side 1, scaled to the footprint.
+        <mesh
+          position={[0, height + 0.15, 0]}
+          rotation={[0, Math.PI / 4, 0]}
+          scale={[part.width + 0.08, 0.3, part.depth + 0.08]}
+          castShadow
+        >
+          <coneGeometry args={[Math.SQRT1_2, 1, 4]} />
+          <meshStandardMaterial color={part.roofColor} flatShading />
+        </mesh>
+      )}
+      {part.roof === 'flat' && (
+        <mesh position={[0, height + 0.03, 0]} castShadow>
+          <boxGeometry args={[part.width + 0.05, 0.06, part.depth + 0.05]} />
+          <meshStandardMaterial color={part.roofColor} />
+        </mesh>
+      )}
+    </group>
+  )
+}
+
 function School({ workplace, selected, hovered, onSelect, onHover }: SchoolProps) {
   const { shape } = workplace
   const [x, z] = percentToWorld(workplace.mapX, workplace.mapY)
   const height = shape.floors * FLOOR_H
+  const [mx, mz] = shape.offset ?? [0, 0]
   const group = useRef<THREE.Group>(null)
   const gable = useMemo(() => makeGableGeometry(), [])
   const accent = ACCENT_HEX[workplace.accent]
@@ -545,48 +596,26 @@ function School({ workplace, selected, hovered, onSelect, onHover }: SchoolProps
     <group position={[x, 0, z]}>
       {/* Coloured "lot" around the school so it pops out of the town. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.016, 0]} receiveShadow>
-        <circleGeometry args={[Math.max(shape.width, shape.depth) * 0.7, 40]} />
+        <circleGeometry args={[footprintRadius(shape) * 0.95, 40]} />
         <meshStandardMaterial color={accent} transparent opacity={selected ? 0.55 : 0.3} />
       </mesh>
 
       <group ref={group} rotation={[0, shape.rotation, 0]} {...handlers}>
-        <mesh position={[0, height / 2, 0]} castShadow receiveShadow>
-          <boxGeometry args={[shape.width, height, shape.depth]} />
-          <meshStandardMaterial color={shape.wall} />
-        </mesh>
-        {shape.plinth && (
-          <mesh position={[0, FLOOR_H / 2, 0]} castShadow>
-            <boxGeometry args={[shape.width + 0.02, FLOOR_H, shape.depth + 0.02]} />
-            <meshStandardMaterial color={shape.plinth} />
-          </mesh>
-        )}
-        <Windows width={shape.width} depth={shape.depth} floors={shape.floors} rows={shape.floors} />
-        {shape.roof === 'gable' ? (
-          <mesh
-            geometry={gable}
-            position={[0, height, 0]}
-            scale={[shape.width + 0.06, 0.32, shape.depth + 0.08]}
-            castShadow
-          >
-            <meshStandardMaterial color={shape.roofColor} />
-          </mesh>
-        ) : (
-          <mesh position={[0, height + 0.03, 0]} castShadow>
-            <boxGeometry args={[shape.width + 0.05, 0.06, shape.depth + 0.05]} />
-            <meshStandardMaterial color={shape.roofColor} />
-          </mesh>
-        )}
-        {/* Entrance canopy */}
-        <mesh position={[0, FLOOR_H * 0.95, shape.depth / 2 + 0.07]} castShadow>
+        <Part part={shape} gable={gable} />
+        {shape.annexes?.map((annex, i) => (
+          <Part key={i} part={annex} gable={gable} />
+        ))}
+        {/* Entrance canopy (front = local +z) */}
+        <mesh position={[mx, FLOOR_H * 0.95, mz + shape.depth / 2 + 0.07]} castShadow>
           <boxGeometry args={[0.32, 0.03, 0.16]} />
           <meshStandardMaterial color={accent} />
         </mesh>
         {/* Flag */}
-        <mesh position={[shape.width / 2 - 0.08, height + 0.32, 0]}>
+        <mesh position={[mx + shape.width / 2 - 0.08, height + 0.32, mz]}>
           <cylinderGeometry args={[0.01, 0.01, 0.55, 6]} />
           <meshStandardMaterial color="#6b6577" />
         </mesh>
-        <mesh position={[shape.width / 2 + 0.02, height + 0.52, 0]}>
+        <mesh position={[mx + shape.width / 2 + 0.02, height + 0.52, mz]}>
           <boxGeometry args={[0.2, 0.12, 0.01]} />
           <meshStandardMaterial color={accent} />
         </mesh>
@@ -671,7 +700,16 @@ function overviewFor(aspect: number, workplaces: WorkplaceWithLive[]) {
   }
 }
 
-function CameraRig({ selected, workplaces }: { selected: WorkplaceKey | null; workplaces: WorkplaceWithLive[] }) {
+function CameraRig({
+  selected,
+  workplaces,
+  animate
+}: {
+  selected: WorkplaceKey | null
+  workplaces: WorkplaceWithLive[]
+  /** False with prefers-reduced-motion: jump instead of flying. */
+  animate: boolean
+}) {
   const controls = useRef<CameraControls>(null)
   const first = useRef(true)
   const aspect = useThree((state) => state.size.width / state.size.height)
@@ -680,27 +718,42 @@ function CameraRig({ selected, workplaces }: { selected: WorkplaceKey | null; wo
     const c = controls.current
     if (!c) return
 
-    if (first.current) {
-      // Intro: start far and high, glide down to the overview.
-      first.current = false
-      const overview = overviewFor(aspect, workplaces)
-      c.setLookAt(0, 40, 36, 0, 0, 0, false)
-      c.setLookAt(...overview.pos, ...overview.target, true)
-      return
-    }
-
     const workplace = workplaces.find((w) => w.key === selected)
+    // First run with no building in the URL: a fly-in intro. With a deep link (#palackeho)
+    // the camera starts at that building right away.
+    const intro = first.current && !workplace && animate
+    const smooth = animate && !first.current
+    first.current = false
+
     if (!workplace) {
       const overview = overviewFor(aspect, workplaces)
-      c.setLookAt(...overview.pos, ...overview.target, true)
+      if (intro) {
+        c.setLookAt(0, 40, 36, 0, 0, 0, false)
+      }
+      c.setLookAt(...overview.pos, ...overview.target, intro || smooth)
       return
     }
     const [x, z] = percentToWorld(workplace.mapX, workplace.mapY)
+    // Look at the entrance side (local +z), like the photos do, a bit from the right.
+    const r = workplace.shape.rotation
+    const front: Vec2 = [Math.sin(r), Math.cos(r)]
+    const right: Vec2 = [Math.cos(r), -Math.sin(r)]
     // On wide screens the info panel covers the right side - aim a bit right of the building.
     const shift = aspect > 1.2 ? 1.1 : 0
     const k = Math.max(1, 1.2 / aspect)
-    c.setLookAt(x + 2.6 * k + shift, 3.4 * k, z + 4.2 * k, x + shift, 0.35, z, true)
-  }, [selected, workplaces, aspect])
+    const side = workplace.cameraFrom === 'left' ? -1 : 1
+    const tx = x + right[0] * shift
+    const tz = z + right[1] * shift
+    c.setLookAt(
+      tx + front[0] * 4.2 * k + right[0] * 2.6 * k * side,
+      3.4 * k,
+      tz + front[1] * 4.2 * k + right[1] * 2.6 * k * side,
+      tx,
+      0.35,
+      tz,
+      smooth
+    )
+  }, [selected, workplaces, aspect, animate])
 
   return (
     <CameraControls
@@ -733,7 +786,7 @@ export default function TownScene({ workplaces, selected, onSelect, reducedMotio
   const { houses, trees } = useMemo(() => {
     const keepOut = workplaces.map((w) => {
       const [x, z] = percentToWorld(w.mapX, w.mapY)
-      return { x, z, r: Math.max(w.shape.width, w.shape.depth) * 0.75 + 0.45 }
+      return { x, z, r: footprintRadius(w.shape) + 0.3 }
     })
     return generateTown(keepOut)
   }, [workplaces])
@@ -818,7 +871,7 @@ export default function TownScene({ workplaces, selected, onSelect, reducedMotio
           />
         ))}
 
-        <CameraRig selected={selected} workplaces={workplaces} />
+        <CameraRig selected={selected} workplaces={workplaces} animate={!reducedMotion} />
         <LabelProjector labels={labels} elements={elements} />
         <FirstFrame onReady={() => setReady(true)} />
       </Canvas>

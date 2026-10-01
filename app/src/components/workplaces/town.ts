@@ -161,13 +161,15 @@ export const ROADS: Line[] = [
     ]
   },
   {
+    // Na Lávkách - runs behind the school at Palackého náměstí.
     width: 0.18,
     color: '#fbf6ea',
     points: [
       [1060, 585],
-      [1150, 520],
-      [1330, 528],
-      [1470, 540]
+      [1150, 574],
+      [1250, 582],
+      [1350, 584],
+      [1470, 545]
     ]
   },
   {
