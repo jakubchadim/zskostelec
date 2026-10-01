@@ -4,6 +4,7 @@ import { NavLink } from '../nav/nav-link'
 import { Container } from '../ui/container'
 import { Cloud, PaperPlane, Star, WaveEdge } from '../ui/doodles'
 import { BackToTop } from './back-to-top'
+import { SchoolLogo } from '../ui/school-logo'
 import type { NavItem } from '../nav/types'
 
 type FooterProps = {
@@ -46,16 +47,9 @@ export default function Footer({ fastFirst, fastSecond }: FooterProps) {
         <Container className="relative">
           <div className="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr_1.3fr] md:gap-8 md:py-16">
             <div>
-              <div className="flex items-center gap-3">
-                <span className="block size-16 shrink-0 rounded-[26%] border-[2.5px] border-white-1">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
-                  <img src="/logo.svg" alt="" className="block size-full rounded-[22%]" />
-                </span>
-                <p className="m-0 font-display text-xl leading-tight font-bold">
-                  ZŠ Gutha-Jarkovského
-                  <span className="block text-base font-semibold text-white-1/70">Kostelec nad Orlicí</span>
-                </p>
-              </div>
+              <Link href="/" className="group inline-flex" aria-label="Základní škola Gutha-Jarkovského – úvodní stránka">
+                <SchoolLogo inverted />
+              </Link>
               <p className="mt-5 max-w-xs text-white-1/70">
                 Škola, kde se učíme s radostí, zvědavostí a&nbsp;respektem.
               </p>

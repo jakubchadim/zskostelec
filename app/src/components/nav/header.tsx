@@ -9,7 +9,7 @@ import { ChevronDown, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { accentAt } from '@/components/ui/accent'
 import { Container } from '@/components/ui/container'
-import { Star } from '@/components/ui/doodles'
+import { SchoolLogo } from '@/components/ui/school-logo'
 import { NavLink } from './nav-link'
 import { MobileMenuItem } from './mobile-menu-item'
 import type { NavItem } from './types'
@@ -42,22 +42,12 @@ function isActive(item: NavItem, pathname: string): boolean {
 
 export function Logo({ compact }: { compact?: boolean }) {
   return (
-    <Link href="/" className="group flex items-center gap-3" aria-label="ZŠ Kostelec nad Orlicí – úvodní stránka">
-      <span
-        className={cn(
-          'relative block shrink-0 rounded-[26%] border-[2.5px] border-ink shadow-pop-sm transition-transform duration-300 group-hover:-rotate-6',
-          compact ? 'size-10' : 'size-11 md:size-12'
-        )}
-      >
-        {/* Logo: Jiří Guth-Jarkovský, the school's patron (see design/logo). */}
-        {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
-        <img src="/logo.svg" alt="" className="block size-full rounded-[22%]" />
-        <Star className="absolute -top-2 -right-2 w-5 text-sun transition-transform duration-500 group-hover:rotate-180" />
-      </span>
-      <span className="leading-none">
-        <span className="block font-display text-xl font-extrabold tracking-tight md:text-2xl">ZŠ Kostelec</span>
-        <span className="block text-xs font-bold text-gray-7">nad Orlicí</span>
-      </span>
+    <Link
+      href="/"
+      className="group flex items-center rounded-2xl"
+      aria-label="Základní škola Gutha-Jarkovského, Kostelec nad Orlicí – úvodní stránka"
+    >
+      <SchoolLogo compact={compact} />
     </Link>
   )
 }
@@ -89,7 +79,7 @@ export default function Header({ menu }: HeaderProps) {
                 const accent = accentAt(idx)
                 const active = isActive(item, pathname)
                 const pill = cn(
-                  'flex items-center gap-0.5 rounded-full px-2 py-2 font-display text-[0.98rem] font-bold whitespace-nowrap lg:gap-1 lg:px-3 lg:text-[1.05rem] transition-colors outline-none focus-visible:ring-4 focus-visible:ring-sky',
+                  'flex items-center gap-0.5 rounded-full px-[7px] py-2 font-display text-[0.98rem] font-bold whitespace-nowrap lg:gap-1 lg:px-3 lg:text-[1.05rem] transition-colors outline-none focus-visible:ring-4 focus-visible:ring-sky',
                   active ? cn(accent.tint, 'ring-2 ring-ink') : 'hover:bg-white-1'
                 )
 
