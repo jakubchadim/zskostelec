@@ -327,20 +327,45 @@ export const INDUSTRY: Area[] = [
 export const STADIUM = { center: [1375, 180] as Vec2, rx: 1.35, rz: 0.75 }
 
 export type Landmark = {
-  kind: 'church' | 'castle' | 'station' | 'townhall'
+  kind: 'church' | 'castle' | 'station' | 'townhall' | 'academy'
   at: Vec2
   name: string
   rotation?: number
   /** Hide the floating name (e.g. when it would collide with a school pin). */
   hideLabel?: boolean
+  /** How far (world units) generated houses keep away. Default 0.9. */
+  clearRadius?: number
+  /** Label height above the ground (world units). Default 1.3. */
+  labelHeight?: number
 }
 
 export const LANDMARKS: Landmark[] = [
   { kind: 'church', at: [1395, 600], name: 'Kostel sv. Jiří', rotation: 0.1 },
   { kind: 'castle', at: [360, 495], name: 'Nový zámek', rotation: -0.1 },
   { kind: 'station', at: [745, 812], name: 'Nádraží', rotation: 0.35 },
-  { kind: 'townhall', at: [1250, 420], name: 'Radnice', rotation: 0, hideLabel: true }
+  { kind: 'townhall', at: [1250, 420], name: 'Radnice', rotation: 0, hideLabel: true },
+  // Obchodní akademie T. G. Masaryka - the big neo-renaissance school next to Komenského 80.
+  // Not one of our buildings, so it's scenery only (no pin, not clickable).
+  { kind: 'academy', at: [1155, 266], name: 'Obchodní akademie', rotation: -0.15, clearRadius: 1.35, labelHeight: 0.75 }
 ]
+
+/**
+ * Palackého náměstí furniture (map px): the fountain in the middle ringed by
+ * four lindens, and the two plague columns at either end of the square.
+ */
+export const SQUARE_DECOR = {
+  fountain: [1262, 457] as Vec2,
+  lindens: [
+    [1246, 446],
+    [1278, 446],
+    [1246, 469],
+    [1278, 469]
+  ] as Vec2[],
+  plagueColumns: [
+    [1188, 460],
+    [1330, 470]
+  ] as Vec2[]
+}
 
 // --- geometry helpers -------------------------------------------------------
 
@@ -422,6 +447,7 @@ export function generateTown(keepOut: { x: number; z: number; r: number }[]): {
   const parks = PARKS.map(worldPoly)
   const blocked = [worldPoly(SQUARE), ...INDUSTRY.map(worldPoly)]
   const landmarkPts = LANDMARKS.map((landmark) => toWorld(landmark.at))
+  const landmarkClear = LANDMARKS.map((landmark) => landmark.clearRadius ?? 0.9)
   const stadium = toWorld(STADIUM.center)
   const allRoads = ROADS
 
@@ -450,7 +476,7 @@ export function generateTown(keepOut: { x: number; z: number; r: number }[]): {
       if (keepOut.some((k) => Math.hypot(p[0] - k.x, p[1] - k.z) < k.r)) {
         continue
       }
-      if (landmarkPts.some(([lx, lz]) => Math.hypot(p[0] - lx, p[1] - lz) < 0.9)) {
+      if (landmarkPts.some(([lx, lz], i) => Math.hypot(p[0] - lx, p[1] - lz) < landmarkClear[i])) {
         continue
       }
       if (Math.hypot((p[0] - stadium[0]) / (STADIUM.rx + 0.45), (p[1] - stadium[1]) / (STADIUM.rz + 0.45)) < 1) {

@@ -14,6 +14,7 @@ import {
   RIVER,
   ROADS,
   SQUARE,
+  SQUARE_DECOR,
   STADIUM,
   WORLD_D,
   WORLD_W,
@@ -419,6 +420,9 @@ function LandmarkModel({ landmark }: { landmark: Landmark }) {
         </>
       )
       break
+    case 'academy':
+      body = <Academy />
+      break
   }
 
   return (
@@ -465,6 +469,158 @@ function Clouds({ animate }: { animate: boolean }) {
           ))}
         </group>
       ))}
+    </group>
+  )
+}
+
+/**
+ * Obchodní akademie T. G. Masaryka: a long, symmetrical neo-renaissance
+ * block in ochre with a white plinth, a light hipped roof, a dark mansard
+ * tower over the central bay and the TGM statue on the lawn in front.
+ * Scenery only - it isn't one of our buildings.
+ */
+function Academy() {
+  const w = 2.3
+  const d = 0.7
+  const floors = 3
+  const h = floors * FLOOR_H
+  const wall = '#e9c14f'
+
+  return (
+    <>
+      <mesh position={[0, h / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[w, h, d]} />
+        <meshStandardMaterial color={wall} />
+      </mesh>
+      {/* White plinth */}
+      <mesh position={[0, 0.06, 0]} castShadow>
+        <boxGeometry args={[w + 0.02, 0.12, d + 0.02]} />
+        <meshStandardMaterial color="#f3eee2" />
+      </mesh>
+      {/* Cornice bands between floors */}
+      {[1, 2].map((f) => (
+        <mesh key={f} position={[0, f * FLOOR_H, 0]}>
+          <boxGeometry args={[w + 0.03, 0.025, d + 0.03]} />
+          <meshStandardMaterial color="#d3a63a" />
+        </mesh>
+      ))}
+      <Windows width={w} depth={d} floors={floors} rows={floors} />
+      <HipRoof width={w + 0.06} depth={d + 0.06} y={h} color="#cfd4da" />
+      {/* Projecting side bays with little gables */}
+      {[-0.82, 0.62].map((bx) => (
+        <group key={bx} position={[bx, 0, d / 2 + 0.03]}>
+          <mesh position={[0, h / 2, 0]} castShadow>
+            <boxGeometry args={[0.36, h + 0.02, 0.08]} />
+            <meshStandardMaterial color={wall} />
+          </mesh>
+          <mesh position={[0, h + 0.07, 0]} rotation={[0, 0, Math.PI / 4]} castShadow>
+            <boxGeometry args={[0.18, 0.18, 0.06]} />
+            <meshStandardMaterial color="#d3a63a" />
+          </mesh>
+        </group>
+      ))}
+      {/* Dark mansard tower over the centre-left bay */}
+      <group position={[-0.25, h, 0]}>
+        <mesh position={[0, 0.16, 0]} castShadow>
+          <boxGeometry args={[0.46, 0.32, 0.46]} />
+          <meshStandardMaterial color="#3c4150" />
+        </mesh>
+        <mesh position={[0, 0.34, 0]} castShadow>
+          <boxGeometry args={[0.36, 0.05, 0.36]} />
+          <meshStandardMaterial color="#2c303b" />
+        </mesh>
+      </group>
+      {/* TGM statue on its pedestal in front */}
+      <group position={[-0.35, 0, d / 2 + 0.5]}>
+        <mesh position={[0, 0.1, 0]} castShadow>
+          <boxGeometry args={[0.12, 0.2, 0.12]} />
+          <meshStandardMaterial color="#e6e3dc" />
+        </mesh>
+        <mesh position={[0, 0.27, 0]} castShadow>
+          <cylinderGeometry args={[0.025, 0.03, 0.14, 8]} />
+          <meshStandardMaterial color="#4a4f5c" />
+        </mesh>
+      </group>
+      {/* Lawn */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.013, d / 2 + 0.45]} receiveShadow>
+        <planeGeometry args={[w, 0.75]} />
+        <meshStandardMaterial color="#8fd17a" />
+      </mesh>
+    </>
+  )
+}
+
+/** Palackého náměstí: fountain, four lindens around it and the two plague columns. */
+function SquareDecor() {
+  const [fx, fz] = toWorld(SQUARE_DECOR.fountain)
+
+  return (
+    <group>
+      {/* Fountain: octagonal basin, water, small central pillar */}
+      <group position={[fx, 0, fz]}>
+        <mesh position={[0, 0.05, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.24, 0.26, 0.1, 8]} />
+          <meshStandardMaterial color="#d8d2c6" />
+        </mesh>
+        <mesh position={[0, 0.101, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.2, 8]} />
+          <meshStandardMaterial color="#7cc4f0" emissive="#9fe0ff" emissiveIntensity={0.25} />
+        </mesh>
+        <mesh position={[0, 0.17, 0]} castShadow>
+          <cylinderGeometry args={[0.03, 0.04, 0.16, 8]} />
+          <meshStandardMaterial color="#d8d2c6" />
+        </mesh>
+        <mesh position={[0, 0.27, 0]}>
+          <sphereGeometry args={[0.045, 10, 8]} />
+          <meshStandardMaterial color="#bfe6ff" emissive="#bfe6ff" emissiveIntensity={0.4} />
+        </mesh>
+      </group>
+
+      {/* Lindens - bigger, rounder and lighter than the generic trees */}
+      {SQUARE_DECOR.lindens.map((p, i) => {
+        const [x, z] = toWorld(p)
+        return (
+          <group key={i} position={[x, 0, z]}>
+            <mesh position={[0, 0.12, 0]} castShadow>
+              <cylinderGeometry args={[0.03, 0.04, 0.24, 6]} />
+              <meshStandardMaterial color="#7a5236" />
+            </mesh>
+            <mesh position={[0, 0.42, 0]} castShadow>
+              <icosahedronGeometry args={[0.24, 1]} />
+              <meshStandardMaterial color={i % 2 ? '#6fbf4f' : '#7ccb5a'} flatShading />
+            </mesh>
+          </group>
+        )
+      })}
+
+      {/* Plague columns: stepped base, tall column, golden statue on top */}
+      {SQUARE_DECOR.plagueColumns.map((p, i) => {
+        const [x, z] = toWorld(p)
+        return (
+          <group key={i} position={[x, 0, z]}>
+            <mesh position={[0, 0.03, 0]} castShadow>
+              <boxGeometry args={[0.24, 0.06, 0.24]} />
+              <meshStandardMaterial color="#cfc8b8" />
+            </mesh>
+            <mesh position={[0, 0.11, 0]} castShadow>
+              <boxGeometry args={[0.15, 0.1, 0.15]} />
+              <meshStandardMaterial color="#ddd6c6" />
+            </mesh>
+            <mesh position={[0, 0.42, 0]} castShadow>
+              <cylinderGeometry args={[0.035, 0.045, 0.52, 10]} />
+              <meshStandardMaterial color="#e6dfcf" />
+            </mesh>
+            <mesh position={[0, 0.72, 0]} castShadow>
+              <coneGeometry args={[0.055, 0.14, 8]} />
+              <meshStandardMaterial color="#e8b93a" metalness={0.4} roughness={0.35} />
+            </mesh>
+            <mesh position={[0, 0.81, 0]}>
+              <sphereGeometry args={[0.035, 10, 8]} />
+              <meshStandardMaterial color="#f0c84a" metalness={0.4} roughness={0.35} />
+            </mesh>
+          </group>
+        )
+      })}
     </group>
   )
 }
@@ -845,7 +1001,7 @@ export default function TownScene({ workplaces, selected, onSelect, reducedMotio
     })
     for (const landmark of LANDMARKS) {
       const [x, z] = toWorld(landmark.at)
-      out.push({ id: `lm-${landmark.name}`, pos: [x, 1.3, z] })
+      out.push({ id: `lm-${landmark.name}`, pos: [x, landmark.labelHeight ?? 1.3, z] })
     }
     const [rx, rz] = toWorld(RIVER.points[2])
     out.push({ id: 'river', pos: [rx, 0.05, rz + 0.75] })
@@ -892,6 +1048,7 @@ export default function TownScene({ workplaces, selected, onSelect, reducedMotio
           <Ribbon key={i} line={road} y={0.01 + (road.width > 0.25 ? 0.004 : 0)} />
         ))}
         <Stadium />
+        <SquareDecor />
         <Houses houses={houses} />
         <Trees trees={trees} />
         {LANDMARKS.map((landmark) => (
