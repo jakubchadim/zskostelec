@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { FolderOpen } from 'lucide-react'
 import type { ID, WpDocument, WpDocumentCategory } from '@/lib/wp'
 import { ChipGroup } from '@/components/filter/chip-group'
@@ -20,6 +21,20 @@ function toggleId(ids: ID[], id: ID): ID[] {
   return ids.includes(id) ? ids.filter((existing) => existing !== id) : [...ids, id]
 }
 
+/** One category's documents; its own auto-animate parent so rows animate inside the section. */
+function DocumentList({ documents }: { documents: WpDocument[] }) {
+  const [listRef] = useAutoAnimate<HTMLUListElement>({ duration: 260 })
+  return (
+    <ul ref={listRef} className="m-0 grid list-none gap-3 p-0 md:grid-cols-2">
+      {documents.map((document) => (
+        <li key={document.id}>
+          <FileCard name={document.title || document.filename} href={document.fileUrl} />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 /**
  * Client island for the documents page: search (diacritics-insensitive) +
  * category chips, then the matching documents grouped into category
@@ -30,6 +45,9 @@ function toggleId(ids: ID[], id: ID): ID[] {
 export function DocumentsExplorer({ documents, categories }: DocumentsExplorerProps) {
   const [name, setName] = useState('')
   const [categoryIds, setCategoryIds] = useState<ID[]>([])
+
+  // Sections and rows animate in and out as the filters change (respects reduced motion).
+  const [groupsRef] = useAutoAnimate<HTMLDivElement>({ duration: 260 })
 
   const groups = useMemo(() => groupDocumentsByCategory(documents, categories), [documents, categories])
   const filteredGroups = useMemo(() => filterDocumentGroups(groups, { name, categoryIds }), [groups, name, categoryIds])
@@ -68,7 +86,7 @@ export function DocumentsExplorer({ documents, categories }: DocumentsExplorerPr
       {filteredGroups.length === 0 ? (
         <ArticleEmptyState parentCategoryLink={null} title="Žádný dokument" text="Zkuste jiné slovo nebo zrušte filtr kategorií." />
       ) : (
-        <div className="space-y-10">
+        <div ref={groupsRef} className="space-y-10">
           {filteredGroups.map((group, idx) => {
             const accent = accentAt(idx)
             return (
@@ -80,13 +98,7 @@ export function DocumentsExplorer({ documents, categories }: DocumentsExplorerPr
                   {group.category?.name ?? 'Ostatní'}
                   <span className="rounded-full bg-gray-2 px-2.5 py-0.5 font-sans text-sm font-bold text-gray-7">{group.documents.length}</span>
                 </h2>
-                <ul className="m-0 grid list-none gap-3 p-0 md:grid-cols-2">
-                  {group.documents.map((document) => (
-                    <li key={document.id}>
-                      <FileCard name={document.title || document.filename} href={document.fileUrl} />
-                    </li>
-                  ))}
-                </ul>
+                <DocumentList documents={group.documents} />
               </section>
             )
           })}

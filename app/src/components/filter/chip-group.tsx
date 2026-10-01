@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Check } from 'lucide-react'
 import type { ID } from '@/lib/wp'
 import { cn } from '@/lib/utils'
@@ -19,6 +20,7 @@ type ChipGroupProps = {
 /** Multi-select filter as toggle chips (a `<fieldset>` of checkboxes styled as pills). */
 export function ChipGroup({ legend, items, selected, onToggle, collapseAfter, activeClassName = 'bg-sun' }: ChipGroupProps) {
   const [expanded, setExpanded] = useState(false)
+  const [chipsRef] = useAutoAnimate<HTMLDivElement>({ duration: 200 })
   const collapsible = collapseAfter != null && items.length > collapseAfter
   // Selected chips always stay visible, even when collapsed.
   const visible =
@@ -27,7 +29,7 @@ export function ChipGroup({ legend, items, selected, onToggle, collapseAfter, ac
   return (
     <fieldset className="m-0 min-w-0 border-0 p-0">
       <legend className="mb-2 font-display text-sm font-extrabold tracking-wider text-gray-7 uppercase">{legend}</legend>
-      <div className="flex flex-wrap gap-2">
+      <div ref={chipsRef} className="flex flex-wrap gap-2">
         {visible.map((item) => {
           const active = selected.includes(item.id)
           return (

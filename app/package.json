@@ -13,6 +13,7 @@
     "mock-server": "node scripts/mock-server.js"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.10.0",
     "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-navigation-menu": "^1.2.22",
     "@react-three/drei": "^10.7.9",

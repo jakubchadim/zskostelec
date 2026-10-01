@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useSearchParams } from 'next/navigation'
 import type { ID, WpBuilding, WpEmployee, WpPosition } from '@/lib/wp'
 import { ChipGroup } from '@/components/filter/chip-group'
@@ -40,6 +41,9 @@ export function EmployeesExplorer({ employees, positions, buildings }: Employees
     const fromUrl = searchParams.get('pracoviste')
     return buildings.filter((building) => String(building.id) === fromUrl).map((building) => building.id)
   })
+
+  // Cards slide into place / fade in and out as the filters change (respects reduced motion).
+  const [listRef] = useAutoAnimate<HTMLUListElement>({ duration: 260 })
 
   const filtered = useMemo(
     () => filterEmployees(employees, { name, positionIds, buildingIds }),
@@ -87,7 +91,7 @@ export function EmployeesExplorer({ employees, positions, buildings }: Employees
       {filtered.length === 0 ? (
         <ArticleEmptyState parentCategoryLink={null} title="Nikoho jsme nenašli" text="Zkuste upravit hledání nebo zrušit některý filtr." />
       ) : (
-        <ul className="m-0 grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 md:grid-cols-3">
+        <ul ref={listRef} className="m-0 grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 md:grid-cols-3">
           {filtered.map((employee) => (
             <li key={employee.id}>
               <EmployeeCard
