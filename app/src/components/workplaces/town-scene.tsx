@@ -509,6 +509,55 @@ type SchoolProps = {
   onHover: (key: WorkplaceKey | null) => void
 }
 
+/**
+ * Hipped roof built in the building's real proportions (a ridge along the
+ * longer side, sloped ends) - scaling a 45°-rotated pyramid would skew it,
+ * because Object3D applies scale before rotation.
+ */
+function makeHipGeometry(width: number, depth: number, height: number): THREE.BufferGeometry {
+  const alongX = width >= depth
+  const long = alongX ? width : depth
+  const short = alongX ? depth : width
+  const ridge = Math.max(0, long - short) / 2
+  const hw = long / 2
+  const hd = short / 2
+
+  // Corners in (long, short) space, ridge ends on top.
+  const a = [-hw, 0, -hd]
+  const b = [hw, 0, -hd]
+  const c = [hw, 0, hd]
+  const d = [-hw, 0, hd]
+  const r1 = [-ridge, height, 0]
+  const r2 = [ridge, height, 0]
+  const faces = [
+    [a, r2, b],
+    [a, r1, r2], // back slope
+    [d, c, r2],
+    [d, r2, r1], // front slope
+    [a, d, r1], // left end
+    [b, r2, c], // right end
+    [a, b, c],
+    [a, c, d] // underside
+  ]
+  const positions = faces.flat(2)
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+  if (!alongX) {
+    geo.rotateY(Math.PI / 2)
+  }
+  geo.computeVertexNormals()
+  return geo
+}
+
+function HipRoof({ width, depth, y, color }: { width: number; depth: number; y: number; color: string }) {
+  const geo = useMemo(() => makeHipGeometry(width, depth, 0.3), [width, depth])
+  return (
+    <mesh geometry={geo} position={[0, y, 0]} castShadow>
+      <meshStandardMaterial color={color} side={THREE.DoubleSide} />
+    </mesh>
+  )
+}
+
 /** One block of a school: walls, optional plinth, windows and a gable / hipped / flat roof. */
 function Part({ part, gable }: { part: BuildingPart; gable: THREE.BufferGeometry }) {
   const height = part.floors * FLOOR_H
@@ -538,16 +587,7 @@ function Part({ part, gable }: { part: BuildingPart; gable: THREE.BufferGeometry
         </mesh>
       )}
       {part.roof === 'hip' && (
-        // 4-sided cone rotated 45° = a pyramid with a square base of side 1, scaled to the footprint.
-        <mesh
-          position={[0, height + 0.15, 0]}
-          rotation={[0, Math.PI / 4, 0]}
-          scale={[part.width + 0.08, 0.3, part.depth + 0.08]}
-          castShadow
-        >
-          <coneGeometry args={[Math.SQRT1_2, 1, 4]} />
-          <meshStandardMaterial color={part.roofColor} flatShading />
-        </mesh>
+        <HipRoof width={part.width + 0.08} depth={part.depth + 0.08} y={height} color={part.roofColor} />
       )}
       {part.roof === 'flat' && (
         <mesh position={[0, height + 0.03, 0]} castShadow>
