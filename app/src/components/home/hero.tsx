@@ -6,6 +6,7 @@ import { Blob, Cloud, PaperPlane, Pencil, Sparkle, Star, Sun, WaveEdge } from '@
 import { WpImage } from '@/components/image/wp-image'
 import type { WpMediaLike, WpPost } from '@/lib/wp'
 import { isExternalUrl } from './is-external-url'
+import { TownPopover } from './town-popover'
 
 export type HeroPhoto = { media: WpMediaLike; title: string; link: string }
 
@@ -84,8 +85,8 @@ export function Hero({ mainPost, photos, newsAnchor }: HeroProps) {
               <Sun className="absolute -top-20 right-[12%] hidden w-18 text-sun animate-spin-slow sm:block" />
             </h1>
             <p className="mt-6 max-w-lg text-lg text-gray-8">
-              Základní škola v srdci Kostelce nad Orlicí. Tady najdete novinky ze tříd, fotky z výletů, dokumenty i kontakty
-              na naše učitele.
+              Základní škola v srdci <TownPopover>Kostelce nad Orlicí</TownPopover>. Tady najdete novinky ze tříd, fotky z
+              výletů, dokumenty i kontakty na naše učitele.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               {newsAnchor && (

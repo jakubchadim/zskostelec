@@ -530,3 +530,34 @@
     transform: translateX(100%);
   }
 }
+
+/* Hero town popover (components/home/town-popover.tsx): dashes run along the route and the pin drops in. */
+.town-card.is-open .town-route {
+  animation: town-route 0.9s linear infinite;
+}
+
+.town-card.is-open .town-pin {
+  animation: town-pin 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes town-route {
+  from {
+    stroke-dashoffset: 18;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes town-pin {
+  0% {
+    transform: translateY(-18px) scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    transform: none;
+  }
+}
