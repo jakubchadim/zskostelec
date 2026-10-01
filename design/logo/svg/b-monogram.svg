@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="ZŠ Gutha-Jarkovského – monogram G">
+  <rect width="100" height="100" rx="26" fill="#1d2150"/>
+  <!-- G drawn as an open ring -->
+  <path d="M72 30 A28 28 0 1 0 78 52" fill="none" stroke="#ff8a00" stroke-width="13" stroke-linecap="round"/>
+  <!-- crossbar is a pencil pointing into the G -->
+  <rect x="52" y="45" width="22" height="12" rx="2" fill="#fff9f0"/>
+  <rect x="68" y="45" width="6" height="12" rx="1.5" fill="#ff5c8a"/>
+  <path d="M52 45 L42 51 L52 57 Z" fill="#ffcf33"/>
+  <path d="M45.2 49 L42 51 L45.2 53 Z" fill="#1d2150"/>
+  <!-- the gap lets the sun in -->
+  <circle cx="78" cy="28" r="6.5" fill="#ffcf33"/>
+</svg>

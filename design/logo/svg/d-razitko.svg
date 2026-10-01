@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="ZŠ Gutha-Jarkovského – razítko">
+  <defs>
+    <path id="d-top" d="M 13 50 A 37 37 0 0 1 87 50"/>
+    <path id="d-bottom" d="M 9.5 50 A 40.5 40.5 0 0 0 90.5 50"/>
+  </defs>
+  <circle cx="50" cy="50" r="49" fill="#1d2150"/>
+  <circle cx="50" cy="50" r="30" fill="#ffcf33"/>
+  <g font-family="'Baloo 2', ui-rounded, sans-serif" font-weight="800" fill="#fff9f0" letter-spacing=".6">
+    <text font-size="9.2"><textPath href="#d-top" startOffset="50%" text-anchor="middle">ZÁKLADNÍ ŠKOLA</textPath></text>
+    <text font-size="7.4"><textPath href="#d-bottom" startOffset="50%" text-anchor="middle">KOSTELEC NAD ORLICÍ</textPath></text>
+  </g>
+  <circle cx="11.5" cy="54" r="2" fill="#ff8a00"/>
+  <circle cx="88.5" cy="54" r="2" fill="#ff8a00"/>
+  <!-- the character from concept A, scaled into the centre -->
+  <g transform="translate(50 52) scale(.5) translate(-50 -52)">
+  <!-- face -->
+  <path d="M31 50 C31 74 38 89 50 89 C62 89 69 74 69 50 Z" fill="#ffd9b0"/>
+  <!-- hat: crown, band, brim -->
+  <path d="M31 45 L33 20 Q34 16 38 16 H62 Q66 16 67 20 L69 45 Z" fill="#1d2150"/>
+  <rect x="32.5" y="35" width="35" height="6" fill="#ff8a00"/>
+  <rect x="15" y="43" width="70" height="8" rx="4" fill="#1d2150"/>
+  <!-- round glasses -->
+  <circle cx="40" cy="61" r="7.5" fill="#fff9f0" stroke="#1d2150" stroke-width="3.5"/>
+  <circle cx="60" cy="61" r="7.5" fill="#fff9f0" stroke="#1d2150" stroke-width="3.5"/>
+  <path d="M47.5 60 Q50 57.5 52.5 60" fill="none" stroke="#1d2150" stroke-width="3" stroke-linecap="round"/>
+  <!-- nose -->
+  <path d="M50 64 Q53.5 69 50 71" fill="none" stroke="#c9875a" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- moustache -->
+  <path d="M50 76 C45 72 35 71 29 79 C35 77.5 41 80 50 79 C59 80 65 77.5 71 79 C65 71 55 72 50 76 Z" fill="#1d2150"/>
+  </g>
+</svg>
