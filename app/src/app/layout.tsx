@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const menus = await getNavData()
 
   return (
-    <html lang="cs" className={`${display.variable} ${body.variable} h-full`}>
+    <html lang="cs" data-scroll-behavior="smooth" className={`${display.variable} ${body.variable} h-full`}>
       <body className="flex min-h-full flex-col">
         <a
           href="#obsah"

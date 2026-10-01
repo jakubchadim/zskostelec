@@ -112,8 +112,20 @@ Redesign jde směrem **„hravá škola“**: krémový papír, zaoblené písmo
 ---
 
 ## 5. Ověření
-- `npx tsc --noEmit` ✅, `npm test` ✅ (206 testů, +1 regresní pro B1), `npx eslint src` ✅ (jen původní warning u `<img>` ve `WpImage`), `next build` ✅.
+- `npx tsc --noEmit` ✅, `npm test` ✅ (207 testů, +1 regresní pro B1), `npx eslint src` ✅ (jen původní warning u `<img>` ve `WpImage`), `next build` ✅.
 - Ručně prokliknuto proti mock API: úvod, aktuality, článek, fotogalerie + detail, zaměstnanci, dokumenty, Guťák, úřední deska (tabulka), školní družina (citace, seznamy), pracoviště (obrázky), historie (soubory) – desktop i mobil 390 px.
+
+## 5b. Opravy po revizi redesignu
+Druhé kolo (vlastní kontrola + nezávislá code review) našlo a opravilo:
+- plynulé odjíždění nahoru při každé navigaci (Next 16 potřebuje `data-scroll-behavior="smooth"` na `<html>`),
+- neviditelný focus u položek hlavního menu a vyhledávacích polí,
+- hlavička měnila výšku při scrollu → na krátkých stránkách blikala,
+- styly obsahu přebíjely barvy textu z editoru; chyběly odrážky/citace/tabulky v klasickém obsahu; dvojitý pruh u bloku citace; barevná skupina bloků bez odsazení; outline tlačítko ztrácelo barvu z editoru,
+- kontrast: barevné nadpisky sekcí, „Právě teď“, měsíc v datu a některá tlačítka měly bílý/světlý text pod 4,5 : 1 → tmavé varianty,
+- karty článků neukazovaly rok (a čtečky datum nečetly) → `<time>` + rok,
+- dlaždice „Další fotky“ se ukazovala i u galerie bez dalších fotek,
+- desktopové menu se ukazovalo až od 1311 px → nově od 1024 px (kompaktnější položky),
+- odkaz „Co je nového“ mohl vést na neexistující kotvu, pás fotek při omezení animací nešel posouvat, pozice zaměstnanců s čárkou v názvu se rozpadaly na dva štítky.
 
 ## 6. Doporučení a otevřené body (na rozhodnutí)
 1. **Texty k potvrzení** – claim v hero („Učíme se s radostí a objevujeme svět“), perex pod ním, „Škola, kde se učíme s radostí, zvědavostí a respektem“ v patičce, perexy na podstránkách. Jsou napsané jako návrh; ideálně je přesunout do ACF polí homepage, aby je škola mohla měnit.

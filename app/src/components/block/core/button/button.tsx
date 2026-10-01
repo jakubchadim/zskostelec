@@ -28,7 +28,7 @@ export const BlockCoreButton: BlockFC<BlockCoreButtonAttrs> = ({ block: { attrs,
     hasColor ? getBackgroundColorClass(attrs.backgroundColor) : 'bg-sun',
     hasColor ? getBackgroundHoverColorClass(attrs.backgroundColor) : undefined,
     attrs.textColor != null ? getTextColorClass(attrs.textColor) : 'text-ink',
-    isOutline && 'bg-paper'
+    isOutline && !hasColor && 'bg-paper'
   )
 
   const isExternal = !attrs.href || attrs.href.startsWith('http') || attrs.target === '_blank'

@@ -7,7 +7,7 @@ import { formatPhoneNumber } from './format-phone'
 type EmployeeCardProps = {
   name: string
   photo: WpMediaLike | null
-  position?: string
+  positions?: string[]
   location?: string
   phone?: string
   email?: string
@@ -25,7 +25,7 @@ export function initialsOf(name: string): string {
 }
 
 /** One staff member: round photo (or colourful initials), name, role chips and tap-to-call/mail buttons. */
-export function EmployeeCard({ name, photo, position, location, phone, email }: EmployeeCardProps) {
+export function EmployeeCard({ name, photo, positions = [], location, phone, email }: EmployeeCardProps) {
   const accent = accentFor(name)
   const [surnameFirst, titles] = name.split(/,(.+)/)
 
@@ -51,9 +51,9 @@ export function EmployeeCard({ name, photo, position, location, phone, email }: 
         </div>
       </div>
 
-      {position && (
+      {positions.length > 0 && (
         <ul className="m-0 mt-4 flex list-none flex-wrap gap-1.5 p-0">
-          {position.split(', ').map((role) => (
+          {positions.map((role) => (
             <li key={role} className={cn('rounded-full px-2.5 py-0.5 text-xs font-extrabold', accent.tint, accent.text)}>
               {role}
             </li>

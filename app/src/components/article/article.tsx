@@ -48,18 +48,22 @@ export function DateBadge({ date, accent, className }: { date: DateString; accen
   }
 
   return (
-    <div
+    <time
+      dateTime={date.slice(0, 10)}
       className={cn(
-        'w-14 shrink-0 overflow-hidden rounded-xl border-[2.5px] border-ink bg-paper text-center leading-none shadow-pop-sm',
+        'block w-14 shrink-0 overflow-hidden rounded-xl border-[2.5px] border-ink bg-paper text-center leading-none shadow-pop-sm',
         className
       )}
-      aria-label={formatArticleDate(date)}
     >
-      <div className={cn('border-b-2 border-ink py-1 text-[0.7rem] font-extrabold tracking-wider uppercase', accent.bg, accent.name === 'sun' || accent.name === 'grass' ? 'text-ink' : 'text-white-1')}>
-        {parts.month}
-      </div>
-      <div className="py-1.5 font-display text-2xl font-extrabold">{parts.day}</div>
-    </div>
+      <span className="sr-only">{formatArticleDate(date)}</span>
+      <span aria-hidden className="block">
+        <span className={cn('block border-b-2 border-ink py-1 text-[0.7rem] font-extrabold tracking-wider text-ink uppercase', accent.bg)}>
+          {parts.month}
+        </span>
+        <span className="block pt-1.5 font-display text-2xl font-extrabold">{parts.day}</span>
+        <span className="block pb-1 text-[0.65rem] font-bold text-gray-7">{parts.year}</span>
+      </span>
+    </time>
   )
 }
 

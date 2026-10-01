@@ -12,6 +12,8 @@ export type HeroPhoto = { media: WpMediaLike; title: string; link: string }
 type HeroProps = {
   mainPost: WpPost | null
   photos: HeroPhoto[]
+  /** In-page anchor of the news section, or null when the homepage has none. */
+  newsAnchor: string | null
 }
 
 const POLAROID_LAYOUT = [
@@ -52,7 +54,7 @@ function Polaroid({ photo, className, priority }: { photo: HeroPhoto; className:
  * with the main post, and a polaroid collage of the latest gallery photos,
  * surrounded by floating doodles.
  */
-export function Hero({ mainPost, photos }: HeroProps) {
+export function Hero({ mainPost, photos, newsAnchor }: HeroProps) {
   const mainLink = mainPost?.link ?? null
 
   return (
@@ -86,10 +88,12 @@ export function Hero({ mainPost, photos }: HeroProps) {
               na naše učitele.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="#aktuality" className="btn bg-tangerine text-lg text-ink">
-                Co je nového
-                <ArrowRight className="size-5" aria-hidden />
-              </Link>
+              {newsAnchor && (
+                <Link href={newsAnchor} className="btn bg-tangerine text-lg text-ink">
+                  Co je nového
+                  <ArrowRight className="size-5" aria-hidden />
+                </Link>
+              )}
               <a
                 href="https://zsgjkno.edupage.org/"
                 target="_blank"
@@ -111,7 +115,7 @@ export function Hero({ mainPost, photos }: HeroProps) {
                   <Megaphone className="size-6" aria-hidden />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-xs font-extrabold tracking-wider text-berry uppercase">Právě teď</span>
+                  <span className="block text-xs font-extrabold tracking-wider text-[#b3164a] uppercase">Právě teď</span>
                   <span className="block font-display text-lg leading-snug font-bold" dangerouslySetInnerHTML={{ __html: mainPost.title }} />
                 </span>
                 <ArrowRight className="ml-auto size-5 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden />

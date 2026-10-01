@@ -22,6 +22,7 @@
   --breakpoint-xs: 26em; /* 416px */
   --breakpoint-sm: 41.75em; /* 668px */
   --breakpoint-md: 55.125em; /* 882px */
+  --breakpoint-nav: 64em; /* 1024px - full desktop nav fits from here */
   --breakpoint-lg: 81.9375em; /* 1311px */
 
   --spacing: 0.3125rem; /* 5px */
@@ -191,6 +192,8 @@
   }
 
   html {
+    /* Only for in-page anchors; Next skips it on route changes
+       (see data-scroll-behavior in layout.tsx). */
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
   }
@@ -337,116 +340,162 @@
 
 /* ------------------------------------------------------ scroll reveal */
 
-/* Set by <Reveal>; the class is only added client-side so content is
-   never hidden when JS is off. */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px) scale(0.98);
-  transition:
-    opacity 0.6s ease,
-    transform 0.7s cubic-bezier(0.34, 1.3, 0.64, 1);
-  transition-delay: var(--reveal-delay, 0ms);
-}
+/* Component layer, so utilities (e.g. an editor-picked `text-white-1`) win. */
+@layer components {
+  /* Set by <Reveal>; the class is only added client-side so content is
+     never hidden when JS is off. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    transition:
+      opacity 0.6s ease,
+      transform 0.7s cubic-bezier(0.34, 1.3, 0.64, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
 
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
 
-/* ------------------------------------------------------- WP content */
+  /* ------------------------------------------------------- WP content */
 
-/* Long-form content coming from WordPress (posts, pages). */
-.wp-prose {
-  font-size: 1.0625rem;
-  line-height: 1.75;
-  color: var(--color-gray-8);
-}
+  /* Long-form content coming from WordPress (posts, pages). */
+  .wp-prose {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-gray-8);
+    /* Headings/bold/links use these; a block with an editor-picked text
+       colour resets them to currentColor (see block/section.tsx, group.tsx). */
+    --prose-strong: var(--color-ink);
+    --prose-link: var(--color-secondary-3);
+  }
 
-.wp-prose p {
-  margin: 0 0 1.1em;
-}
+  .wp-prose p {
+    margin: 0 0 1.1em;
+  }
 
-.wp-prose h1,
-.wp-prose h2,
-.wp-prose h3,
-.wp-prose h4,
-.wp-prose h5,
-.wp-prose h6 {
-  color: var(--color-ink);
-  margin: 1.6em 0 0.6em;
-}
+  .wp-prose h1,
+  .wp-prose h2,
+  .wp-prose h3,
+  .wp-prose h4,
+  .wp-prose h5,
+  .wp-prose h6 {
+    color: var(--prose-strong);
+    margin: 1.6em 0 0.6em;
+  }
 
-.wp-prose h2 {
-  font-size: 1.75rem;
-}
+  .wp-prose h2 {
+    font-size: 1.75rem;
+  }
 
-.wp-prose h3 {
-  font-size: 1.4rem;
-}
+  .wp-prose h3 {
+    font-size: 1.4rem;
+  }
 
-.wp-prose h4 {
-  font-size: 1.2rem;
-}
+  .wp-prose h4 {
+    font-size: 1.2rem;
+  }
 
-.wp-prose > :first-child :is(h1, h2, h3, h4, h5, h6):first-child {
-  margin-top: 0;
-}
+  .wp-prose > :first-child :is(h1, h2, h3, h4, h5, h6):first-child {
+    margin-top: 0;
+  }
 
-.wp-prose a:not([class]),
-.wp-prose a[data-type],
-.wp-prose a[data-id] {
-  color: var(--color-secondary-3);
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in oklab, var(--color-teal) 45%, transparent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-  transition:
-    background-color 0.15s ease,
-    text-decoration-color 0.15s ease;
-  border-radius: 4px;
-}
+  .wp-prose a:not([class]),
+  .wp-prose a[data-type],
+  .wp-prose a[data-id] {
+    color: var(--prose-link);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-teal) 45%, transparent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition:
+      background-color 0.15s ease,
+      text-decoration-color 0.15s ease;
+    border-radius: 4px;
+  }
 
-.wp-prose a:not([class]):hover,
-.wp-prose a[data-type]:hover,
-.wp-prose a[data-id]:hover {
-  background: var(--color-teal-tint);
-  text-decoration-color: var(--color-teal);
-}
+  .wp-prose a:not([class]):hover,
+  .wp-prose a[data-type]:hover,
+  .wp-prose a[data-id]:hover {
+    background: var(--color-teal-tint);
+    text-decoration-color: var(--color-teal);
+  }
 
-.wp-prose strong,
-.wp-prose b {
-  color: var(--color-ink);
-}
+  .wp-prose strong,
+  .wp-prose b {
+    color: var(--prose-strong);
+  }
 
-.wp-prose ol {
-  padding-left: 1.4em;
-  margin: 0 0 1.1em;
-  list-style: decimal;
-}
+  /* Lists in classic-editor HTML / unregistered blocks (core/list blocks get
+     their own colourful bullets in block/blocks.css). */
+  .wp-prose ul:not(.wp-block-list ul) {
+    padding-left: 1.4em;
+    margin: 0 0 1.1em;
+    list-style: disc;
+  }
 
-.wp-prose ol > li::marker {
-  color: var(--color-primary-3);
-  font-weight: 700;
-}
+  .wp-prose ul:not(.wp-block-list ul) > li::marker {
+    color: var(--color-primary-1);
+  }
 
-.wp-prose img {
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius-medium);
-}
+  .wp-prose li + li {
+    margin-top: 0.3em;
+  }
 
-.wp-prose iframe {
-  max-width: 100%;
-  border-radius: var(--radius-medium);
-}
+  .wp-prose blockquote {
+    margin: 1.5em 0;
+    padding: 0.5em 0 0.5em 1.2em;
+    border-left: 5px solid var(--color-grape);
+    font-family: var(--font-display);
+    font-size: 1.2em;
+    color: var(--prose-strong);
+  }
 
-.wp-prose hr {
-  border: 0;
-  height: 10px;
-  margin: 2em 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10' viewBox='0 0 40 10'%3E%3Cpath d='M0 5 Q 5 0 10 5 T 20 5 T 30 5 T 40 5' fill='none' stroke='%23eadfce' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: 28px 10px;
+  .wp-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 1.1em;
+  }
+
+  .wp-prose th,
+  .wp-prose td {
+    padding: 0.5em 0.75em;
+    border-bottom: 1.5px solid var(--color-gray-3);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .wp-prose ol {
+    padding-left: 1.4em;
+    margin: 0 0 1.1em;
+    list-style: decimal;
+  }
+
+  .wp-prose ol > li::marker {
+    color: var(--color-primary-3);
+    font-weight: 700;
+  }
+
+  .wp-prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-medium);
+  }
+
+  .wp-prose iframe {
+    max-width: 100%;
+    border-radius: var(--radius-medium);
+  }
+
+  .wp-prose hr {
+    border: 0;
+    height: 10px;
+    margin: 2em 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10' viewBox='0 0 40 10'%3E%3Cpath d='M0 5 Q 5 0 10 5 T 20 5 T 30 5 T 40 5' fill='none' stroke='%23eadfce' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 28px 10px;
+  }
 }
 
 /* ------------------------------------------------------ reduced motion */

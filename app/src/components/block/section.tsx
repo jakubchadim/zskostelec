@@ -20,7 +20,18 @@ export function Section({ backgroundColor, textColor, children }: SectionProps) 
   return (
     <>
       {bg && <WaveEdge className={cn('-mb-px block h-6 w-full sm:h-10', getTextColorClass(backgroundColor))} />}
-      <section className={cn('wp-prose', bg ? 'py-8 sm:py-12' : 'py-6 sm:py-8', bg, getTextColorClass(textColor))}>{children}</section>
+      <section
+        className={cn(
+          'wp-prose',
+          bg ? 'py-8 sm:py-12' : 'py-6 sm:py-8',
+          bg,
+          getTextColorClass(textColor),
+          // An editor-picked text colour applies to headings/links too.
+          textColor && '[--prose-link:currentColor] [--prose-strong:currentColor]'
+        )}
+      >
+        {children}
+      </section>
     </>
   )
 }

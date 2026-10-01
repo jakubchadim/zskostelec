@@ -79,16 +79,16 @@ export default function Header({ menu }: HeaderProps) {
       )}
     >
       <Container>
-        <div className={cn('flex items-center gap-4 transition-all duration-300', scrolled ? 'h-14' : 'h-16 md:h-18')}>
+        <div className="flex h-16 items-center gap-4 md:h-18">
           <Logo compact={scrolled} />
 
-          <NavigationMenu.Root className="relative ml-auto hidden lg:block" delayDuration={80}>
-            <NavigationMenu.List className="m-0 flex list-none items-center gap-1 p-0">
+          <NavigationMenu.Root className="relative ml-auto hidden nav:block" delayDuration={80}>
+            <NavigationMenu.List className="m-0 flex list-none items-center gap-0 p-0 lg:gap-1">
               {menu.map((item, idx) => {
                 const accent = accentAt(idx)
                 const active = isActive(item, pathname)
                 const pill = cn(
-                  'flex items-center gap-1 rounded-full px-3 py-2 font-display text-[1.05rem] font-bold transition-colors outline-none',
+                  'flex items-center gap-0.5 rounded-full px-2 py-2 font-display text-[0.98rem] font-bold whitespace-nowrap lg:gap-1 lg:px-3 lg:text-[1.05rem] transition-colors outline-none focus-visible:ring-4 focus-visible:ring-sky',
                   active ? cn(accent.tint, 'ring-2 ring-ink') : 'hover:bg-white-1'
                 )
 
@@ -158,7 +158,7 @@ export default function Header({ menu }: HeaderProps) {
             <Dialog.Trigger asChild>
               <button
                 type="button"
-                className="btn ml-auto bg-sun px-4 py-2 text-base lg:hidden"
+                className="btn ml-auto bg-sun px-4 py-2 text-base nav:hidden"
                 aria-label="Otevřít menu"
               >
                 <Menu className="size-5" aria-hidden />
@@ -178,7 +178,7 @@ export default function Header({ menu }: HeaderProps) {
                     </div>
                   </Dialog.Title>
                   <Dialog.Close asChild>
-                    <button type="button" aria-label="Zavřít menu" className="btn bg-berry p-2 text-white-1">
+                    <button type="button" aria-label="Zavřít menu" className="btn bg-berry p-2 text-ink">
                       <X className="size-6" aria-hidden />
                     </button>
                   </Dialog.Close>

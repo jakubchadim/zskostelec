@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { asId } from '@/lib/wp'
 import type { WpEmployee } from '@/lib/wp'
-import { EMPTY_EMPLOYEE_FILTERS, filterEmployees, resolveNames } from './filter'
+import { EMPTY_EMPLOYEE_FILTERS, filterEmployees, resolveNameList, resolveNames } from './filter'
 
 function employee(overrides: Partial<WpEmployee>): WpEmployee {
   return {
@@ -81,5 +81,16 @@ describe('resolveNames', () => {
 
   it('returns an empty string for no ids', () => {
     expect(resolveNames([], dictionary)).toBe('')
+  })
+})
+
+describe('resolveNameList', () => {
+  it('keeps names containing a comma intact and drops duplicates', () => {
+    const dictionary = [
+      { id: asId(1), name: 'Zástupce ředitele, 1. stupeň' },
+      { id: asId(2), name: 'Učitel' },
+      { id: asId(3), name: 'Učitel' }
+    ]
+    expect(resolveNameList([asId(1), asId(2), asId(3)], dictionary)).toEqual(['Zástupce ředitele, 1. stupeň', 'Učitel'])
   })
 })

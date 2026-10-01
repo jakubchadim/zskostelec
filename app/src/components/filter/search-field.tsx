@@ -18,7 +18,7 @@ export function SearchField({ label, placeholder, value, onChange }: SearchField
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="block w-full rounded-full border-[2.5px] border-ink bg-paper py-3 pr-12 pl-12 text-lg font-semibold shadow-pop-sm outline-none placeholder:font-normal placeholder:text-gray-6 focus:shadow-pop focus-visible:outline-3 focus-visible:outline-sky [&::-webkit-search-cancel-button]:hidden"
+        className="block w-full rounded-full border-[2.5px] border-ink bg-paper py-3 pr-12 pl-12 text-lg font-semibold shadow-pop-sm outline-none placeholder:font-normal placeholder:text-gray-6 focus:shadow-pop focus:ring-4 focus:ring-sky/50 [&::-webkit-search-cancel-button]:hidden"
       />
       {value && (
         <button

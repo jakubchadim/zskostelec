@@ -16,6 +16,7 @@ type GalleryPreviewProps = {
  */
 export function GalleryPreview({ gallery }: GalleryPreviewProps) {
   const images = getGalleryPreviewImages(gallery)
+  const hasMore = getGalleryPreviewImages(gallery, Infinity).length > images.length
 
   if (images.length === 0) {
     return null
@@ -31,7 +32,8 @@ export function GalleryPreview({ gallery }: GalleryPreviewProps) {
       </h2>
       <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
         {images.map((image, idx) => {
-          const isLast = idx === images.length - 1
+          // A "more photos" teaser only when the gallery really holds more than shown.
+          const isLast = idx === images.length - 1 && hasMore
 
           return (
             <Link

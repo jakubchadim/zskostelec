@@ -10,6 +10,7 @@ import { SecondSection } from '@/components/home/second-section'
 import { allLabel, SectionHeading } from '@/components/home/section-heading'
 import { getNavData } from '@/components/nav/data'
 import { sortByDateDesc } from '@/components/gallery/sort-by-date'
+import { ACCENTS } from '@/components/ui/accent'
 import { Container } from '@/components/ui/container'
 import { Sparkle, Star } from '@/components/ui/doodles'
 import { Reveal } from '@/components/ui/reveal'
@@ -57,7 +58,7 @@ export async function HomeTemplate({ data }: TemplateProps) {
 
   return (
     <>
-      <Hero mainPost={mainPost} photos={photos.slice(0, 3)} />
+      <Hero mainPost={mainPost} photos={photos.slice(0, 3)} newsAnchor={news || achievements ? '#aktuality' : null} />
 
       <section aria-labelledby="rychle" className="relative -mt-6 pb-16">
         <Container>
@@ -71,7 +72,7 @@ export async function HomeTemplate({ data }: TemplateProps) {
       {notices && notices.articles.length > 0 && (
         <section aria-labelledby="nastenka" className="pb-20">
           <Container>
-            <SectionHeading id="nastenka" eyebrow="Nástěnka" title={notices.category.name} color="text-berry" />
+            <SectionHeading id="nastenka" eyebrow="Nástěnka" title={notices.category.name} accent={ACCENTS[2]} />
             <NoticeBoard preview={notices} />
           </Container>
         </section>
@@ -87,7 +88,7 @@ export async function HomeTemplate({ data }: TemplateProps) {
                     id="aktuality-nadpis"
                     eyebrow="Ze školy"
                     title={news.category.name}
-                    color="text-sky"
+                    accent={ACCENTS[1]}
                     action={{ href: news.category.link, label: allLabel(news.category.name) }}
                   />
                   <div className="grid gap-5 sm:grid-cols-2">
@@ -121,7 +122,7 @@ export async function HomeTemplate({ data }: TemplateProps) {
                         </li>
                       ))}
                     </ul>
-                    <Link href={achievements.category.link} className="btn mt-5 w-full bg-grape text-white-1">
+                    <Link href={achievements.category.link} className="btn mt-5 w-full bg-sun">
                       {allLabel(achievements.category.name)}
                     </Link>
                   </Reveal>
@@ -139,7 +140,7 @@ export async function HomeTemplate({ data }: TemplateProps) {
               id="fotky"
               eyebrow="Fotogalerie"
               title="Jak to u nás vypadá"
-              color="text-grass"
+              accent={ACCENTS[3]}
               action={{ href: '/fotogalerie/', label: 'Všechny fotky' }}
               className="mb-2"
             />

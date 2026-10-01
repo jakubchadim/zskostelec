@@ -43,9 +43,12 @@ export function filterEmployees(employees: WpEmployee[], filters: EmployeeFilter
 /** Builds an `id -> name` lookup from a flat dictionary list (positions/buildings), joined
  * comma-separated for the ids on one employee - port of `getDictionaryTranslator`. */
 export function resolveNames(ids: ID[], dictionary: { id: ID; name: string }[]): string {
+  return resolveNameList(ids, dictionary).join(', ')
+}
+
+/** Same lookup as `resolveNames`, as a de-duplicated list (one chip per name). */
+export function resolveNameList(ids: ID[], dictionary: { id: ID; name: string }[]): string[] {
   const byId = new Map(dictionary.map((item) => [item.id, item.name]))
-  return ids
-    .map((id) => byId.get(id))
-    .filter((name): name is string => Boolean(name))
-    .join(', ')
+  const names = ids.map((id) => byId.get(id)).filter((name): name is string => Boolean(name))
+  return [...new Set(names)]
 }

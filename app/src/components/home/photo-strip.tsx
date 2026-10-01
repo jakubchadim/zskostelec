@@ -16,7 +16,7 @@ export function PhotoStrip({ photos }: { photos: HeroPhoto[] }) {
 
   const renderRow = (duplicate: boolean) =>
     photos.map((photo, idx) => (
-      <li key={`${duplicate ? 'd' : 'o'}-${photo.link}`} aria-hidden={duplicate || undefined} className="shrink-0 px-3 py-6">
+      <li key={`${duplicate ? 'd' : 'o'}-${photo.link}`} aria-hidden={duplicate || undefined} className={cn('shrink-0 px-3 py-6', duplicate && 'motion-reduce:hidden')}>
         <Link
           href={photo.link}
           tabIndex={duplicate ? -1 : undefined}
@@ -34,8 +34,8 @@ export function PhotoStrip({ photos }: { photos: HeroPhoto[] }) {
     ))
 
   return (
-    <div className="group/strip relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)]">
-      <ul className="m-0 flex w-max list-none animate-marquee p-0 group-hover/strip:[animation-play-state:paused] group-focus-within/strip:[animation-play-state:paused]">
+    <div className="group/strip relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)] motion-reduce:overflow-x-auto">
+      <ul className="m-0 flex w-max list-none animate-marquee p-0 motion-reduce:animate-none group-hover/strip:[animation-play-state:paused] group-focus-within/strip:[animation-play-state:paused]">
         {renderRow(false)}
         {renderRow(true)}
       </ul>

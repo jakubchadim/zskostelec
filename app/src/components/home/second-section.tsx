@@ -25,7 +25,7 @@ export function SecondSection({ sectionLink }: SecondSectionProps) {
             Každá budova má svou atmosféru. Podívejte se, kde všude nás potkáte.
           </p>
           {sectionLink?.url && (
-            <Link href={sectionLink.url} className="btn mt-6 bg-sky text-white-1">
+            <Link href={sectionLink.url} className="btn mt-6 bg-sky text-ink">
               <MapPin className="size-5" aria-hidden />
               Zobrazit pracoviště
             </Link>
