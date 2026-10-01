@@ -96,6 +96,7 @@ h1{{font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin:0 0 12px}} .lead{{f
 </style></head><body><main>
 <h1>Návrhy nového loga<br>ZŠ Gutha-Jarkovského</h1>
 <p class="lead">Pět směrů, od jemné modernizace razítka po úplně nový znak. Všechny používají barvy a zaoblené písmo nového webu (Baloo 2, oranžová, sluníčkově žlutá, inkoustově modrá). Jde o koncepty: před finálním použitím je potřeba je dotáhnout, hlavně převést text na křivky a doladit detaily.</p>
+<p style="margin:18px 0 0"><a href="a-varianty.html" style="display:inline-block;border:2.5px solid #1d2150;border-radius:999px;padding:8px 16px;background:#ffcf33;font-weight:800;color:#1d2150;text-decoration:none;box-shadow:3px 3px 0 #1d2150">Nové: 5 variant loga A podle fotek Gutha-Jarkovského →</a></p>
 <nav class="toc"><a href="#puvodni">Současné logo</a>{''.join(f'<a href="#{c["key"]}">{c["name"]}</a>' for c in concepts)}</nav>
 
 <section class="old" id="puvodni">
