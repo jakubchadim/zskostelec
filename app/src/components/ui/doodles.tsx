@@ -125,7 +125,8 @@ export function Sun({ ...props }: DoodleProps) {
 
 export function Cloud({ ...props }: DoodleProps) {
   return (
-    <svg viewBox="0 0 120 64" {...base} {...props}>
+    // Padded viewBox: the arcs of the outline poke above y=0, which clipped the cloud tops.
+    <svg viewBox="-6 -16 132 82" overflow="visible" {...base} {...props}>
       <path
         d="M28 56h66a20 20 0 002-40 26 26 0 00-48-6 18 18 0 00-26 14A16 16 0 0028 56z"
         fill="currentColor"

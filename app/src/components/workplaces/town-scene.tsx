@@ -5,7 +5,8 @@ import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { CameraControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { cn } from '@/lib/utils'
-import { ACCENT_HEX, footprintRadius, type BuildingPart, type WorkplaceKey, type WorkplaceWithLive } from './data'
+import { FLOOR_H, Fountain, HipRoof, Linden, Part, PlagueColumn, Windows, makeGableGeometry } from './parts'
+import { ACCENT_HEX, footprintRadius, type WorkplaceKey, type WorkplaceWithLive } from './data'
 import {
   INDUSTRY,
   LANDMARKS,
@@ -29,26 +30,7 @@ import {
   type Vec2
 } from './town'
 
-const FLOOR_H = 0.26
-
 // --- shared geometry --------------------------------------------------------
-
-/** Unit gable-roof prism: ridge along X, 1 wide (Z), 1 tall, 1 long (X), base at y=0. */
-function makeGableGeometry(): THREE.BufferGeometry {
-  const shape = new THREE.Shape()
-  shape.moveTo(-0.5, 0)
-  shape.lineTo(0.5, 0)
-  shape.lineTo(0, 1)
-  shape.closePath()
-  const geo = new THREE.ExtrudeGeometry(shape, {
-    depth: 1,
-    bevelEnabled: false
-  })
-  geo.translate(0, 0, -0.5)
-  // Extruded along Z; rotate so the ridge runs along X.
-  geo.rotateY(Math.PI / 2)
-  return geo
-}
 
 /** Flat ribbon along a world-space polyline, lying just above the ground. */
 function makeRibbon(points: Vec2[], width: number, y: number): THREE.BufferGeometry {
@@ -552,110 +534,25 @@ function Academy() {
 
 /** Palackého náměstí: fountain, four lindens around it and the two plague columns. */
 function SquareDecor() {
-  const [fx, fz] = toWorld(SQUARE_DECOR.fountain)
-
   return (
     <group>
-      {/* Fountain: octagonal basin, water, small central pillar */}
-      <group position={[fx, 0, fz]}>
-        <mesh position={[0, 0.05, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.24, 0.26, 0.1, 8]} />
-          <meshStandardMaterial color="#d8d2c6" />
-        </mesh>
-        <mesh position={[0, 0.101, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.2, 8]} />
-          <meshStandardMaterial color="#7cc4f0" emissive="#9fe0ff" emissiveIntensity={0.25} />
-        </mesh>
-        <mesh position={[0, 0.17, 0]} castShadow>
-          <cylinderGeometry args={[0.03, 0.04, 0.16, 8]} />
-          <meshStandardMaterial color="#d8d2c6" />
-        </mesh>
-        <mesh position={[0, 0.27, 0]}>
-          <sphereGeometry args={[0.045, 10, 8]} />
-          <meshStandardMaterial color="#bfe6ff" emissive="#bfe6ff" emissiveIntensity={0.4} />
-        </mesh>
-      </group>
-
-      {/* Lindens - bigger, rounder and lighter than the generic trees */}
-      {SQUARE_DECOR.lindens.map((p, i) => {
-        const [x, z] = toWorld(p)
-        return (
-          <group key={i} position={[x, 0, z]}>
-            <mesh position={[0, 0.12, 0]} castShadow>
-              <cylinderGeometry args={[0.03, 0.04, 0.24, 6]} />
-              <meshStandardMaterial color="#7a5236" />
-            </mesh>
-            <mesh position={[0, 0.42, 0]} castShadow>
-              <icosahedronGeometry args={[0.24, 1]} />
-              <meshStandardMaterial color={i % 2 ? '#6fbf4f' : '#7ccb5a'} flatShading />
-            </mesh>
-          </group>
-        )
-      })}
-
-      {/* Plague columns: stepped base, tall column, golden statue on top */}
-      {SQUARE_DECOR.plagueColumns.map((p, i) => {
-        const [x, z] = toWorld(p)
-        return (
-          <group key={i} position={[x, 0, z]}>
-            <mesh position={[0, 0.03, 0]} castShadow>
-              <boxGeometry args={[0.24, 0.06, 0.24]} />
-              <meshStandardMaterial color="#cfc8b8" />
-            </mesh>
-            <mesh position={[0, 0.11, 0]} castShadow>
-              <boxGeometry args={[0.15, 0.1, 0.15]} />
-              <meshStandardMaterial color="#ddd6c6" />
-            </mesh>
-            <mesh position={[0, 0.42, 0]} castShadow>
-              <cylinderGeometry args={[0.035, 0.045, 0.52, 10]} />
-              <meshStandardMaterial color="#e6dfcf" />
-            </mesh>
-            <mesh position={[0, 0.72, 0]} castShadow>
-              <coneGeometry args={[0.055, 0.14, 8]} />
-              <meshStandardMaterial color="#e8b93a" metalness={0.4} roughness={0.35} />
-            </mesh>
-            <mesh position={[0, 0.81, 0]}>
-              <sphereGeometry args={[0.035, 10, 8]} />
-              <meshStandardMaterial color="#f0c84a" metalness={0.4} roughness={0.35} />
-            </mesh>
-          </group>
-        )
-      })}
+      <Fountain position={toWorld3(SQUARE_DECOR.fountain)} />
+      {SQUARE_DECOR.lindens.map((p, i) => (
+        <Linden key={i} position={toWorld3(p)} shade={i} />
+      ))}
+      {SQUARE_DECOR.plagueColumns.map((p, i) => (
+        <PlagueColumn key={i} position={toWorld3(p)} />
+      ))}
     </group>
   )
 }
 
-// --- school buildings -------------------------------------------------------
-
-function Windows({ width, floors, depth, rows }: { width: number; floors: number; depth: number; rows: number }) {
-  const count = Math.max(2, Math.round(width / 0.18))
-  const ref = useRef<THREE.InstancedMesh>(null)
-  const total = count * rows * 2
-
-  useLayoutEffect(() => {
-    const m = new THREE.Object3D()
-    let i = 0
-    for (const side of [1, -1]) {
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < count; c++) {
-          const x = -width / 2 + (width / count) * (c + 0.5)
-          const y = FLOOR_H * (r + floors - rows) + FLOOR_H * 0.55
-          m.position.set(x, y, side * (depth / 2 + 0.005))
-          m.updateMatrix()
-          ref.current?.setMatrixAt(i++, m.matrix)
-        }
-      }
-    }
-    if (ref.current) ref.current.instanceMatrix.needsUpdate = true
-  }, [count, rows, width, depth, floors])
-
-  return (
-    <instancedMesh ref={ref} args={[undefined, undefined, total]}>
-      <boxGeometry args={[0.09, 0.13, 0.02]} />
-      <meshStandardMaterial color="#cfe9ff" emissive="#9fd2ff" emissiveIntensity={0.35} />
-    </instancedMesh>
-  )
+function toWorld3(p: Vec2): [number, number, number] {
+  const [x, z] = toWorld(p)
+  return [x, 0, z]
 }
+
+// --- school buildings -------------------------------------------------------
 
 type SchoolProps = {
   workplace: WorkplaceWithLive
@@ -663,96 +560,6 @@ type SchoolProps = {
   hovered: boolean
   onSelect: (key: WorkplaceKey) => void
   onHover: (key: WorkplaceKey | null) => void
-}
-
-/**
- * Hipped roof built in the building's real proportions (a ridge along the
- * longer side, sloped ends) - scaling a 45°-rotated pyramid would skew it,
- * because Object3D applies scale before rotation.
- */
-function makeHipGeometry(width: number, depth: number, height: number): THREE.BufferGeometry {
-  const alongX = width >= depth
-  const long = alongX ? width : depth
-  const short = alongX ? depth : width
-  const ridge = Math.max(0, long - short) / 2
-  const hw = long / 2
-  const hd = short / 2
-
-  // Corners in (long, short) space, ridge ends on top.
-  const a = [-hw, 0, -hd]
-  const b = [hw, 0, -hd]
-  const c = [hw, 0, hd]
-  const d = [-hw, 0, hd]
-  const r1 = [-ridge, height, 0]
-  const r2 = [ridge, height, 0]
-  const faces = [
-    [a, r2, b],
-    [a, r1, r2], // back slope
-    [d, c, r2],
-    [d, r2, r1], // front slope
-    [a, d, r1], // left end
-    [b, r2, c], // right end
-    [a, b, c],
-    [a, c, d] // underside
-  ]
-  const positions = faces.flat(2)
-  const geo = new THREE.BufferGeometry()
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-  if (!alongX) {
-    geo.rotateY(Math.PI / 2)
-  }
-  geo.computeVertexNormals()
-  return geo
-}
-
-function HipRoof({ width, depth, y, color }: { width: number; depth: number; y: number; color: string }) {
-  const geo = useMemo(() => makeHipGeometry(width, depth, 0.3), [width, depth])
-  return (
-    <mesh geometry={geo} position={[0, y, 0]} castShadow>
-      <meshStandardMaterial color={color} side={THREE.DoubleSide} />
-    </mesh>
-  )
-}
-
-/** One block of a school: walls, optional plinth, windows and a gable / hipped / flat roof. */
-function Part({ part, gable }: { part: BuildingPart; gable: THREE.BufferGeometry }) {
-  const height = part.floors * FLOOR_H
-  const [ox, oz] = part.offset ?? [0, 0]
-
-  return (
-    <group position={[ox, 0, oz]}>
-      <mesh position={[0, height / 2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[part.width, height, part.depth]} />
-        <meshStandardMaterial color={part.wall} />
-      </mesh>
-      {part.plinth && (
-        <mesh position={[0, FLOOR_H / 2, 0]} castShadow>
-          <boxGeometry args={[part.width + 0.02, FLOOR_H, part.depth + 0.02]} />
-          <meshStandardMaterial color={part.plinth} />
-        </mesh>
-      )}
-      <Windows width={part.width} depth={part.depth} floors={part.floors} rows={part.floors} />
-      {part.roof === 'gable' && (
-        <mesh
-          geometry={gable}
-          position={[0, height, 0]}
-          scale={[part.width + 0.06, 0.32, part.depth + 0.08]}
-          castShadow
-        >
-          <meshStandardMaterial color={part.roofColor} />
-        </mesh>
-      )}
-      {part.roof === 'hip' && (
-        <HipRoof width={part.width + 0.08} depth={part.depth + 0.08} y={height} color={part.roofColor} />
-      )}
-      {part.roof === 'flat' && (
-        <mesh position={[0, height + 0.03, 0]} castShadow>
-          <boxGeometry args={[part.width + 0.05, 0.06, part.depth + 0.05]} />
-          <meshStandardMaterial color={part.roofColor} />
-        </mesh>
-      )}
-    </group>
-  )
 }
 
 function School({ workplace, selected, hovered, onSelect, onHover }: SchoolProps) {
