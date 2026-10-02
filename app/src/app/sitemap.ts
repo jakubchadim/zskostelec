@@ -24,3 +24,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return []
   }
 }
+
+// Rebuilt once a day so new articles and galleries show up without a deploy.
+export const revalidate = 86400

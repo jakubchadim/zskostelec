@@ -46,7 +46,7 @@ export const Users: CollectionConfig = {
         if (operation === 'create') {
           const { totalDocs } = await req.payload.count({ collection: 'users', req })
           if (totalDocs === 0) data.role = 'admin'
-          else if (!isAdmin(req.user)) data.role = 'editor'
+          else if (req.user && !isAdmin(req.user)) data.role = 'editor'
         }
         return data
       }
