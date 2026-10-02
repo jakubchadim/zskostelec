@@ -19,7 +19,7 @@ export function Logo() {
 /** Small icon in the admin's top bar. */
 export function Icon() {
   return (
-    <span className="zs-mark" style={{ width: 28, height: 28 }}>
+    <span className="zs-mark" style={{ width: '100%', height: '100%' }}>
       <SchoolMark outline="#1d2150" />
     </span>
   )
