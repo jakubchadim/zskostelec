@@ -3,6 +3,7 @@ import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
 import { Callout, DocList, PersonCard, Section } from '@/components/static/kit'
 import { staticPageMetadata } from '@/components/static/meta'
+import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 
 export const metadata = staticPageMetadata({
   title: 'Klub rodičů',
@@ -56,7 +57,8 @@ export default function KlubRodicuPage() {
           ]}
         />
         <p className="mt-8 text-sm text-gray-6">
-          Klub rodičů při Základní škole Gutha-Jarkovského Kostelec nad Orlicí, z.s., Komenského 80, 517 41 Kostelec nad Orlicí,
+          Klub rodičů při Základní škole Gutha-Jarkovského Kostelec nad Orlicí, z.s.,{' '}
+          <WorkplacePopover place="komenskeho" />, 517 41 Kostelec nad Orlicí,
           IČ 270 13 014.
         </p>
       </Section>

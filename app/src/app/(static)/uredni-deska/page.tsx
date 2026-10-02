@@ -5,6 +5,8 @@ import { accentAt } from '@/components/ui/accent'
 import { Accordion, Callout, JumpNav, PersonCard, Section } from '@/components/static/kit'
 import { CopyValue } from '@/components/static/copy-value'
 import { staticPageMetadata } from '@/components/static/meta'
+import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
+import type { WorkplaceKey } from '@/components/workplaces/data'
 import { cn } from '@/lib/utils'
 
 export const metadata = staticPageMetadata({
@@ -22,7 +24,14 @@ const IDENTIFIERS = [
 
 const BASICS: { label: string; value: React.ReactNode }[] = [
   { label: 'Název školy', value: 'Základní škola Gutha-Jarkovského Kostelec nad Orlicí' },
-  { label: 'Sídlo', value: 'Palackého náměstí 45, 517 41 Kostelec nad Orlicí' },
+  {
+    label: 'Sídlo',
+    value: (
+      <>
+        <WorkplacePopover place="palackeho" />, 517 41 Kostelec nad Orlicí
+      </>
+    )
+  },
   { label: 'Právní forma', value: 'příspěvková organizace' },
   { label: 'Spisová značka', value: 'Pr 220 vedená u Krajského soudu v Hradci Králové' },
   { label: 'Zřizovatel', value: 'Město Kostelec nad Orlicí, Palackého náměstí 38, 517 41 Kostelec nad Orlicí' },
@@ -36,11 +45,11 @@ const BASICS: { label: string; value: React.ReactNode }[] = [
   }
 ]
 
-const WORKPLACES = [
-  { address: 'Palackého náměstí 45', what: '2. stupeň, vzdělávání cizinců', phone: '775 598 553' },
-  { address: 'Komenského 80', what: '1. stupeň, vzdělávání cizinců' },
-  { address: 'Drtinova 662', what: '1. stupeň a školní družina' },
-  { address: 'Erbenova 891', what: 'školní družina' }
+const WORKPLACES: { key: WorkplaceKey; address: string; what: string; phone?: string }[] = [
+  { key: 'palackeho', address: 'Palackého náměstí 45', what: '2. stupeň, vzdělávání cizinců', phone: '775 598 553' },
+  { key: 'komenskeho', address: 'Komenského 80', what: '1. stupeň, vzdělávání cizinců' },
+  { key: 'drtinova', address: 'Drtinova 662', what: '1. stupeň a školní družina' },
+  { key: 'erbenova', address: 'Erbenova 891', what: 'školní družina' }
 ]
 
 /** Org chart rebuilt from the 2022 image, as real (readable, accessible) HTML. */
@@ -100,7 +109,9 @@ export default function UredniDeskaPage() {
           {WORKPLACES.map((w, idx) => (
             <li key={w.address} className="sticker flex flex-col gap-2 p-5">
               <Building2 className={cn('size-7', accentAt(idx + 1).text)} aria-hidden />
-              <span className="font-display text-lg leading-tight font-bold">{w.address}</span>
+              <span className="font-display text-lg leading-tight">
+                <WorkplacePopover place={w.key} />
+              </span>
               <span className="text-gray-7">{w.what}</span>
               {w.phone && (
                 <a href={`tel:+420${w.phone.replace(/\s/g, '')}`} className="text-sm font-bold">
@@ -222,9 +233,9 @@ export default function UredniDeskaPage() {
                     <div className="rounded-2xl bg-sky-tint p-4">
                       <strong>Podatelna</strong>
                       <br />
-                      Palackého nám. 45, <a href="tel:+420775598553">775 598 553</a>
+                      <WorkplacePopover place="palackeho">Palackého nám. 45</WorkplacePopover>, <a href="tel:+420775598553">775 598 553</a>
                       <br />
-                      Komenského 80, <a href="tel:+420775751229">775 751 229</a>
+                      <WorkplacePopover place="komenskeho" />, <a href="tel:+420775751229">775 751 229</a>
                     </div>
                     <div className="rounded-2xl bg-sun-tint p-4">
                       <strong>E-mail</strong>

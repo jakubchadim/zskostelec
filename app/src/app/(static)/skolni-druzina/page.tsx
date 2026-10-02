@@ -35,6 +35,7 @@ import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
 import { Callout, FactGrid, IconCard, Section } from '@/components/static/kit'
 import { staticPageMetadata } from '@/components/static/meta'
+import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 import { YearCalendar, type CalendarEvent, type CalendarMonth } from '@/components/static/year-calendar'
 import { cn } from '@/lib/utils'
 
@@ -46,11 +47,12 @@ export const metadata = staticPageMetadata({
 
 const WORKPLACES = [
   {
+    key: 'erbenova' as const,
     name: 'Erbenova 891',
     hours: '6:00 – 16:00',
     staff: ['Jitka Bezdíčková – vedoucí vychovatelka', 'Marcela Bělobrádková', 'Mgr. Jitka Šveidlerová']
   },
-  { name: 'Drtinova 662', hours: '6:15 – 16:00', staff: ['Eva Jelínková', 'Bc. Veronika Špačková'] }
+  { key: 'drtinova' as const, name: 'Drtinova 662', hours: '6:15 – 16:00', staff: ['Eva Jelínková', 'Bc. Veronika Špačková'] }
 ]
 
 /**
@@ -154,7 +156,9 @@ export default function SkolniDruzinaPage() {
           {WORKPLACES.map((w, idx) => (
             <article key={w.name} className="sticker flex flex-col gap-4 p-5 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 className="font-display text-2xl">{w.name}</h3>
+                <h3 className="font-display text-2xl">
+                  <WorkplacePopover place={w.key}>{w.name}</WorkplacePopover>
+                </h3>
                 <span className={cn('flex items-center gap-2 rounded-full border-2 border-ink px-3 py-1 font-display text-lg font-bold', accentAt(idx).tint)}>
                   <Clock className="size-5" aria-hidden /> {w.hours}
                 </span>

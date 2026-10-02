@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Castle, Church, Mountain, Users, Waves } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { DoodlePopover } from '@/components/ui/doodle-popover'
 
 /*
  * A stylised outline of Czechia (lon/lat, simplified by hand) projected into
@@ -162,161 +161,50 @@ function MiniMap() {
  * focus / tap a little card about the town - a doodle map of Czechia with
  * the town pinned, the route from Hradec Králové and a few facts.
  */
-const CARD_W = 352 // 22rem
-const GAP = 14
-const SM = 668 // the `sm` breakpoint (41.75em)
-
-function subscribeNoop() {
-  return () => {}
-}
-
-/**
- * Where the card goes: under the word when it fits, above it when there's room there,
- * otherwise as low as it can while staying fully on screen; a bottom sheet on phones.
- */
-function placeCard(trigger: DOMRect, height: number): CSSProperties {
-  const vw = window.innerWidth
-  const vh = window.innerHeight
-  if (vw < SM) {
-    return { left: 16, right: 16, bottom: 16 }
-  }
-  const left = Math.min(Math.max(trigger.left + trigger.width / 2 - CARD_W / 2, 16), vw - 16 - CARD_W)
-  if (trigger.bottom + GAP + height <= vh - 16) {
-    return { left, top: trigger.bottom + GAP, width: CARD_W }
-  }
-  if (trigger.top - GAP - height >= 16) {
-    return { left, top: trigger.top - GAP - height, width: CARD_W }
-  }
-  return { left, top: Math.max(16, vh - 16 - height), width: CARD_W }
-}
-
 export function TownPopover({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false)
-  const [style, setStyle] = useState<CSSProperties>({})
-  const id = useId()
-  const trigger = useRef<HTMLButtonElement>(null)
-  const card = useRef<HTMLSpanElement>(null)
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  // The card is portalled to <body>: nothing in the hero (overflow, stacking, transforms) can clip or cover it.
-  const mounted = useSyncExternalStore(
-    subscribeNoop,
-    () => true,
-    () => false
-  )
-
-  const reposition = () => {
-    if (trigger.current) setStyle(placeCard(trigger.current.getBoundingClientRect(), card.current?.offsetHeight || 520))
-  }
-  const show = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current)
-    reposition()
-    setOpen(true)
-  }
-  const hideSoon = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current)
-    closeTimer.current = setTimeout(() => setOpen(false), 160)
-  }
-
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
-    const onDown = (e: PointerEvent) => {
-      const target = e.target instanceof Node ? e.target : null
-      if (target && !trigger.current?.contains(target) && !card.current?.contains(target)) setOpen(false)
-    }
-    const onMove = () => {
-      if (trigger.current) setStyle(placeCard(trigger.current.getBoundingClientRect(), card.current?.offsetHeight || 520))
-    }
-    window.addEventListener('keydown', onKey)
-    window.addEventListener('pointerdown', onDown)
-    window.addEventListener('scroll', onMove, { passive: true })
-    window.addEventListener('resize', onMove)
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      window.removeEventListener('pointerdown', onDown)
-      window.removeEventListener('scroll', onMove)
-      window.removeEventListener('resize', onMove)
-    }
-  }, [open])
-
   return (
-    <>
-      <button
-        ref={trigger}
-        type="button"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={() => (open ? setOpen(false) : show())}
-        onMouseEnter={show}
-        onMouseLeave={hideSoon}
-        onFocus={show}
-        onBlur={hideSoon}
-        className="cursor-help font-bold text-ink underline decoration-primary-1 decoration-dotted decoration-[3px] underline-offset-[5px] transition-colors hover:text-primary-3"
-      >
-        {children}
-      </button>
-
-      {mounted &&
-        createPortal(
-          <span
-            ref={card}
-            id={id}
-            role="dialog"
-            aria-label="O městě Kostelec nad Orlicí"
-            onMouseEnter={show}
-            onMouseLeave={hideSoon}
-            onFocus={show}
-            onBlur={hideSoon}
-            style={style}
-            className={cn(
-              'town-card fixed z-[60] block text-left text-base transition-[opacity,transform] duration-200',
-              open
-                ? 'pointer-events-auto translate-y-0 opacity-100'
-                : 'pointer-events-none invisible translate-y-2 opacity-0',
-              open && 'is-open'
-            )}
-          >
-            <span className="sticker block overflow-hidden">
-              <span className="block bg-sky-tint px-4 pt-4 pb-2">
-                <span className="flex items-baseline justify-between gap-2">
-                  <span className="font-display text-xl leading-tight font-extrabold text-ink">
-                    Kostelec nad Orlicí
-                  </span>
-                  <span className="shrink-0 rounded-full border-2 border-ink bg-paper px-2 text-[0.7rem] font-extrabold">
-                    od roku 1316
-                  </span>
-                </span>
-                <span className="mt-0.5 block text-xs font-bold text-gray-7">
-                  Královéhradecký kraj · 29 km jihovýchodně od Hradce Králové
-                </span>
-                <span className="mt-2 block">
-                  <MiniMap />
-                </span>
+    <DoodlePopover
+      label="O městě Kostelec nad Orlicí"
+      card={
+        <>
+          <span className="block bg-sky-tint px-4 pt-4 pb-2">
+            <span className="flex items-baseline justify-between gap-2">
+              <span className="font-display text-xl leading-tight font-extrabold text-ink">Kostelec nad Orlicí</span>
+              <span className="shrink-0 rounded-full border-2 border-ink bg-paper px-2 text-[0.7rem] font-extrabold">
+                od roku 1316
               </span>
-              <span className="grid grid-cols-2 gap-x-3 gap-y-2.5 border-t-[2.5px] border-ink px-4 py-3">
-                {FACTS.map(({ icon: Icon, label, note }) => (
-                  <span key={label} className="flex items-start gap-2">
-                    <span className="grid size-7 shrink-0 place-items-center rounded-lg border-2 border-ink bg-sun-tint">
-                      <Icon className="size-4" aria-hidden />
-                    </span>
-                    <span className="min-w-0 leading-tight">
-                      <span className="block text-sm font-extrabold text-ink">{label}</span>
-                      <span className="block text-[0.72rem] font-semibold text-gray-6">{note}</span>
-                    </span>
-                  </span>
-                ))}
-              </span>
-              <Link
-                href="/pracoviste/"
-                className="flex items-center justify-between border-t-2 border-dashed border-gray-3 bg-paper px-4 py-2.5 font-display text-sm font-bold text-ink hover:bg-cream"
-              >
-                Kde nás ve městě najdete
-                <ArrowRight className="size-4" aria-hidden />
-              </Link>
             </span>
-          </span>,
-          document.body
-        )}
-    </>
+            <span className="mt-0.5 block text-xs font-bold text-gray-7">
+              Královéhradecký kraj · 29 km jihovýchodně od Hradce Králové
+            </span>
+            <span className="mt-2 block">
+              <MiniMap />
+            </span>
+          </span>
+          <span className="grid grid-cols-2 gap-x-3 gap-y-2.5 border-t-[2.5px] border-ink px-4 py-3">
+            {FACTS.map(({ icon: Icon, label, note }) => (
+              <span key={label} className="flex items-start gap-2">
+                <span className="grid size-7 shrink-0 place-items-center rounded-lg border-2 border-ink bg-sun-tint">
+                  <Icon className="size-4" aria-hidden />
+                </span>
+                <span className="min-w-0 leading-tight">
+                  <span className="block text-sm font-extrabold text-ink">{label}</span>
+                  <span className="block text-[0.72rem] font-semibold text-gray-6">{note}</span>
+                </span>
+              </span>
+            ))}
+          </span>
+          <Link
+            href="/pracoviste/"
+            className="flex items-center justify-between border-t-2 border-dashed border-gray-3 bg-paper px-4 py-2.5 font-display text-sm font-bold text-ink hover:bg-cream"
+          >
+            Kde nás ve městě najdete
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </>
+      }
+    >
+      {children}
+    </DoodlePopover>
   )
 }

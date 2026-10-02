@@ -5,6 +5,7 @@ import { Container } from '../ui/container'
 import { Cloud, PaperPlane, Star, WaveEdge } from '../ui/doodles'
 import { BackToTop } from './back-to-top'
 import { SchoolLogo } from '../ui/school-logo'
+import { WorkplacePopover } from '../workplaces/workplace-popover'
 import type { NavItem } from '../nav/types'
 
 type FooterProps = {
@@ -65,19 +66,14 @@ export default function Footer({ fastFirst, fastSecond }: FooterProps) {
             <div>
               <FooterHeading>Kontakt</FooterHeading>
               <address className="space-y-3 not-italic text-white-1/85">
-                <a
-                  href="https://mapy.cz/zakladni?q=Palack%C3%A9ho%20n%C3%A1m%C4%9Bst%C3%AD%2045%2C%20Kostelec%20nad%20Orlic%C3%AD"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex gap-3 transition-colors hover:text-sun"
-                >
+                <div className="flex gap-3">
                   <MapPin className="mt-1 size-5 shrink-0 text-berry" aria-hidden />
                   <span>
-                    Palackého náměstí 45
+                    <WorkplacePopover place="palackeho" className="text-white-1 hover:text-sun" />
                     <br />
                     517 41 Kostelec nad Orlicí
                   </span>
-                </a>
+                </div>
                 <Link href="/zamestnanci/" className="flex items-center gap-3 transition-colors hover:text-sun">
                   <Users className="size-5 shrink-0 text-grass" aria-hidden />
                   Kontakty na zaměstnance

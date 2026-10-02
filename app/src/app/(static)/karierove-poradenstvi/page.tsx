@@ -4,6 +4,7 @@ import { accentAt } from '@/components/ui/accent'
 import { DocList, IconCard, LinkList, PersonCard, Section } from '@/components/static/kit'
 import { Countdown } from '@/components/static/countdown'
 import { staticPageMetadata } from '@/components/static/meta'
+import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 
 export const metadata = staticPageMetadata({
   title: 'Kariérové poradenství',
@@ -36,7 +37,11 @@ export default function KarierovePoradenstviPage() {
             person={{
               name: 'Mgr. Petr Málek',
               role: 'kariérový poradce',
-              place: 'Pracoviště Palackého náměstí',
+              place: (
+                <>
+                  Pracoviště <WorkplacePopover place="palackeho">Palackého náměstí</WorkplacePopover>
+                </>
+              ),
               hours: 'Konzultace denně po ústní či telefonické domluvě',
               phones: ['775902746']
             }}

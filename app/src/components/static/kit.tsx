@@ -48,7 +48,7 @@ export function telHref(phone: string): string {
 export type Person = {
   name: string
   role?: string
-  place?: string
+  place?: ReactNode
   hours?: string
   phones?: string[]
   email?: string

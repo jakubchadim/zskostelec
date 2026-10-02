@@ -540,6 +540,22 @@
   animation: town-pin 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+/* Workplace popovers (components/workplaces/workplace-popover.tsx): a ring pulses under the pin. */
+.town-card.is-open .town-pulse {
+  animation: town-pulse 1.6s ease-out infinite;
+}
+
+@keyframes town-pulse {
+  from {
+    transform: scale(0.4);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
 @keyframes town-route {
   from {
     stroke-dashoffset: 18;

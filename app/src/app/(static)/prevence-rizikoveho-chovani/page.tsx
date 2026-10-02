@@ -6,6 +6,7 @@ import { accentAt } from '@/components/ui/accent'
 import { Callout, DocList, FactGrid, IconCard, JumpNav, PersonCard, Section } from '@/components/static/kit'
 import { ProgramFilter, type Program } from '@/components/static/program-filter'
 import { staticPageMetadata } from '@/components/static/meta'
+import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 
 export const metadata = staticPageMetadata({
   title: 'Prevence rizikového chování',
@@ -137,7 +138,13 @@ export default function PrevencePage() {
             person={{
               name: 'Mgr. Pavla Řeháková, DiS.',
               role: 'školní metodička prevence, sociální pedagožka',
-              place: 'Pracoviště Palackého náměstí, Komenského, Drtinova',
+              place: (
+                <>
+                  Pracoviště <WorkplacePopover place="palackeho">Palackého náměstí</WorkplacePopover>,{' '}
+                  <WorkplacePopover place="komenskeho">Komenského</WorkplacePopover>,{' '}
+                  <WorkplacePopover place="drtinova">Drtinova</WorkplacePopover>
+                </>
+              ),
               hours: 'Konzultace po domluvě',
               phones: ['775177678'],
               email: 'pavla.rehakova@zskostelec.cz'

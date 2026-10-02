@@ -3,6 +3,7 @@ import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
 import { Callout, DocList, IconCard, LinkList, PersonCard, Section } from '@/components/static/kit'
 import { staticPageMetadata } from '@/components/static/meta'
+import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 
 export const metadata = staticPageMetadata({
   title: 'Výchovné poradenství',
@@ -27,7 +28,11 @@ export default function VychovnePoradenstviPage() {
             person={{
               name: 'Mgr. Romana Tomanová',
               role: 'výchovná poradkyně',
-              place: 'Pracoviště Palackého náměstí',
+              place: (
+                <>
+                  Pracoviště <WorkplacePopover place="palackeho">Palackého náměstí</WorkplacePopover>
+                </>
+              ),
               hours: 'Konzultace denně po předchozí ústní nebo telefonické domluvě',
               phones: ['608983497'],
               email: 'romana.tomanova@zskostelec.cz'
