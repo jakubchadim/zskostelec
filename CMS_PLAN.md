@@ -29,7 +29,7 @@ Technicky:
 - `STATIC_PAGE_SLUGS` (`components/static/meta.ts`) – catch-all je vynechává v `generateStaticParams`.
 
 **K ověření se školou** (našel jsem při převodu):
-- Řád ŠJ má dvě data (18. 8. 2026 na titulu × 22. 6. 2026 u podpisu); výdej pro žáky je v řádu 11:45–14:30, starší leták uvádí obědy od 11:00. Použil jsem řád.
+- Řád ŠJ má dvě data (18. 8. 2026 na titulu × 22. 6. 2026 u podpisu). Otevírací doba je podle letáku jídelny (obědy 11:00–14:30); řád uvádí výdej pro žáky 11:45–14:30.
 - Kariérové poradenství odkazovalo na .docx s termíny pro rok 2023/24 – nahrazeno samotnými daty 2027.
 - Prohlášení o přístupnosti citovalo „§ 7 zákona 356/2000 Sb.“ – opraveno na zákon č. 99/2019 Sb. (zjevný překlep).
 - Na Úřední desce byly rozbité e-mailové odkazy ředitele a pověřence (chybělo `mailto:`) – opraveno.

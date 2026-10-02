@@ -98,7 +98,7 @@ export default function SkolniStravovaniPage() {
       <Section id="kdy" eyebrow="Kdy a kde" title="Výdej obědů">
         <FactGrid
           facts={[
-            { icon: UtensilsCrossed, label: 'Výdej pro žáky', value: '11:45 – 14:30', hint: 'pondělí až pátek' },
+            { icon: UtensilsCrossed, label: 'Obědy', value: '11:00 – 14:30', hint: 'pondělí až pátek' },
             {
               icon: Thermometer,
               label: 'Do jídlonosiče',
