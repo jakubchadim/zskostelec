@@ -1,0 +1,10 @@
+{
+  // Read-only public gateway to the zskostelec-media R2 bucket (see src/index.ts).
+  // Deploy: npx wrangler deploy (from media-worker/)
+  "name": "zskostelec-media",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "observability": { "enabled": true },
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "zskostelec-media" }]
+}
