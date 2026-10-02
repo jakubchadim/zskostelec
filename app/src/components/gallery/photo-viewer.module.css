@@ -1,0 +1,124 @@
+/* Photo viewer (photo-viewer.tsx): dotted night backdrop, polaroid photo, film strip. */
+
+.dialog {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-white-1);
+  overflow: hidden;
+  /* Height taken by everything around the photo (bars, caption, film strip) - sizes the polaroid. */
+  --viewer-chrome: 20rem;
+}
+
+@media (min-width: 41.75em) {
+  .dialog {
+    --viewer-chrome: 16rem;
+  }
+}
+
+.dialog::backdrop {
+  background-color: rgb(19 22 58 / 0.97);
+  background-image: radial-gradient(rgb(255 255 255 / 0.07) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
+.dialog[open] {
+  animation: viewer-in 0.25s ease-out;
+}
+
+@keyframes viewer-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+/* The polaroid: slides in from the side we're moving towards, with a little tilt that settles. */
+.photoNext {
+  animation: photo-next 0.38s cubic-bezier(0.34, 1.35, 0.64, 1) both;
+}
+
+.photoPrev {
+  animation: photo-prev 0.38s cubic-bezier(0.34, 1.35, 0.64, 1) both;
+}
+
+.photoOpen {
+  animation: photo-open 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes photo-next {
+  from {
+    opacity: 0;
+    transform: translateX(70px) rotate(4deg);
+  }
+}
+
+@keyframes photo-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-70px) rotate(-4deg);
+  }
+}
+
+@keyframes photo-open {
+  from {
+    opacity: 0;
+    transform: scale(0.85) rotate(-3deg);
+  }
+}
+
+/* Loading shimmer behind the photo until it arrives. */
+.shimmer {
+  background: linear-gradient(100deg, #eadfce 30%, #fff9f0 50%, #eadfce 70%);
+  background-size: 300% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* Film strip: a dark band with sprocket holes along both edges. */
+.film {
+  background-color: #0c0e26;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 10px, rgb(255 249 240 / 0.85) 10px 20px, transparent 20px 30px),
+    repeating-linear-gradient(90deg, transparent 0 10px, rgb(255 249 240 / 0.85) 10px 20px, transparent 20px 30px);
+  background-size:
+    30px 6px,
+    30px 6px;
+  background-position:
+    0 5px,
+    0 calc(100% - 5px);
+  background-repeat: repeat-x;
+  scrollbar-width: none;
+}
+
+.film::-webkit-scrollbar {
+  display: none;
+}
+
+/* Slideshow timer bar - restarted per photo via React key. */
+.timer {
+  animation: timer var(--slide-ms, 4000ms) linear both;
+  transform-origin: left;
+}
+
+@keyframes timer {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
