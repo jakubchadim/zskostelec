@@ -143,12 +143,12 @@ async function upsert<T extends Record<string, unknown>>(
   data: T
 ) {
   const existing = map.get(wpId)
-  const common = { overrideAccess: true, context: CTX, depth: 0 } as const
+  const common = { overrideAccess: true, depth: 0 } as const
   if (existing) {
-    await payload.update({ collection, id: existing, data: data as never, ...common })
+    await payload.update({ collection, id: existing, data: data as never, ...common, context: { ...CTX } })
     return existing
   }
-  const doc = await payload.create({ collection, data: { ...data, wpId } as never, ...common })
+  const doc = await payload.create({ collection, data: { ...data, wpId } as never, ...common, context: { ...CTX } })
   map.set(wpId, doc.id as number)
   return doc.id as number
 }
@@ -237,6 +237,29 @@ async function localFile(rel: string): Promise<string | null> {
 }
 
 const missingFiles: string[] = []
+const failedMedia: string[] = []
+
+/**
+ * WP keeps files in year/month folders, so the same name repeats
+ * (2023/09/Media-18.jpg, 2026/09/Media-18.jpg); the CMS needs unique names.
+ * Hard-link the file as `2026-09-Media-18.jpg` (instant, no copy) - the
+ * original path is kept in `legacyPath` for the old-link redirects.
+ */
+const LINK_DIR = path.resolve(process.cwd(), '../.local/import-names')
+function uniqueName(sourcePath: string, rel: string): string {
+  const parts = rel.normalize('NFC').split('/')
+  const prefix = parts.length >= 3 ? `${parts[0]}-${parts[1]}-` : ''
+  const target = path.join(LINK_DIR, prefix + parts[parts.length - 1])
+  if (!fs.existsSync(target)) {
+    fs.mkdirSync(LINK_DIR, { recursive: true })
+    try {
+      fs.linkSync(sourcePath, target)
+    } catch {
+      fs.copyFileSync(sourcePath, target)
+    }
+  }
+  return target
+}
 
 async function importMedia(ids?: number[]) {
   const todo = (await attachments(ids)).filter((a) => a.file && !mediaMap.has(a.id))
@@ -246,22 +269,32 @@ async function importMedia(ids?: number[]) {
     for (;;) {
       const a = todo.shift()
       if (!a) return
-      const filePath = await localFile(a.file)
-      if (!filePath) {
+      const sourcePath = await localFile(a.file)
+      if (!sourcePath) {
         missingFiles.push(a.file)
         continue
       }
+      const filePath = uniqueName(sourcePath, a.file)
       try {
         const doc = await payload.create({
           collection: 'media',
           data: { alt: a.alt || null, legacyPath: `uploads/${a.file}`, wpId: a.id, createdAt: a.date } as never,
           filePath,
           overrideAccess: true,
-          context: CTX,
+          context: { ...CTX },
           depth: 0
         })
+        // With R2, make sure the file really is there (public URL via the media worker).
+        if (doc.url?.startsWith('http')) {
+          const head = await fetch(doc.url, { method: 'HEAD' }).catch(() => null)
+          if (!head?.ok) {
+            await payload.delete({ collection: 'media', id: doc.id, overrideAccess: true, context: { ...CTX } })
+            throw new Error(`file not in storage after upload (${head?.status ?? 'no response'})`)
+          }
+        }
         mediaMap.set(a.id, doc.id as number)
       } catch (error) {
+        failedMedia.push(a.file)
         console.warn(`  ! media ${a.id} (${a.file}):`, (error as Error).message)
       }
       if (++done % 200 === 0) log(`  media ${done}/${done + todo.length}`)
@@ -492,6 +525,11 @@ if (missingFiles.length) {
   const out = path.resolve(process.cwd(), '../.local/import-missing-files.txt')
   fs.writeFileSync(out, missingFiles.join('\n'))
   log(`${missingFiles.length} files not found locally - list in ${out}`)
+}
+if (failedMedia.length) {
+  const out = path.resolve(process.cwd(), '../.local/import-failed-media.txt')
+  fs.writeFileSync(out, failedMedia.join('\n'))
+  log(`${failedMedia.length} files failed to import - list in ${out} (re-run to retry)`)
 }
 log(`done in ${Math.round((Date.now() - started) / 1000)} s`)
 await db.end()

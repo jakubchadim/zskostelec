@@ -1,3 +1,4 @@
+import os from 'node:os'
 import path from 'node:path'
 import type { CollectionConfig } from 'payload'
 import { loggedIn } from '../access'
@@ -24,8 +25,9 @@ export const Media: CollectionConfig = {
     delete: loggedIn
   },
   upload: {
-    // Local development only - in production the S3 (R2) adapter takes over.
-    staticDir: path.resolve(process.cwd(), 'media'),
+    // Local files only without R2. With R2 Payload still checks this folder for name clashes,
+    // so it must not be the dev folder (that renamed imports to foo-1.jpg) - use an always-empty one.
+    staticDir: process.env.R2_ACCESS_KEY_ID ? path.join(os.tmpdir(), 'zskostelec-no-local-media') : path.resolve(process.cwd(), 'media'),
     // Phone photos are huge - keep at most 2560 px on the long side.
     resizeOptions: { width: 2560, height: 2560, fit: 'inside', withoutEnlargement: true },
     imageSizes: [
