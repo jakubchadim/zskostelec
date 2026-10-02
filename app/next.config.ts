@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   // redirects, so without this every internal link would round-trip
   // through a 308 - this makes the app's own URLs the canonical ones.
   trailingSlash: true,
+  // Dev only: let phones/tablets on the local network load the dev server's
+  // JS (Next blocks non-localhost origins by default, which leaves the page
+  // un-hydrated - e.g. the mobile menu button does nothing).
+  allowedDevOrigins: ['192.168.*.*', '10.*.*.*', '*.local'],
   async redirects() {
     return [
       // Školská rada is run by the town; its page lives on the town's site.
