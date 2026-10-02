@@ -2,7 +2,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { EXPERIMENTAL_TableFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { cs } from '@payloadcms/translations/languages/cs'
 import sharp from 'sharp'
@@ -42,7 +42,7 @@ export default buildConfig({
   },
   i18n: { supportedLanguages: { cs }, fallbackLanguage: 'cs' },
   collections: [Posts, Galleries, Documents, Media, Categories, DocumentCategories, Users],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({ features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()] }),
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URL || '' }
   }),

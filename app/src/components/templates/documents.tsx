@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { DocumentsExplorer } from '@/components/file/documents-explorer'
 import { Container } from '@/components/ui/container'
 import { PageHero } from '@/components/ui/page-hero'
-import { getDocumentCategories, getDocuments, getPageById, type ResolvedRoute } from '@/lib/wp'
+import { getDocumentCategories, getDocuments, getPageById, type ResolvedRoute } from '@/lib/content'
 import { PageBody } from './page-body'
 import type { TemplateProps } from './registry'
 

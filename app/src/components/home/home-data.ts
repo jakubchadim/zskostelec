@@ -1,4 +1,4 @@
-import { getCategoryBySlug, getPostById, getPostsByCategory } from '@/lib/wp'
+import { getCategoryBySlug, getPostById, getPostsByCategory } from '@/lib/content'
 import type { WpPage } from '@/lib/wp'
 import { selectMainPostAndPreviews, type HomeArticlePreview, type HomeSelection } from './home.normalize'
 

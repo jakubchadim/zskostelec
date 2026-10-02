@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { getStaticRoutes } from '@/lib/wp'
+import { getSitemapRoutes } from '@/lib/content'
 import { getSiteUrl } from '@/lib/seo'
 
 /**
@@ -12,15 +12,15 @@ import { getSiteUrl } from '@/lib/seo'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl()
 
-  if (!siteUrl || !process.env.WP_URL) {
+  if (!siteUrl) {
     return []
   }
 
   try {
-    const routes = await getStaticRoutes()
-    return routes.map(({ path }) => ({ url: new URL(path, siteUrl).toString() }))
+    const routes = await getSitemapRoutes()
+    return routes.map(({ path, lastModified }) => ({ url: new URL(path, siteUrl).toString(), lastModified }))
   } catch (error) {
-    console.warn('[sitemap] WP unreachable, returning an empty sitemap:', error)
+    console.warn('[sitemap] CMS unreachable, returning an empty sitemap:', error)
     return []
   }
 }

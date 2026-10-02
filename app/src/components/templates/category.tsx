@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { CATEGORY_PAGE_SIZE, getCategories, getCategoryById, getPostPreviews, type ResolvedRoute } from '@/lib/wp'
+import { CATEGORY_PAGE_SIZE, getCategories, getCategoryById, getPostPreviews, type ResolvedRoute } from '@/lib/content'
 import { Container } from '@/components/ui/container'
 import { PageHero } from '@/components/ui/page-hero'
 import { Reveal } from '@/components/ui/reveal'

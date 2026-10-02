@@ -14,7 +14,7 @@ import { ACCENTS } from '@/components/ui/accent'
 import { Container } from '@/components/ui/container'
 import { Sparkle, Star } from '@/components/ui/doodles'
 import { Reveal } from '@/components/ui/reveal'
-import { getLatestGalleries, getPageById, type ResolvedRoute } from '@/lib/wp'
+import { getLatestGalleries, getPageById, type ResolvedRoute } from '@/lib/content'
 import { Trophy } from 'lucide-react'
 import type { TemplateProps } from './registry'
 

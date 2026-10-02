@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { Camera } from 'lucide-react'
-import { getGalleryById, type ResolvedRoute } from '@/lib/wp'
+import { getGalleryById, type ResolvedRoute } from '@/lib/content'
 import type { TemplateProps } from './registry'
 import { Container } from '@/components/ui/container'
 import { PageHero } from '@/components/ui/page-hero'

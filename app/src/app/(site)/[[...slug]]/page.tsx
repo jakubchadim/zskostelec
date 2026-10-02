@@ -9,7 +9,7 @@ import {
   resolveRoute,
   PageTemplateType,
   type ResolvedRoute
-} from '@/lib/wp'
+} from '@/lib/content'
 import { templateRegistry } from '@/components/templates/registry'
 import { templateKeyForRoute } from '@/components/templates/route-mapping'
 import { STATIC_PAGE_SLUGS } from '@/components/static/meta'
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   try {
     resolved = await resolveRoute(slug ?? [])
   } catch (error) {
-    console.warn('[generateMetadata] WP unreachable, falling back to minimal metadata:', error)
+    console.warn('[generateMetadata] CMS unreachable, falling back to minimal metadata:', error)
     return { title: SITE_NAME, description: SITE_DEFAULT_DESCRIPTION }
   }
 
@@ -176,15 +176,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  // Without a reachable WP (or WP_URL unset, e.g. CI), build nothing statically;
-  // `dynamicParams` serves every route on demand via ISR instead.
-  if (!process.env.WP_URL) {
-    return []
-  }
-
+  // Fixed pages + category listings only; articles and galleries render on
+  // first visit (ISR). Without a reachable database (e.g. CI), build nothing
+  // statically - every route is then rendered on demand.
   try {
     const routes = await getStaticRoutes()
-
     const handMade = new Set<string>(STATIC_PAGE_SLUGS)
 
     return routes
@@ -192,9 +188,11 @@ export async function generateStaticParams() {
       .filter((slug) => !(slug.length === 1 && handMade.has(slug[0])))
       .map((slug) => ({ slug }))
   } catch (error) {
-    console.warn('[generateStaticParams] WP unreachable, falling back to fully dynamic rendering:', error)
+    console.warn('[generateStaticParams] CMS unreachable, falling back to fully dynamic rendering:', error)
     return []
   }
 }
 
 export const dynamicParams = true
+// Pages are cached; saving in the admin revalidates them immediately (cms/revalidate.ts).
+export const revalidate = 86400

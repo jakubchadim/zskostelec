@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getGalleries, getPageById, GALLERY_PAGE_SIZE, type ResolvedRoute } from '@/lib/wp'
+import { getGalleryPage, getPageById, type ResolvedRoute } from '@/lib/content'
 import type { TemplateProps } from './registry'
 import { Container } from '@/components/ui/container'
 import { ArticlePagination } from '@/components/article/pagination'
@@ -8,7 +8,6 @@ import { Reveal } from '@/components/ui/reveal'
 import { PageBody } from './page-body'
 import { GalleryCard } from '@/components/gallery/gallery-card'
 import { hasPreview } from '@/components/gallery/has-preview'
-import { sortByDateDesc } from '@/components/gallery/sort-by-date'
 
 type GalleriesRoute = Extract<ResolvedRoute, { kind: 'page' }>
 
@@ -26,11 +25,9 @@ export async function GalleriesTemplate({ data }: TemplateProps) {
     notFound()
   }
 
-  // Parity with the legacy query's `filter: { acf: { preview: { link: { ne: null } } } }` -
-  // `getGalleries()` already applies this at the data-layer level; re-asserting it
-  // here too via `hasPreview` documents the intent at the render site.
-  const allGalleries = sortByDateDesc(await getGalleries()).filter(hasPreview)
-  const totalPages = Math.max(Math.ceil(allGalleries.length / GALLERY_PAGE_SIZE), 1)
+  const { galleries: pageGalleries, totalPages } = await getGalleryPage(route.pageNumber)
+  // A gallery without any photo has nothing to show on a card.
+  const galleries = pageGalleries.filter(hasPreview)
 
   // A `strana-N` beyond the last page has no content to show. `resolveRoute`
   // can't catch it (it resolves paths without counting galleries), so it's
@@ -39,8 +36,6 @@ export async function GalleriesTemplate({ data }: TemplateProps) {
     notFound()
   }
 
-  const offset = (route.pageNumber - 1) * GALLERY_PAGE_SIZE
-  const galleries = allGalleries.slice(offset, offset + GALLERY_PAGE_SIZE)
 
   return (
     <>

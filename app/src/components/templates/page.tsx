@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { PageHero } from '@/components/ui/page-hero'
-import { getPageById, type ResolvedRoute } from '@/lib/wp'
+import { getPageById, type ResolvedRoute } from '@/lib/content'
 import { PageBody } from './page-body'
 import { WORKPLACES_SLUG, WorkplacesTemplate } from './workplaces'
 import type { TemplateProps } from './registry'

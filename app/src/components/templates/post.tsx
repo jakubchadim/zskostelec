@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CalendarDays, Clock, Download } from 'lucide-react'
-import { getCategoryById, getGalleryPreviewImages, getPostById, getPostPreviews, type ResolvedRoute } from '@/lib/wp'
+import { getCategoryById, getGalleryPreviewImages, getPostById, getPostPreviews, type ResolvedRoute } from '@/lib/content'
 import { Container } from '@/components/ui/container'
 import { PageHero } from '@/components/ui/page-hero'
 import { Reveal } from '@/components/ui/reveal'
