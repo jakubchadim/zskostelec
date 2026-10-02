@@ -1,6 +1,6 @@
 /*
  * Spoken narration of the history story (the "Přehrát příběh" player on
- * /historie-1/). Written for the ear, from the same facts as story.ts: no
+ * /historie/). Written for the ear, from the same facts as story.ts: no
  * abbreviations, dates spelled out, short sentences. One segment per
  * chapter (ids match CHAPTERS) plus an intro and an outro.
  *

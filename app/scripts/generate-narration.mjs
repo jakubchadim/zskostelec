@@ -2,7 +2,7 @@
 /**
  * Generates the spoken history story (src/components/history/narration.ts)
  * into public/soubory/historie/audio/ and writes the player's manifest
- * (src/components/history/v1/narration-audio.json).
+ * (src/components/history/journey/narration-audio.json).
  *
  * Usage (from app/):
  *   node scripts/generate-narration.mjs [provider] [segmentId...]
@@ -24,7 +24,7 @@ import { NARRATION } from '../src/components/history/narration.ts'
 
 const APP = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 const OUT_DIR = path.join(APP, 'public/soubory/historie/audio')
-const MANIFEST = path.join(APP, 'src/components/history/v1/narration-audio.json')
+const MANIFEST = path.join(APP, 'src/components/history/journey/narration-audio.json')
 const PUBLIC_PREFIX = '/soubory/historie/audio'
 
 const envFile = path.join(APP, '.env.local')

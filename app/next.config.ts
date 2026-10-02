@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
     return [
       // Školská rada is run by the town; its page lives on the town's site.
       { source: '/skolska-rada', destination: 'https://www.kostelecno.cz/skolska-rada', permanent: false },
+      // Draft URLs of the history story, in case they were shared.
+      { source: '/historie-:variant(1|2|3)', destination: '/historie/', permanent: true },
     ];
   },
 };

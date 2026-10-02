@@ -1,5 +1,5 @@
 /*
- * Content for the history story pages (/historie-1/, -2/, -3/ drafts).
+ * Content for the history story page (/historie/, "Cesta časem").
  *
  * Sources: "Z historie škol a školství v našem městě Kostelci nad Orlicí"
  * (Dr. V. Fidler, Zpravodaj města; public/soubory/historie/histskol.pdf),

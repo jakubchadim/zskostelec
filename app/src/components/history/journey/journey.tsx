@@ -142,10 +142,10 @@ function Hero() {
           Průvodce: pan Guth
         </span>
         <Link
-          href="/historie/"
+          href="/historie/v-kostce/"
           className="text-sm font-bold text-secondary-3 underline decoration-2 underline-offset-4 hover:text-ink"
         >
-          Raději klasická historie
+          Raději jen text: historie v kostce
         </Link>
       </div>
       <NarrationPlayer targets={{ intro: HERO_ID, outro: 'v1-ending' }} />
@@ -211,9 +211,9 @@ function Ending() {
         </ul>
         <p className="mt-6 text-sm text-gray-7">Citáty z knihy J. Gutha-Jarkovského Společenský katechismus.</p>
         <div className="mt-10 flex flex-wrap gap-4">
-          <Link href="/historie/" className="btn bg-tangerine text-ink">
+          <Link href="/historie/v-kostce/" className="btn bg-tangerine text-ink">
             <ArrowLeft className="size-5" aria-hidden />
-            Zpět na Historii
+            Historie v kostce
           </Link>
           <a href={`#${HERO_ID}`} className="btn bg-paper">
             <RotateCcw className="size-5" aria-hidden />
@@ -225,7 +225,7 @@ function Ending() {
   )
 }
 
-/** /historie-1/ - "Cesta časem": scrollytelling over a hand-drawn town that grows with the story. */
+/** /historie/ - "Cesta časem": scrollytelling over a hand-drawn town that grows with the story. */
 export function Journey() {
   return (
     <div id={ROOT_ID}>
