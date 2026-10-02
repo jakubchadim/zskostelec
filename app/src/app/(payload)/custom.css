@@ -1,0 +1,14 @@
+/* School colours in the admin (Payload theme variables). */
+:root {
+  --theme-success-500: #2fbf71;
+}
+
+/* The school mark is an inline SVG without its own size (the site sizes it with Tailwind). */
+.zs-mark {
+  display: inline-block;
+  flex-shrink: 0;
+}
+.zs-mark svg {
+  width: 100%;
+  height: 100%;
+}

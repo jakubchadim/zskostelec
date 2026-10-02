@@ -3,3 +3,6 @@
 # Database dumps / exports (personal data - never commit)
 *.sql
 *.sql.gz
+
+# Local dev databases (Postgres for the CMS, MariaDB with the WP export)
+.local/
