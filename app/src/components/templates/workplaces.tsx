@@ -1,5 +1,6 @@
 import { Container } from '@/components/ui/container'
 import { PageHero } from '@/components/ui/page-hero'
+import { TownPopover } from '@/components/home/town-popover'
 import { WorkplacesExplorer } from '@/components/workplaces/workplaces-explorer'
 import { WORKPLACES, extractPhotos, type WorkplaceWithLive } from '@/components/workplaces/data'
 import { getBuildings, getEmployees, type WpPage } from '@/lib/wp'
@@ -29,7 +30,12 @@ export async function WorkplacesTemplate({ page }: { page: WpPage }) {
         title="Kde nás najdete"
         colorKey="pracoviste"
         eyebrow="Pracoviště školy"
-        lead="Škola má v Kostelci nad Orlicí čtyři budovy. Projděte si město – klikněte na budovu a podívejte se, co se v ní děje."
+        lead={
+          <>
+            Škola má v <TownPopover mapLink={false}>Kostelci nad Orlicí</TownPopover> čtyři budovy. Projděte si město – klikněte
+            na budovu a podívejte se, co se v ní děje.
+          </>
+        }
       />
       <Container className="pt-2">
         <WorkplacesExplorer workplaces={workplaces} mapUrl={map} />

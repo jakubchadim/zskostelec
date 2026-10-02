@@ -161,7 +161,13 @@ function MiniMap() {
  * focus / tap a little card about the town - a doodle map of Czechia with
  * the town pinned, the route from Hradec Králové and a few facts.
  */
-export function TownPopover({ children }: { children: ReactNode }) {
+type TownPopoverProps = {
+  children: ReactNode
+  /** Show the "Kde nás ve městě najdete" link (off on /pracoviste/ itself). */
+  mapLink?: boolean
+}
+
+export function TownPopover({ children, mapLink = true }: TownPopoverProps) {
   return (
     <DoodlePopover
       label="O městě Kostelec nad Orlicí"
@@ -194,13 +200,15 @@ export function TownPopover({ children }: { children: ReactNode }) {
               </span>
             ))}
           </span>
-          <Link
-            href="/pracoviste/"
-            className="flex items-center justify-between border-t-2 border-dashed border-gray-3 bg-paper px-4 py-2.5 font-display text-sm font-bold text-ink hover:bg-cream"
-          >
-            Kde nás ve městě najdete
-            <ArrowRight className="size-4" aria-hidden />
-          </Link>
+          {mapLink && (
+            <Link
+              href="/pracoviste/"
+              className="flex items-center justify-between border-t-2 border-dashed border-gray-3 bg-paper px-4 py-2.5 font-display text-sm font-bold text-ink hover:bg-cream"
+            >
+              Kde nás ve městě najdete
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          )}
         </>
       }
     >
