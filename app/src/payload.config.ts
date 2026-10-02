@@ -13,6 +13,7 @@ import { Posts } from './cms/collections/posts'
 import { Galleries } from './cms/collections/galleries'
 import { DocumentCategories, Documents } from './cms/collections/documents'
 import { Gutak } from './cms/collections/gutak'
+import { migrations } from './migrations'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -47,7 +48,10 @@ export default buildConfig({
   collections: [Posts, Galleries, Documents, Gutak, Media, Categories, DocumentCategories, Users],
   editor: lexicalEditor({ features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()] }),
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL || '' }
+    pool: { connectionString: process.env.DATABASE_URL || '' },
+    // Production (Neon) gets its schema from migrations (src/migrations, `payload migrate:create`),
+    // applied when the server starts; local development keeps Payload's automatic schema push.
+    prodMigrations: migrations
   }),
   sharp,
   graphQL: { disable: true },
