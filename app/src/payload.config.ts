@@ -62,6 +62,9 @@ export default buildConfig({
                 `${process.env.R2_PUBLIC_URL}/${[prefix, filename].filter(Boolean).join('/')}`
             }
           },
+          // Browser -> R2 directly (presigned PUT): phone photos exceed Vercel's 4.5 MB request
+          // limit. Payload then reads the file back to generate the smaller sizes.
+          clientUploads: true,
           bucket: process.env.R2_BUCKET || 'zskostelec-media',
           config: {
             endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
