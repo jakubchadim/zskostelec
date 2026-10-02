@@ -1,100 +1,100 @@
 {
-  "voice": "Zuzana (macOS, zkušební)",
+  "voice": "Michael – Fairytale Narrator (ElevenLabs, voice Y9pzXglljt62KSmEAcTg)",
   "segments": [
     {
       "id": "intro",
-      "src": "/soubory/historie/audio/intro.m4a",
-      "duration": 16.1
+      "src": "/soubory/historie/audio/intro.mp3",
+      "duration": 19.9
     },
     {
       "id": "dekanstvi",
-      "src": "/soubory/historie/audio/dekanstvi.m4a",
-      "duration": 23.5
+      "src": "/soubory/historie/audio/dekanstvi.mp3",
+      "duration": 28.1
     },
     {
       "id": "bratrska",
-      "src": "/soubory/historie/audio/bratrska.m4a",
-      "duration": 13.2
+      "src": "/soubory/historie/audio/bratrska.mp3",
+      "duration": 17.9
     },
     {
       "id": "kantori",
-      "src": "/soubory/historie/audio/kantori.m4a",
-      "duration": 28.7
-    },
-    {
-      "id": "prvni-budova",
-      "src": "/soubory/historie/audio/prvni-budova.m4a",
-      "duration": 18.2
-    },
-    {
-      "id": "lhota",
-      "src": "/soubory/historie/audio/lhota.m4a",
-      "duration": 23.9
-    },
-    {
-      "id": "hlavni-skola",
-      "src": "/soubory/historie/audio/hlavni-skola.m4a",
-      "duration": 24.6
-    },
-    {
-      "id": "jiri-kluk",
-      "src": "/soubory/historie/audio/jiri-kluk.m4a",
-      "duration": 20.4
-    },
-    {
-      "id": "stesk",
-      "src": "/soubory/historie/audio/stesk.m4a",
-      "duration": 27.4
-    },
-    {
-      "id": "namesti",
-      "src": "/soubory/historie/audio/namesti.m4a",
-      "duration": 19.5
-    },
-    {
-      "id": "olympiada",
-      "src": "/soubory/historie/audio/olympiada.m4a",
-      "duration": 38.5
-    },
-    {
-      "id": "realka",
-      "src": "/soubory/historie/audio/realka.m4a",
-      "duration": 17.8
-    },
-    {
-      "id": "skala",
-      "src": "/soubory/historie/audio/skala.m4a",
-      "duration": 9.9
-    },
-    {
-      "id": "hrad",
-      "src": "/soubory/historie/audio/hrad.m4a",
-      "duration": 27.6
-    },
-    {
-      "id": "stezka",
-      "src": "/soubory/historie/audio/stezka.m4a",
+      "src": "/soubory/historie/audio/kantori.mp3",
       "duration": 32.4
     },
     {
+      "id": "prvni-budova",
+      "src": "/soubory/historie/audio/prvni-budova.mp3",
+      "duration": 23
+    },
+    {
+      "id": "lhota",
+      "src": "/soubory/historie/audio/lhota.mp3",
+      "duration": 24.7
+    },
+    {
+      "id": "hlavni-skola",
+      "src": "/soubory/historie/audio/hlavni-skola.mp3",
+      "duration": 27.3
+    },
+    {
+      "id": "jiri-kluk",
+      "src": "/soubory/historie/audio/jiri-kluk.mp3",
+      "duration": 23.7
+    },
+    {
+      "id": "stesk",
+      "src": "/soubory/historie/audio/stesk.mp3",
+      "duration": 31
+    },
+    {
+      "id": "namesti",
+      "src": "/soubory/historie/audio/namesti.mp3",
+      "duration": 23.7
+    },
+    {
+      "id": "olympiada",
+      "src": "/soubory/historie/audio/olympiada.mp3",
+      "duration": 45.8
+    },
+    {
+      "id": "realka",
+      "src": "/soubory/historie/audio/realka.mp3",
+      "duration": 22.8
+    },
+    {
+      "id": "skala",
+      "src": "/soubory/historie/audio/skala.mp3",
+      "duration": 12
+    },
+    {
+      "id": "hrad",
+      "src": "/soubory/historie/audio/hrad.mp3",
+      "duration": 33.6
+    },
+    {
+      "id": "stezka",
+      "src": "/soubory/historie/audio/stezka.mp3",
+      "duration": 36.6
+    },
+    {
       "id": "masaryk",
-      "src": "/soubory/historie/audio/masaryk.m4a",
-      "duration": 13.6
+      "src": "/soubory/historie/audio/masaryk.mp3",
+      "duration": 17.7
     },
     {
       "id": "nova-skola",
-      "src": "/soubory/historie/audio/nova-skola.m4a",
-      "duration": 33
+      "src": "/soubory/historie/audio/nova-skola.mp3",
+      "duration": 39.2
     },
     {
       "id": "dnes",
-      "src": "/soubory/historie/audio/dnes.m4a",
-      "duration": 29
+      "src": "/soubory/historie/audio/dnes.mp3",
+      "duration": 32
     },
     {
       "id": "outro",
-      "src": "/soubory/historie/audio/outro.m4a",
-      "duration": 22.8
+      "src": "/soubory/historie/audio/outro.mp3",
+      "duration": 25.4
     }
   ]
 }
