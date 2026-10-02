@@ -58,13 +58,30 @@ const toInt = (v: unknown) => {
   return Number.isInteger(n) && n > 0 ? n : null
 }
 
-const decodeTitle = (s: string) => new JSDOM(`<p>${s}</p>`).window.document.querySelector('p')!.textContent ?? s
+const decodeTitle = (s: string) => {
+  const dom = new JSDOM(`<p>${s}</p>`)
+  const text = dom.window.document.querySelector('p')!.textContent ?? s
+  dom.window.close()
+  return text
+}
 
 /** WP stores dates as local time; post_date_gmt is UTC ("0000-00-00 00:00:00" for drafts). */
-function isoDate(gmt: unknown, local: unknown): string {
+/** Typos like "0212-09-26" (meant 2012) -> 20xx; anything else invalid falls through as-is. */
+function fixYear(value: string): string {
+  const m = value.match(/^(\d{4})(-.*)$/)
+  if (!m || Number(m[1]) >= 1990 || Number(m[1]) === 0) return value
+  return `${2000 + (Number(m[1]) % 100)}${m[2]}`
+}
+
+function isoDate(gmtRaw: unknown, localRaw: unknown, fallbackRaw?: unknown): string {
+  const [gmt, local, fallback] = [gmtRaw, localRaw, fallbackRaw].map((v) => (v == null ? v : fixYear(String(v))))
   const g = String(gmt ?? '')
   if (g && !g.startsWith('0000')) return new Date(`${g.replace(' ', 'T')}Z`).toISOString()
-  return new Date(String(local).replace(' ', 'T')).toISOString()
+  const l = String(local ?? '')
+  if (l && !l.startsWith('0000')) return new Date(l.replace(' ', 'T')).toISOString()
+  // Some drafts have no date at all - use when they were last modified.
+  const f = String(fallback ?? '')
+  return f && !f.startsWith('0000') ? new Date(f.replace(' ', 'T')).toISOString() : new Date().toISOString()
 }
 
 // Neon occasionally drops a pooled connection ("Connection terminated unexpectedly"), which pg
@@ -325,13 +342,13 @@ async function importMedia(ids?: number[]) {
       if (++done % 200 === 0) log(`  media ${done}/${done + todo.length}`)
     }
   }
-  await Promise.all(Array.from({ length: 4 }, worker))
+  await Promise.all(Array.from({ length: Number(process.env.IMPORT_CONCURRENCY ?? 4) }, worker))
 }
 
 /** Rows of a post type, newest first, honouring --limit. */
 async function postsOf(type: string, statuses = ['publish']) {
   return q(
-    `SELECT ID, post_title, post_name, post_content, post_excerpt, post_status, post_date, post_date_gmt
+    `SELECT ID, post_title, post_name, post_content, post_excerpt, post_status, post_date, post_date_gmt, post_modified
      FROM wp_posts WHERE post_type = ? AND post_status IN (?) ORDER BY post_date DESC ${LIMIT ? `LIMIT ${LIMIT}` : ''}`,
     [type, statuses]
   )
@@ -345,17 +362,30 @@ async function importGalleries() {
   )
   const photoIds = (id: number) => phpArrayValues(meta.get(id)?.gallery).map(Number).filter(Boolean)
   if (LIMIT) await importMedia([...new Set(rows.flatMap((r) => [...photoIds(Number(r.ID)), Number(meta.get(Number(r.ID))?.preview) || 0]))].filter(Boolean))
+  // Galleries only take images (WP galleries sometimes contain a PDF or a video).
+  const images = new Set(
+    (
+      await payload.find({ collection: 'media', pagination: false, depth: 0, select: { mimeType: true }, where: { mimeType: { contains: 'image' } } })
+    ).docs.map((d) => d.id as number)
+  )
+  const image = (wpId: number | null) => {
+    const id = wpId ? mediaMap.get(wpId) : undefined
+    return id && images.has(id) ? id : null
+  }
   for (const r of rows) {
     const id = Number(r.ID)
-    const preview = toInt(meta.get(id)?.preview)
-    await upsert('galleries', galleryMap, id, {
-      title: decodeTitle(String(r.post_title)),
-      slug: String(r.post_name || id),
-      publishedAt: isoDate(r.post_date_gmt, r.post_date),
-      photos: photoIds(id).map((pid) => mediaMap.get(pid)).filter(Boolean),
-      cover: preview ? (mediaMap.get(preview) ?? null) : null,
-      _status: r.post_status === 'publish' ? 'published' : 'draft'
-    })
+    try {
+      await upsert('galleries', galleryMap, id, {
+        title: decodeTitle(String(r.post_title)),
+        slug: String(r.post_name || id),
+        publishedAt: isoDate(r.post_date_gmt, r.post_date, r.post_modified),
+        photos: photoIds(id).map(image).filter(Boolean),
+        cover: image(toInt(meta.get(id)?.preview)),
+        _status: r.post_status === 'publish' ? 'published' : 'draft'
+      })
+    } catch (error) {
+      console.warn(`  ! gallery ${id} (${r.post_name}):`, (error as Error).message)
+    }
   }
   log(`galleries: ${rows.length}`)
 }
@@ -411,9 +441,14 @@ async function contentToLexical(html: string, mediaWanted: Set<number>) {
     }
     fig.replaceWith(p)
   }
-  // Absolute links to the old site -> site-relative.
-  for (const a of [...doc.querySelectorAll('a[href]')]) {
-    a.setAttribute('href', a.getAttribute('href')!.replace(HOSTS, '') || '/')
+  // Absolute links to the old site -> site-relative; links without a real target become plain text.
+  for (const a of [...doc.querySelectorAll('a')]) {
+    const href = (a.getAttribute('href') ?? '').trim()
+    if (!href || href === '#' || /^(javascript|file):/i.test(href)) {
+      a.replaceWith(...a.childNodes)
+      continue
+    }
+    a.setAttribute('href', href.replace(HOSTS, '') || '/')
   }
   // Classic-editor posts use bare text + <br>; wrap loose text in paragraphs.
   const body = doc.body
@@ -421,7 +456,9 @@ async function contentToLexical(html: string, mediaWanted: Set<number>) {
     const parts = body.innerHTML.split(/(?:<br\s*\/?>\s*){2,}|\n{2,}/)
     body.innerHTML = parts.map((part) => `<p>${part.trim()}</p>`).join('')
   }
-  return convertHTMLToLexical({ editorConfig, html: body.innerHTML, JSDOM })
+  const html2 = body.innerHTML
+  dom.window.close()
+  return convertHTMLToLexical({ editorConfig, html: html2, JSDOM })
 }
 
 type LexNode = { type?: string; children?: LexNode[]; text?: string; [k: string]: unknown }
@@ -450,42 +487,55 @@ async function importPosts() {
   const meta = await metaFor(ids, ['gallery', 'file', 'link'])
   const cats = await termIdsFor(ids, 'category')
 
-  // First pass: which media do the posts need (content images + attached files)?
-  const wanted = new Set<number>()
-  const lexical = new Map<number, unknown>()
-  for (const r of rows) {
-    lexical.set(Number(r.ID), await contentToLexical(String(r.post_content ?? ''), wanted))
-    const file = toInt(meta.get(Number(r.ID))?.file)
-    if (file) wanted.add(file)
-  }
-  await importMedia([...wanted])
-
+  // In batches: converting all ~3 400 posts at once ran out of memory.
+  const BATCH = 100
   let done = 0
-  for (const r of rows) {
-    const id = Number(r.ID)
-    const m = meta.get(id) ?? {}
-    const content = swapMediaPlaceholders(structuredClone(lexical.get(id)) as LexNode)
-    try {
-      await upsert('posts', postMap, id, {
-        title: decodeTitle(String(r.post_title)),
-        slug: String(r.post_name || id),
-        publishedAt: isoDate(r.post_date_gmt, r.post_date),
-        categories: (cats.get(id) ?? []).map((c) => catMap.get(c)).filter(Boolean),
-        excerpt: String(r.post_excerpt ?? '').trim() || null,
-        content,
-        galleries: phpArrayValues(m.gallery)
-          .map((g) => galleryMap.get(Number(g)))
-          .filter(Boolean),
-        file: toInt(m.file) ? (mediaMap.get(Number(m.file)) ?? null) : null,
-        link: m.link?.trim() || null,
-        _status: 'published'
-      })
-    } catch (error) {
-      console.warn(`  ! post ${id} (${r.post_name}):`, (error as Error).message)
+  for (let start = 0; start < rows.length; start += BATCH) {
+    const batch = rows.slice(start, start + BATCH)
+    const wanted = new Set<number>()
+    const lexical = new Map<number, unknown>()
+    for (const r of batch) {
+      lexical.set(Number(r.ID), await contentToLexical(String(r.post_content ?? ''), wanted))
+      const file = toInt(meta.get(Number(r.ID))?.file)
+      if (file) wanted.add(file)
     }
-    if (++done % 200 === 0) log(`  posts ${done}/${rows.length}`)
+    await importMedia([...wanted])
+
+    for (const r of batch) {
+      const id = Number(r.ID)
+      const m = meta.get(id) ?? {}
+      const content = swapMediaPlaceholders(structuredClone(lexical.get(id)) as LexNode)
+      try {
+        await upsert('posts', postMap, id, {
+          title: decodeTitle(String(r.post_title)),
+          slug: String(r.post_name || id),
+          publishedAt: isoDate(r.post_date_gmt, r.post_date, r.post_modified),
+          categories: (cats.get(id) ?? []).map((c) => catMap.get(c)).filter(Boolean),
+          excerpt: String(r.post_excerpt ?? '').trim() || null,
+          content,
+          galleries: phpArrayValues(m.gallery)
+            .map((g) => galleryMap.get(Number(g)))
+            .filter(Boolean),
+          file: toInt(m.file) ? (mediaMap.get(Number(m.file)) ?? null) : null,
+          link: m.link?.trim() || null,
+          _status: 'published'
+        })
+      } catch (error) {
+        console.warn(`  ! post ${id} (${r.post_name}):`, (error as Error).message)
+      }
+      if (++done % 200 === 0) log(`  posts ${done}/${rows.length}`)
+    }
   }
   log(`posts: ${rows.length}`)
+}
+
+/** A few WP documents have no category - they go to "Ostatní". */
+let otherCategoryId: number | null = null
+async function otherDocumentCategory(): Promise<number> {
+  if (otherCategoryId) return otherCategoryId
+  const found = await payload.find({ collection: 'document-categories', where: { slug: { equals: 'ostatni' } }, limit: 1, depth: 0 })
+  otherCategoryId = (found.docs[0]?.id as number) ?? ((await payload.create({ collection: 'document-categories', data: { title: 'Ostatní', slug: 'ostatni', order: 999 }, overrideAccess: true, context: { ...CTX } })).id as number)
+  return otherCategoryId
 }
 
 async function importDocuments() {
@@ -497,17 +547,21 @@ async function importDocuments() {
   for (const r of rows) {
     const id = Number(r.ID)
     const file = mediaMap.get(Number(meta.get(id)?.file))
-    const category = docCatMap.get((cats.get(id) ?? [])[0])
-    if (!file || !category) {
-      console.warn(`  ! document ${id} (${r.post_title}): ${!file ? 'missing file' : 'no category'}`)
+    const category = docCatMap.get((cats.get(id) ?? [])[0]) ?? (await otherDocumentCategory())
+    if (!file) {
+      console.warn(`  ! document ${id} (${r.post_title}): missing file`)
       continue
     }
-    await upsert('documents', docMap, id, {
-      title: decodeTitle(String(r.post_title)),
-      slug: String(r.post_name || id),
-      file,
-      category
-    })
+    try {
+      await upsert('documents', docMap, id, {
+        title: decodeTitle(String(r.post_title)),
+        slug: String(r.post_name || id),
+        file,
+        category
+      })
+    } catch (error) {
+      console.warn(`  ! document ${id} (${r.post_title}):`, (error as Error).message)
+    }
   }
   log(`documents: ${rows.length}`)
 }
