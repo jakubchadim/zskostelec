@@ -5,6 +5,8 @@ import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 
 const GAP = 14
+/** Hover intent: the card only opens when the pointer rests on the word, not when it just passes over. */
+const HOVER_DELAY = 350
 const SM = 668 // the `sm` breakpoint (41.75em)
 
 function subscribeNoop() {
@@ -57,6 +59,7 @@ export function DoodlePopover({ children, card, label, width = 352, triggerClass
   const trigger = useRef<HTMLButtonElement>(null)
   const cardRef = useRef<HTMLSpanElement>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const mounted = useSyncExternalStore(
     subscribeNoop,
     () => true,
@@ -70,10 +73,19 @@ export function DoodlePopover({ children, card, label, width = 352, triggerClass
   }
   const show = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current)
+    if (openTimer.current) clearTimeout(openTimer.current)
     reposition()
     setOpen(true)
   }
+  /** Mouse over the trigger: open after a short pause (instant if already open). */
+  const showSoon = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    if (open) return
+    if (openTimer.current) clearTimeout(openTimer.current)
+    openTimer.current = setTimeout(show, HOVER_DELAY)
+  }
   const hideSoon = () => {
+    if (openTimer.current) clearTimeout(openTimer.current)
     if (closeTimer.current) clearTimeout(closeTimer.current)
     closeTimer.current = setTimeout(() => setOpen(false), 160)
   }
@@ -110,7 +122,7 @@ export function DoodlePopover({ children, card, label, width = 352, triggerClass
         aria-expanded={open}
         aria-controls={id}
         onClick={() => (open ? setOpen(false) : show())}
-        onMouseEnter={show}
+        onMouseEnter={showSoon}
         onMouseLeave={hideSoon}
         onFocus={show}
         onBlur={hideSoon}
