@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import {
   Apple,
+  ArrowUpRight,
   CalendarClock,
   ClipboardList,
   Clock,
@@ -37,6 +38,24 @@ export const metadata = staticPageMetadata({
  */
 const MENU_URL = 'https://primiapp.cz/#/public/dining/menu/3013/117'
 const PRIMIAPP_URL = 'https://primiapp.cz'
+
+/** Store links decoded from the QR codes on Primirest's PrimiApp leaflet (2026). */
+const APP_STORES = [
+  {
+    name: 'App Store',
+    label: 'App Store',
+    platform: 'iPhone, iPad',
+    href: 'https://apps.apple.com/us/app/primiapp/id6756568649',
+    qr: '/soubory/skolni-stravovani/primiapp-ios.svg'
+  },
+  {
+    name: 'Google Play',
+    label: 'Google Play',
+    platform: 'Android',
+    href: 'https://play.google.com/store/apps/details?id=cz.primirest.primiapp',
+    qr: '/soubory/skolni-stravovani/primiapp-android.svg'
+  }
+]
 
 const STEPS = [
   {
@@ -180,26 +199,50 @@ export default function SkolniStravovaniPage() {
             </li>
           ))}
         </ol>
-        <div className="mt-8 grid items-center gap-6 md:grid-cols-[1fr_18rem]">
-          <Callout icon={Smartphone} accent={accentAt(1)} title="Mobilní aplikace PrimiApp">
-            Vše, co znáte z portálu PrimiApp.cz, teď i v telefonu. Aplikaci najdete v App Store i Google Play pod názvem{' '}
-            <strong>PrimiApp</strong> – nebo naskenujte QR kód z letáku.
-          </Callout>
-          <a
-            href="/soubory/skolni-stravovani/Primirest-mobilni-aplikace-2026_1.jpg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="sticker hover-lift block rotate-2 overflow-hidden p-0"
-          >
-            <Image
-              src="/soubory/skolni-stravovani/Primirest-mobilni-aplikace-2026_1.jpg"
-              alt="Leták PrimiApp s QR kódy pro stažení aplikace (iPhone a Android)"
-              width={1240}
-              height={1754}
-              sizes="18rem"
-              className="h-auto w-full"
-            />
-          </a>
+        <div className="sticker mt-8 grid gap-6 p-5 sm:p-7 md:grid-cols-[1fr_auto] md:items-center">
+          <div>
+            <h3 className="flex items-center gap-2 font-display text-2xl">
+              <Smartphone className="size-7 text-[#0f5fb3]" aria-hidden /> Mobilní aplikace PrimiApp
+            </h3>
+            <p className="mt-2 mb-0 text-lg text-gray-8">
+              Vše, co znáte z portálu PrimiApp.cz, teď i v telefonu: jídelníček, objednávky, odhlašování i zůstatek. Na
+              počítači naskenujte QR kód telefonem, na mobilu klepněte na tlačítko.
+            </p>
+            <a
+              href="/soubory/skolni-stravovani/Primirest-mobilni-aplikace-2026_1.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-block text-sm font-bold"
+            >
+              Leták k aplikaci (obrázek)
+            </a>
+          </div>
+          <ul className="m-0 grid list-none grid-cols-2 gap-4 p-0">
+            {APP_STORES.map((store, idx) => (
+              <li key={store.name}>
+                <a
+                  href={store.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn('group flex h-full flex-col items-center gap-3 rounded-[var(--radius-large)] border-[2.5px] border-ink p-4 text-center no-underline transition-transform hover:-translate-y-1', accentAt(idx + 1).tint)}
+                >
+                  <Image
+                    src={store.qr}
+                    alt={`QR kód: PrimiApp v obchodě ${store.name}`}
+                    width={148}
+                    height={148}
+                    unoptimized
+                    className="size-28 rounded-xl border-2 border-ink bg-white-1 p-1 sm:size-36"
+                  />
+                  <span className="btn bg-paper px-3 py-1.5 text-sm shadow-pop-sm">
+                    {store.label}
+                    <ArrowUpRight className="size-4" aria-hidden />
+                  </span>
+                  <span className="text-xs font-bold text-gray-7">{store.platform}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </Section>
 
