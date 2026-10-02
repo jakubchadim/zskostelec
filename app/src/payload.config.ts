@@ -39,7 +39,9 @@ export default buildConfig({
       }
     },
     importMap: { baseDir: path.resolve(dirname) },
-    dateFormat: 'd. M. yyyy'
+    dateFormat: 'd. M. yyyy',
+    // Light only, matching the site - the default follows the OS and turns dark on many PCs.
+    theme: 'light'
   },
   i18n: { supportedLanguages: { cs }, fallbackLanguage: 'cs' },
   collections: [Posts, Galleries, Documents, Gutak, Media, Categories, DocumentCategories, Users],
