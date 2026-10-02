@@ -8,7 +8,7 @@
  *   npx payload run scripts/import-wp.ts -- [options]
  *
  * Options:
- *   --only=categories,doccats,media,galleries,posts,documents   phases (default: all, in this order)
+ *   --only=categories,doccats,media,galleries,posts,documents,gutak   phases (default: all, in this order)
  *   --files=<dir>        local copy of wp-content/uploads (from the hosting backup)
  *   --fetch-missing      download files missing in --files from the live WP (small samples only!)
  *   --limit=<n>          import only the newest n galleries/posts/documents (+ the media they use)
@@ -35,7 +35,7 @@ const args = Object.fromEntries(
       return [k, v ?? 'true']
     })
 )
-const PHASES = (args.only ?? 'categories,doccats,media,galleries,posts,documents').split(',')
+const PHASES = (args.only ?? 'categories,doccats,media,galleries,posts,documents,gutak').split(',')
 const FILES_DIR = args.files ? path.resolve(args.files) : null
 const FETCH_MISSING = args['fetch-missing'] === 'true'
 const LIMIT = args.limit ? Number(args.limit) : null
@@ -129,7 +129,7 @@ async function termIdsFor(postIds: number[], taxonomy: string): Promise<Map<numb
 const payload: Payload = await getPayload({ config })
 
 /** wpId -> payload id for a collection (one query, then kept up to date). */
-async function idMap(collection: 'categories' | 'document-categories' | 'media' | 'galleries' | 'posts' | 'documents') {
+async function idMap(collection: 'categories' | 'document-categories' | 'media' | 'galleries' | 'posts' | 'documents' | 'gutak') {
   const map = new Map<number, number>()
   const res = await payload.find({ collection, pagination: false, depth: 0, select: { wpId: true }, where: { wpId: { exists: true } }, draft: true })
   for (const doc of res.docs as { id: number; wpId?: number | null }[]) if (doc.wpId) map.set(doc.wpId, doc.id)
@@ -137,7 +137,7 @@ async function idMap(collection: 'categories' | 'document-categories' | 'media' 
 }
 
 async function upsert<T extends Record<string, unknown>>(
-  collection: 'categories' | 'document-categories' | 'galleries' | 'posts' | 'documents',
+  collection: 'categories' | 'document-categories' | 'galleries' | 'posts' | 'documents' | 'gutak',
   map: Map<number, number>,
   wpId: number,
   data: T
@@ -161,6 +161,7 @@ const mediaMap = await idMap('media')
 const galleryMap = await idMap('galleries')
 const postMap = await idMap('posts')
 const docMap = await idMap('documents')
+const gutakMap = await idMap('gutak')
 
 async function importTermTree(taxonomy: string, collection: 'categories' | 'document-categories', map: Map<number, number>) {
   const terms = await termsOf(taxonomy)
@@ -453,6 +454,29 @@ async function importDocuments() {
   log(`documents: ${rows.length}`)
 }
 
+async function importGutak() {
+  const rows = await postsOf('gutak')
+  const ids = rows.map((r) => Number(r.ID))
+  const meta = await metaFor(ids, ['file', 'preview'])
+  await importMedia(ids.flatMap((id) => [toInt(meta.get(id)?.file), toInt(meta.get(id)?.preview)]).filter((x): x is number => Boolean(x)))
+  for (const r of rows) {
+    const id = Number(r.ID)
+    const file = mediaMap.get(Number(meta.get(id)?.file))
+    if (!file) {
+      console.warn(`  ! gutak ${id} (${r.post_title}): missing file`)
+      continue
+    }
+    const cover = toInt(meta.get(id)?.preview)
+    await upsert('gutak', gutakMap, id, {
+      title: decodeTitle(String(r.post_title)),
+      file,
+      cover: cover ? (mediaMap.get(cover) ?? null) : null,
+      publishedAt: isoDate(r.post_date_gmt, r.post_date)
+    })
+  }
+  log(`gutak: ${rows.length}`)
+}
+
 // ---------------------------------------------------------------- run
 
 const started = Date.now()
@@ -462,6 +486,7 @@ if (PHASES.includes('media') && !LIMIT) await importMedia()
 if (PHASES.includes('galleries')) await importGalleries()
 if (PHASES.includes('posts')) await importPosts()
 if (PHASES.includes('documents')) await importDocuments()
+if (PHASES.includes('gutak')) await importGutak()
 
 if (missingFiles.length) {
   const out = path.resolve(process.cwd(), '../.local/import-missing-files.txt')

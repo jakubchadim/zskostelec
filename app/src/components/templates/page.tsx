@@ -18,7 +18,7 @@ export async function PageTemplate({ data }: TemplateProps) {
 
   // A plain WP page with a bespoke interactive layout (no WP template needed).
   if (page.slug === WORKPLACES_SLUG) {
-    return <WorkplacesTemplate page={page} />
+    return <WorkplacesTemplate />
   }
 
   return (

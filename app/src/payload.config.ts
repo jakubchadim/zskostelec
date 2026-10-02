@@ -12,6 +12,7 @@ import { Categories } from './cms/collections/categories'
 import { Posts } from './cms/collections/posts'
 import { Galleries } from './cms/collections/galleries'
 import { DocumentCategories, Documents } from './cms/collections/documents'
+import { Gutak } from './cms/collections/gutak'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -41,7 +42,7 @@ export default buildConfig({
     dateFormat: 'd. M. yyyy'
   },
   i18n: { supportedLanguages: { cs }, fallbackLanguage: 'cs' },
-  collections: [Posts, Galleries, Documents, Media, Categories, DocumentCategories, Users],
+  collections: [Posts, Galleries, Documents, Gutak, Media, Categories, DocumentCategories, Users],
   editor: lexicalEditor({ features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()] }),
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URL || '' }

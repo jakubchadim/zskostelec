@@ -19,6 +19,8 @@ import {
 } from '@/lib/wp'
 import type { Where } from 'payload'
 import type { Category, Gallery, Media, Post } from '@/payload-types'
+import { BUILDINGS, POSITIONS, STAFF } from '@/content/staff'
+import type { WpBuilding, WpEmployee, WpGutak, WpPosition } from '@/lib/wp'
 import { cms } from './payload'
 import { mediaUrl, toMediaLike } from './media'
 
@@ -411,4 +413,40 @@ export async function getSitemapRoutes(): Promise<{ path: string; lastModified?:
     ...posts.docs.map((p) => ({ path: `/${p.slug}/`, lastModified: p.updatedAt })),
     ...galleries.docs.map((g) => ({ path: `/fotogalerie/${g.slug}/`, lastModified: g.updatedAt }))
   ]
+}
+
+// ------------------------------------------------------------------ staff (static) & Guťák
+
+
+/** Staff live in code (src/content/staff.ts) - they change about once a year. */
+export async function getEmployees(): Promise<WpEmployee[]> {
+  return STAFF.map((s) => ({
+    id: asId(s.id),
+    name: s.name,
+    positionIds: s.positionIds.map(asId),
+    buildingIds: s.buildingIds.map(asId),
+    priority: s.priority,
+    email: s.email,
+    phone: s.phone,
+    photo: null
+  }))
+}
+
+export async function getBuildings(): Promise<WpBuilding[]> {
+  return BUILDINGS.map((b) => ({ id: asId(b.id), name: b.name }))
+}
+
+export async function getPositions(): Promise<WpPosition[]> {
+  return POSITIONS.map((p) => ({ id: asId(p.id), name: p.name }))
+}
+
+export async function getGutaky(): Promise<WpGutak[]> {
+  const payload = await cms()
+  const res = await payload.find({ collection: 'gutak', pagination: false, depth: 1, sort: '-publishedAt' })
+  return res.docs.map((g) => ({
+    id: asId(String(g.id)),
+    title: g.title,
+    fileUrl: mediaUrl(g.file as Media | number) ?? '',
+    preview: toMediaLike(g.cover as Media | number | null)
+  }))
 }

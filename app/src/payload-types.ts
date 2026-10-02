@@ -70,6 +70,7 @@ export interface Config {
     posts: Post;
     galleries: Gallery;
     documents: Document;
+    gutak: Gutak;
     media: Media;
     categories: Category;
     'document-categories': DocumentCategory;
@@ -84,6 +85,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
+    gutak: GutakSelect<false> | GutakSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     'document-categories': DocumentCategoriesSelect<false> | DocumentCategoriesSelect<true>;
@@ -326,6 +328,28 @@ export interface DocumentCategory {
   createdAt: string;
 }
 /**
+ * Školní časopis – každé číslo je PDF s obálkou.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gutak".
+ */
+export interface Gutak {
+  id: number;
+  /**
+   * Např. „Číslo 2 … 2022 – 2023“
+   */
+  title: string;
+  file: number | Media;
+  cover?: (number | null) | Media;
+  publishedAt: string;
+  /**
+   * ID z původního WordPressu (import).
+   */
+  wpId?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -391,6 +415,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'documents';
         value: number | Document;
+      } | null)
+    | ({
+        relationTo: 'gutak';
+        value: number | Gutak;
       } | null)
     | ({
         relationTo: 'media';
@@ -494,6 +522,19 @@ export interface DocumentsSelect<T extends boolean = true> {
   file?: T;
   category?: T;
   slug?: T;
+  wpId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gutak_select".
+ */
+export interface GutakSelect<T extends boolean = true> {
+  title?: T;
+  file?: T;
+  cover?: T;
+  publishedAt?: T;
   wpId?: T;
   updatedAt?: T;
   createdAt?: T;
