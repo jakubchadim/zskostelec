@@ -67,6 +67,16 @@ function isoDate(gmt: unknown, local: unknown): string {
   return new Date(String(local).replace(' ', 'T')).toISOString()
 }
 
+// Neon occasionally drops a pooled connection ("Connection terminated unexpectedly"), which pg
+// emits on the client with no listener - log it and carry on; the pool opens a new connection.
+process.on('uncaughtException', (error) => {
+  if (/Connection terminated|ECONNRESET|terminating connection/i.test(String(error?.message))) {
+    console.warn('  ~ database connection dropped, continuing')
+    return
+  }
+  throw error
+})
+
 const log = (...m: unknown[]) => console.log(`[${new Date().toLocaleTimeString('cs-CZ')}]`, ...m)
 
 // ---------------------------------------------------------------- WP data
@@ -261,8 +271,22 @@ function uniqueName(sourcePath: string, rel: string): string {
   return target
 }
 
+/** legacyPath -> media id: WP sometimes has two attachments for the same file - reuse the upload. */
+const mediaByLegacyPath = new Map<string, number>()
+async function loadLegacyPaths() {
+  const res = await payload.find({ collection: 'media', pagination: false, depth: 0, select: { legacyPath: true }, where: { legacyPath: { exists: true } } })
+  for (const doc of res.docs as { id: number; legacyPath?: string | null }[]) if (doc.legacyPath) mediaByLegacyPath.set(doc.legacyPath, doc.id)
+}
+
 async function importMedia(ids?: number[]) {
-  const todo = (await attachments(ids)).filter((a) => a.file && !mediaMap.has(a.id))
+  if (!mediaByLegacyPath.size) await loadLegacyPaths()
+  const all = (await attachments(ids)).filter((a) => a.file && !mediaMap.has(a.id))
+  // Same file already uploaded for another attachment id: just map this id to it.
+  const todo = all.filter((a) => {
+    const existing = mediaByLegacyPath.get(`uploads/${a.file}`)
+    if (existing) mediaMap.set(a.id, existing)
+    return !existing
+  })
   log(`media: ${todo.length} to import (${mediaMap.size} already there)`)
   let done = 0
   const worker = async () => {
@@ -293,6 +317,7 @@ async function importMedia(ids?: number[]) {
           }
         }
         mediaMap.set(a.id, doc.id as number)
+        mediaByLegacyPath.set(`uploads/${a.file}`, doc.id as number)
       } catch (error) {
         failedMedia.push(a.file)
         console.warn(`  ! media ${a.id} (${a.file}):`, (error as Error).message)

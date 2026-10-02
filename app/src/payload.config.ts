@@ -48,7 +48,8 @@ export default buildConfig({
   collections: [Posts, Galleries, Documents, Gutak, Media, Categories, DocumentCategories, Users],
   editor: lexicalEditor({ features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()] }),
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL || '' },
+    // keepAlive: Neon drops idle TCP connections, which surfaced as 'Connection terminated unexpectedly'.
+    pool: { connectionString: process.env.DATABASE_URL || '', keepAlive: true, idleTimeoutMillis: 20_000 },
     // Production (Neon) gets its schema from migrations (src/migrations, `payload migrate:create`),
     // applied when the server starts; local development keeps Payload's automatic schema push.
     prodMigrations: migrations

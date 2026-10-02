@@ -43,6 +43,8 @@ export const Media: CollectionConfig = {
       'video/quicktime',
       'application/pdf',
       'application/msword',
+      // Old binary .doc/.xls/.ppt files are detected as Compound File Binary.
+      'application/x-cfb',
       'application/vnd.openxmlformats-officedocument.*',
       'application/vnd.ms-excel',
       'application/vnd.ms-powerpoint',
