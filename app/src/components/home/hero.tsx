@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Megaphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SchoolSketch } from './school-sketch'
 import { Container } from '@/components/ui/container'
 import { Blob, Cloud, PaperPlane, Pencil, Sparkle, Star, Sun, WaveEdge } from '@/components/ui/doodles'
 import { WpImage } from '@/components/image/wp-image'
@@ -132,8 +133,7 @@ export function Hero({ mainPost, photos, newsAnchor }: HeroProps) {
                   <Polaroid key={photo.link} photo={photo} className={cn(POLAROID_LAYOUT[idx], 'animate-pop-in')} priority={idx === 0} />
                 ))
             ) : (
-              // eslint-disable-next-line @next/next/no-img-element -- bundled illustration
-              <img src="/school.png" alt="" className="absolute inset-0 h-full w-full object-contain" />
+              <SchoolSketch className="absolute inset-0 m-auto" />
             )}
             <PaperPlane className="absolute -top-6 left-[38%] z-40 w-16 text-sky animate-fly" />
             <Pencil className="absolute right-[-2%] bottom-[8%] z-40 w-14 rotate-12 text-sun animate-float-slow" />

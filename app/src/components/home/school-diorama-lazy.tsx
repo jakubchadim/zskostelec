@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { Hand, Moon, Sun } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SchoolSketch } from './school-sketch'
+import schoolSketchCss from './school-sketch.module.css'
 
 const SchoolDiorama = dynamic(() => import('./school-diorama'), { ssr: false })
 
@@ -27,8 +29,8 @@ function subscribeMotion(cb: () => void) {
 
 /**
  * Homepage wrapper for the 3D school diorama. three.js is only downloaded
- * once the block scrolls near the viewport; until then (and without WebGL)
- * the bundled school illustration is shown instead.
+ * once the block scrolls near the viewport; meanwhile the drawn school
+ * builds itself as a loader, and without WebGL it stays as the picture.
  */
 export function SchoolDioramaLazy({ href }: { href: string }) {
   const router = useRouter()
@@ -70,14 +72,19 @@ export function SchoolDioramaLazy({ href }: { href: string }) {
       )}
     >
       {(!show3d || !ready) && (
-        // eslint-disable-next-line @next/next/no-img-element -- bundled illustration (placeholder / no-WebGL fallback)
-        <img
-          src="/school.png"
-          alt="Ilustrace školní budovy"
-          width={1600}
-          height={1020}
-          className={cn('absolute inset-0 m-auto w-full object-contain transition-opacity', show3d && 'opacity-40')}
-        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4">
+          <SchoolSketch building={show3d && !ready && !reducedMotion} className="max-w-md" />
+          {show3d && !ready && (
+            <p className="m-0 inline-flex items-center gap-2 rounded-full border-2 border-ink bg-paper px-3 py-1.5 text-sm font-bold shadow-pop-sm" role="status">
+              Stavíme 3D model školy
+              <span className={schoolSketchCss.dots} aria-hidden>
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </span>
+            </p>
+          )}
+        </div>
       )}
 
       {show3d && (

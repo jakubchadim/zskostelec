@@ -1,0 +1,124 @@
+/*
+ * The drawn school "building itself" while the 3D model loads: ground,
+ * walls rising, windows popping in, roof dropping on - once, ~2.5 s - then
+ * the flag keeps waving until the model is ready. Each part waits for its
+ * turn via --d (delay). Without .building everything is simply drawn
+ * (no-WebGL fallback).
+ */
+
+.building .ground,
+.building .wall,
+.building .window,
+.building .roof,
+.building .flag,
+.building .tree,
+.building .canopy {
+  animation-duration: 0.6s;
+  animation-iteration-count: 1;
+  animation-timing-function: cubic-bezier(0.34, 1.4, 0.64, 1);
+  animation-fill-mode: both;
+  transform-box: fill-box;
+}
+
+.building .ground {
+  animation-name: grow-x;
+  transform-origin: center;
+}
+
+.building .wall {
+  animation-name: rise;
+  transform-origin: bottom;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
+.building .window,
+.building .canopy {
+  animation-name: pop;
+  transform-origin: center;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
+.building .roof {
+  animation-name: drop;
+  animation-duration: 0.7s;
+  transform-origin: bottom;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
+.building .flag {
+  animation-name: pop;
+  transform-origin: bottom left;
+  animation-delay: 1900ms;
+}
+
+.building .tree {
+  animation-name: pop;
+  transform-origin: bottom;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0);
+  }
+}
+
+@keyframes drop {
+  from {
+    transform: translateY(-90px);
+    opacity: 0;
+  }
+}
+
+/* Flag flutter (also when built). */
+.flagCloth {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: flutter 1.4s ease-in-out infinite;
+}
+
+@keyframes flutter {
+  0%,
+  100% {
+    transform: skewY(0deg) scaleX(1);
+  }
+  50% {
+    transform: skewY(-6deg) scaleX(0.92);
+  }
+}
+
+/* "Stavíme…" dots. */
+.dots span {
+  animation: dot 1.2s ease-in-out infinite;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
+}
