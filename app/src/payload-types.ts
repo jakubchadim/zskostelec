@@ -249,6 +249,8 @@ export interface Media {
    * ID z původního WordPressu (import).
    */
   wpId?: number | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -547,6 +549,8 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   legacyPath?: T;
   wpId?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

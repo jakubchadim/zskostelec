@@ -6,3 +6,6 @@
 
 # Local dev databases (Postgres for the CMS, MariaDB with the WP export)
 .local/
+
+# Wrangler local state
+.wrangler/
