@@ -8,6 +8,7 @@ import { SchoolMark } from '@/components/ui/school-logo'
 import { CHAPTERS, ETIQUETTE_RULES } from '../story'
 import { ChapterCard } from './chapter-card'
 import { Director } from './director'
+import { NarrationPlayer } from './narration-player'
 import { FOCUS, LAST_STEP, reelsFor, stampFor } from './steps'
 import { Town } from './town'
 import css from './journey.module.css'
@@ -147,6 +148,7 @@ function Hero() {
           Raději klasická historie
         </Link>
       </div>
+      <NarrationPlayer targets={{ intro: HERO_ID, outro: 'v1-ending' }} />
       <a
         href={`#${CHAPTERS[0].id}`}
         className={cn(
@@ -168,6 +170,7 @@ const RULE_ICONS = [Hand, Utensils, HeartHandshake]
 function Ending() {
   return (
     <section
+      id="v1-ending"
       aria-labelledby="v1-guth-rules"
       className="relative overflow-hidden border-t-[2.5px] border-ink bg-sun-tint py-16 sm:py-22"
     >

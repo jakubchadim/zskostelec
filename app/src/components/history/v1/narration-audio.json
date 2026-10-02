@@ -1,0 +1,100 @@
+{
+  "voice": "Zuzana (macOS, zkušební)",
+  "segments": [
+    {
+      "id": "intro",
+      "src": "/soubory/historie/audio/intro.m4a",
+      "duration": 16.1
+    },
+    {
+      "id": "dekanstvi",
+      "src": "/soubory/historie/audio/dekanstvi.m4a",
+      "duration": 23.5
+    },
+    {
+      "id": "bratrska",
+      "src": "/soubory/historie/audio/bratrska.m4a",
+      "duration": 13.2
+    },
+    {
+      "id": "kantori",
+      "src": "/soubory/historie/audio/kantori.m4a",
+      "duration": 28.7
+    },
+    {
+      "id": "prvni-budova",
+      "src": "/soubory/historie/audio/prvni-budova.m4a",
+      "duration": 18.2
+    },
+    {
+      "id": "lhota",
+      "src": "/soubory/historie/audio/lhota.m4a",
+      "duration": 23.9
+    },
+    {
+      "id": "hlavni-skola",
+      "src": "/soubory/historie/audio/hlavni-skola.m4a",
+      "duration": 24.6
+    },
+    {
+      "id": "jiri-kluk",
+      "src": "/soubory/historie/audio/jiri-kluk.m4a",
+      "duration": 20.4
+    },
+    {
+      "id": "stesk",
+      "src": "/soubory/historie/audio/stesk.m4a",
+      "duration": 27.4
+    },
+    {
+      "id": "namesti",
+      "src": "/soubory/historie/audio/namesti.m4a",
+      "duration": 19.5
+    },
+    {
+      "id": "olympiada",
+      "src": "/soubory/historie/audio/olympiada.m4a",
+      "duration": 38.5
+    },
+    {
+      "id": "realka",
+      "src": "/soubory/historie/audio/realka.m4a",
+      "duration": 17.8
+    },
+    {
+      "id": "skala",
+      "src": "/soubory/historie/audio/skala.m4a",
+      "duration": 9.9
+    },
+    {
+      "id": "hrad",
+      "src": "/soubory/historie/audio/hrad.m4a",
+      "duration": 27.6
+    },
+    {
+      "id": "stezka",
+      "src": "/soubory/historie/audio/stezka.m4a",
+      "duration": 32.4
+    },
+    {
+      "id": "masaryk",
+      "src": "/soubory/historie/audio/masaryk.m4a",
+      "duration": 13.6
+    },
+    {
+      "id": "nova-skola",
+      "src": "/soubory/historie/audio/nova-skola.m4a",
+      "duration": 33
+    },
+    {
+      "id": "dnes",
+      "src": "/soubory/historie/audio/dnes.m4a",
+      "duration": 29
+    },
+    {
+      "id": "outro",
+      "src": "/soubory/historie/audio/outro.m4a",
+      "duration": 22.8
+    }
+  ]
+}
