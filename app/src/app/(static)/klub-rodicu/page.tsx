@@ -16,7 +16,7 @@ export default function KlubRodicuPage() {
       <PageHero
         title="Klub rodičů"
         colorKey="klub-rodicu"
-        eyebrow="O škole"
+        eyebrow="Pro rodiče"
         lead="Každá třída má ve výboru svého zástupce z řad rodičů. Klub úzce spolupracuje se školou a řeší náměty a připomínky rodičů."
       />
 

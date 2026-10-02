@@ -1,67 +1,37 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { getNavData } from './data'
+import { EDUPAGE_URL } from './menu'
+import { STATIC_PAGE_SLUGS } from '@/components/static/meta'
+import type { NavItem } from './types'
 
-function jsonResponse(body: unknown) {
-  return new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } })
+function flatten(items: NavItem[]): NavItem[] {
+  return items.flatMap((item) => [item, ...flatten(item.items)])
 }
 
 describe('getNavData', () => {
-  beforeEach(() => {
-    process.env.WP_URL = 'https://example.test'
-  })
-
-  afterEach(() => {
-    delete process.env.WP_URL
-    vi.restoreAllMocks()
-  })
-
-  it('resolves with an empty menu (not a throw) when one menu fetch fails, keeping the others', async () => {
-    const menuList = [
-      { ID: 1, slug: 'top-menu' },
-      { ID: 2, slug: 'fast-menu-1' },
-      { ID: 3, slug: 'fast-menu-2' }
-    ]
-
-    vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
-      const url = String(input)
-
-      if (url.includes('/menus/1')) {
-        return jsonResponse({ items: [{ ID: 10, parent: 0, title: 'Domů', url: '/' }] })
-      }
-
-      if (url.includes('/menus/2')) {
-        throw new Error('network error')
-      }
-
-      if (url.includes('/menus/3')) {
-        return jsonResponse({ items: [{ ID: 30, parent: 0, title: 'GDPR', url: '/gdpr/' }] })
-      }
-
-      return jsonResponse(menuList)
-    })
-
+  it('serves the menus from code, without touching WP', async () => {
     const menus = await getNavData()
 
-    expect(menus.main).toHaveLength(1)
-    expect(menus.fastFirst).toEqual([])
-    expect(menus.fastSecond).toHaveLength(1)
+    expect(menus.main.length).toBeGreaterThan(0)
+    expect(menus.fastFirst.some((item) => item.url === EDUPAGE_URL)).toBe(true)
   })
 
-  it('resolves with an empty menu for a slug the WP menu list has no entry for', async () => {
-    vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
-      const url = String(input)
+  it('links every hand-made static page (except the redirected Školská rada) from the main menu', async () => {
+    const urls = flatten((await getNavData()).main).map((item) => item.url)
 
-      if (url.includes('/menus/1')) {
-        return jsonResponse({ items: [{ ID: 10, parent: 0, title: 'Domů', url: '/' }] })
-      }
+    for (const slug of STATIC_PAGE_SLUGS.filter((s) => s !== 'skolska-rada' && s !== 'prohlaseni-o-pristupnosti')) {
+      expect(urls).toContain(`/${slug}/`)
+    }
+  })
 
-      return jsonResponse([{ ID: 1, slug: 'top-menu' }])
-    })
-
+  it('only uses trailing-slash internal urls, matching `trailingSlash: true`', async () => {
     const menus = await getNavData()
+    const internal = flatten([...menus.main, ...menus.fastFirst, ...menus.fastSecond])
+      .map((item) => item.url)
+      .filter((url) => url.startsWith('/'))
 
-    expect(menus.main).toHaveLength(1)
-    expect(menus.fastFirst).toEqual([])
-    expect(menus.fastSecond).toEqual([])
+    for (const url of internal) {
+      expect(url.endsWith('/')).toBe(true)
+    }
   })
 })

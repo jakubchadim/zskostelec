@@ -94,7 +94,7 @@ Záložní varianta bez Payloadu: vlastní mini-admin (Better Auth + Drizzle + T
 ## Fáze
 
 **F1 – web nezávislý na WP mimo články/galerie** (1–2 dny)
-- Menu a rychlé odkazy do `components/nav/menu.ts` (místo `wp-api-menus`), Školská rada rovnou jako externí odkaz.
+- ~~Menu a rychlé odkazy do `components/nav/menu.ts`~~ – **hotovo**: nová hierarchie (Úvod · Aktuality · O škole · Pro rodiče · Poradenství · Prezentace), EduPage jako samostatné tlačítko v hlavičce, Školská rada jako externí odkaz.
 - Pracoviště: fotky do `public/`, počty zaměstnanců ze statických dat.
 - Zaměstnanci (69) a Guťák → TS data + jednorázový export z WP; šablony beze změny.
 - Úvodní strana: konfigurace kategorií v kódu.

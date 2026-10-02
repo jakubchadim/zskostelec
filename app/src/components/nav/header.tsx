@@ -5,13 +5,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import { ArrowUpRight, ChevronDown, GraduationCap, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { accentAt } from '@/components/ui/accent'
 import { Container } from '@/components/ui/container'
 import { SchoolLogo } from '@/components/ui/school-logo'
 import { NavLink } from './nav-link'
 import { MobileMenuItem } from './mobile-menu-item'
+import { EDUPAGE_URL } from './menu'
 import type { NavItem } from './types'
 
 // Scroll position via useSyncExternalStore: SSR-safe (the server snapshot
@@ -70,7 +71,7 @@ export default function Header({ menu }: HeaderProps) {
       )}
     >
       <Container>
-        <div className="flex h-16 items-center gap-4 md:h-18">
+        <div className="flex h-16 items-center gap-2 xs:gap-4 md:h-18">
           <Logo compact={scrolled} />
 
           <NavigationMenu.Root className="relative ml-auto hidden nav:block" delayDuration={80}>
@@ -145,15 +146,28 @@ export default function Header({ menu }: HeaderProps) {
             </NavigationMenu.List>
           </NavigationMenu.Root>
 
+          {/* EduPage (timetable, grades, messages) is where parents and pupils go daily - always one click away. */}
+          <a
+            href={EDUPAGE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn ml-auto shrink-0 bg-grass p-2 text-base text-ink sm:px-3 nav:ml-1 lg:px-4"
+            aria-label="EduPage – rozvrh, známky, zprávy (otevře se v novém okně)"
+          >
+            <GraduationCap className="size-5" aria-hidden />
+            <span className="hidden sm:inline">EduPage</span>
+            <ArrowUpRight className="hidden size-4 opacity-70 lg:block" aria-hidden />
+          </a>
+
           <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
             <Dialog.Trigger asChild>
               <button
                 type="button"
-                className="btn ml-auto bg-sun px-4 py-2 text-base nav:hidden"
+                className="btn shrink-0 bg-sun p-2 text-base sm:px-4 nav:hidden"
                 aria-label="Otevřít menu"
               >
                 <Menu className="size-5" aria-hidden />
-                Menu
+                <span className="hidden sm:inline">Menu</span>
               </button>
             </Dialog.Trigger>
             <Dialog.Portal>
@@ -175,6 +189,21 @@ export default function Header({ menu }: HeaderProps) {
                   </Dialog.Close>
                 </div>
                 <nav aria-label="Hlavní menu" className="flex-1 px-5 py-6">
+                  <a
+                    href={EDUPAGE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="sticker mb-5 flex items-center gap-4 bg-grass-tint p-4 no-underline"
+                  >
+                    <span className="grid size-12 shrink-0 place-items-center rounded-2xl border-[2.5px] border-ink bg-grass">
+                      <GraduationCap className="size-6" aria-hidden />
+                    </span>
+                    <span className="flex-1">
+                      <span className="block font-display text-xl leading-tight font-bold">EduPage</span>
+                      <span className="block text-sm text-gray-7">Rozvrh, známky, omluvenky, zprávy</span>
+                    </span>
+                    <ArrowUpRight className="size-5 shrink-0" aria-hidden />
+                  </a>
                   <ul className="m-0 list-none space-y-3 p-0" onClick={(e) => (e.target as HTMLElement).closest('a') && setMobileOpen(false)}>
                     {menu.map((item, idx) => (
                       <MobileMenuItem key={`${item.slug ?? item.url}-${idx}`} item={item} accentIndex={idx} />

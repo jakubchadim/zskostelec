@@ -86,14 +86,14 @@ type SchoolLogoProps = {
 /** Mark + full school name: "Základní škola / Gutha-Jarkovského / Kostelec nad Orlicí". */
 export function SchoolLogo({ compact, inverted, className }: SchoolLogoProps) {
   return (
-    <span className={cn('flex items-center gap-3 nav:gap-2.5 lg:gap-3', className)}>
+    <span className={cn('flex items-center gap-2 xs:gap-3 nav:gap-2.5 lg:gap-3', className)}>
       <SchoolMark
         outline={inverted ? '#ffffff' : '#1d2150'}
         className={cn(
           'shrink-0 transition-transform duration-300 group-hover:-rotate-3',
           // drop-shadow follows the drawn shape exactly (a box-shadow would have its own corner radius).
           !inverted && '[filter:drop-shadow(2px_2px_0_#1d2150)]',
-          compact ? 'size-11' : 'size-12 md:size-14 nav:size-12 lg:size-14'
+          compact ? 'size-11' : 'size-11 xs:size-12 md:size-14 nav:size-12 lg:size-14'
         )}
       />
       <span className="min-w-0 leading-none">
@@ -108,7 +108,7 @@ export function SchoolLogo({ compact, inverted, className }: SchoolLogoProps) {
         <span
           className={cn(
             'block font-display leading-[1.05] font-extrabold tracking-tight whitespace-nowrap',
-            compact ? 'text-lg' : 'text-lg xs:text-xl nav:text-[1.1rem] lg:text-[1.55rem]'
+            compact ? 'text-base xs:text-lg' : 'text-base xs:text-xl nav:text-[1.1rem] lg:text-[1.55rem]'
           )}
         >
           Gutha-Jarkovského

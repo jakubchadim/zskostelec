@@ -1,8 +1,41 @@
-import { Ban, Clock, Gem, Leaf, PencilLine, Snowflake, Sparkles, Sun, Flower2, Wallet, CalendarOff, Utensils } from 'lucide-react'
+import {
+  Award,
+  Ban,
+  Briefcase,
+  CalendarOff,
+  Church,
+  Clapperboard,
+  Clock,
+  Compass,
+  Drama,
+  Egg,
+  Flame,
+  Flashlight,
+  Flower2,
+  Gem,
+  Ghost,
+  Handshake,
+  Heart,
+  HeartHandshake,
+  IceCreamCone,
+  Medal,
+  Palette,
+  PartyPopper,
+  PencilLine,
+  Snowflake,
+  Star,
+  Sun,
+  TreePine,
+  Utensils,
+  Wallet,
+  WandSparkles,
+  Wind
+} from 'lucide-react'
 import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
 import { Callout, FactGrid, IconCard, Section } from '@/components/static/kit'
 import { staticPageMetadata } from '@/components/static/meta'
+import { YearCalendar, type CalendarEvent, type CalendarMonth } from '@/components/static/year-calendar'
 import { cn } from '@/lib/utils'
 
 export const metadata = staticPageMetadata({
@@ -20,37 +53,62 @@ const WORKPLACES = [
   { name: 'Drtinova 662', hours: '6:15 – 16:00', staff: ['Eva Jelínková', 'Bc. Veronika Špačková'] }
 ]
 
-/** The year's events grouped by season (the list on the old page, sorted for the calendar). */
-const SEASONS = [
+/**
+ * The year's events from the old page, placed on the month they belong to
+ * (holidays, seasons); the ones without a fixed time go to "celý rok".
+ */
+const MONTHS: CalendarMonth[] = [
+  { month: 'Září', events: [{ title: 'Seznámení s novými kamarády', icon: Handshake }] },
   {
-    name: 'Podzim',
-    icon: Leaf,
-    events: ['Seznámení s novými kamarády', 'Pouštění draků', 'Halloweenské vyrábění', 'Stezka odvahy']
-  },
-  {
-    name: 'Zima',
-    icon: Snowflake,
-    events: ['Mikuláš ve družině', 'Vánoční dílničky', 'Návštěva betlémů', 'Zimní radovánky', 'Valentýnské vyrábění', 'Karneval']
-  },
-  {
-    name: 'Jaro',
-    icon: Flower2,
-    events: ['Velikonoční dílničky', 'Čarodějnický rej', 'Den matek', 'Olympijské hry']
-  },
-  { name: 'Léto', icon: Sun, events: ['Den otců', 'Zmrzlina na rozloučenou'] },
-  {
-    name: 'Celý rok',
-    icon: Sparkles,
+    month: 'Říjen',
     events: [
-      'Sobotní výpravy za dobrodružstvím a poznáním',
-      'Návštěva kina',
-      'Návštěva divadla',
-      'Návštěva kouzelníka',
-      'Návštěva odborníků z praxe',
-      'Výtvarné soutěže',
-      'Charitativní akce'
+      { title: 'Pouštění draků', icon: Wind },
+      { title: 'Halloweenské vyrábění', icon: Ghost }
+    ]
+  },
+  {
+    month: 'Prosinec',
+    events: [
+      { title: 'Mikuláš ve družině', icon: Star },
+      { title: 'Vánoční dílničky', icon: TreePine },
+      { title: 'Návštěva betlémů', icon: Church }
+    ]
+  },
+  { month: 'Leden', events: [{ title: 'Zimní radovánky', icon: Snowflake }] },
+  {
+    month: 'Únor',
+    events: [
+      { title: 'Valentýnské vyrábění', icon: Heart },
+      { title: 'Karneval', icon: PartyPopper }
+    ]
+  },
+  {
+    month: 'Duben',
+    events: [
+      { title: 'Velikonoční dílničky', icon: Egg },
+      { title: 'Čarodějnický rej', icon: Flame }
+    ]
+  },
+  { month: 'Květen', events: [{ title: 'Den matek', icon: Flower2 }] },
+  {
+    month: 'Červen',
+    events: [
+      { title: 'Den otců', icon: Award },
+      { title: 'Zmrzlina na rozloučenou', icon: IceCreamCone }
     ]
   }
+]
+
+const YEAR_ROUND: CalendarEvent[] = [
+  { title: 'Sobotní výpravy za dobrodružstvím', icon: Compass },
+  { title: 'Stezka odvahy', icon: Flashlight },
+  { title: 'Olympijské hry', icon: Medal },
+  { title: 'Návštěva kina', icon: Clapperboard },
+  { title: 'Návštěva divadla', icon: Drama },
+  { title: 'Návštěva kouzelníka', icon: WandSparkles },
+  { title: 'Odborníci z praxe', icon: Briefcase },
+  { title: 'Výtvarné soutěže', icon: Palette },
+  { title: 'Charitativní akce', icon: HeartHandshake }
 ]
 
 export default function SkolniDruzinaPage() {
@@ -59,7 +117,7 @@ export default function SkolniDruzinaPage() {
       <PageHero
         title="Školní družina"
         colorKey="skolni-druzina"
-        eyebrow="Informace"
+        eyebrow="Pro rodiče"
         lead="Mezistupeň mezi výukou ve škole a výchovou v rodině. Tady se odpočívá, tvoří, sportuje a hlavně si hraje."
       >
         <figure className="sticker m-0 max-w-md -rotate-1 bg-paper p-5">
@@ -146,24 +204,8 @@ export default function SkolniDruzinaPage() {
         </div>
       </Section>
 
-      <Section eyebrow="Celý rok" title="Akce, na které se těšíme" tinted accent={accentAt(1)}>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {SEASONS.map((season, idx) => (
-            <div key={season.name} className={cn('sticker flex flex-col gap-3 p-5', accentAt(idx).tint)}>
-              <h3 className="flex items-center gap-2 font-display text-xl">
-                <season.icon className={cn('size-6', accentAt(idx).text)} aria-hidden />
-                {season.name}
-              </h3>
-              <ul className="m-0 flex list-none flex-wrap gap-1.5 p-0">
-                {season.events.map((e) => (
-                  <li key={e} className="rounded-full border-2 border-ink/20 bg-paper px-2.5 py-0.5 text-sm font-semibold">
-                    {e}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+      <Section eyebrow="Školní rok v družině" title="Akce, na které se těšíme" tinted accent={accentAt(1)}>
+        <YearCalendar months={MONTHS} yearRound={YEAR_ROUND} />
       </Section>
 
     </>
