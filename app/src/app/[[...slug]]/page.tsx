@@ -12,6 +12,7 @@ import {
 } from '@/lib/wp'
 import { templateRegistry } from '@/components/templates/registry'
 import { templateKeyForRoute } from '@/components/templates/route-mapping'
+import { STATIC_PAGE_SLUGS } from '@/components/static/meta'
 import { buildTitle, decodeEntities, getSiteUrl, htmlToPlainText, pathFromSlug, SITE_DEFAULT_DESCRIPTION, SITE_NAME } from '@/lib/seo'
 
 type PageProps = {
@@ -184,9 +185,12 @@ export async function generateStaticParams() {
   try {
     const routes = await getStaticRoutes()
 
-    return routes.map(({ path }) => ({
-      slug: path.split('/').filter(Boolean)
-    }))
+    const handMade = new Set<string>(STATIC_PAGE_SLUGS)
+
+    return routes
+      .map(({ path }) => path.split('/').filter(Boolean))
+      .filter((slug) => !(slug.length === 1 && handMade.has(slug[0])))
+      .map((slug) => ({ slug }))
   } catch (error) {
     console.warn('[generateStaticParams] WP unreachable, falling back to fully dynamic rendering:', error)
     return []
