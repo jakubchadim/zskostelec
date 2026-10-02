@@ -9,6 +9,80 @@ statické stránky v `app/src/app/(static)/` mají přednost před catch-all rou
 
 ---
 
+## Stav k 2. 10. 2026 – změřeno, nové pořadí
+
+**WP hosting (Endora) nezvládá zátěž** buildu ani provozu → nejdřív odstřihnout návštěvníky od WP, CMS až potom.
+
+Změřeno (`app/scripts/ftp-measure-uploads.py`, FTP jen čtení) a z exportu DB (`app/db_*.sql`, **v .gitignore – osobní data**):
+
+| | |
+|---|---|
+| `wp-content/uploads` | **9,3 GB**, 31 000 souborů (originály 9,0 GB, WP zmenšeniny jen 0,2 GB) |
+| z toho videa | 108× MP4/MOV = **2,8 GB** (největší 122 MB) |
+| fotky | ~36 000 JPG/PNG = 5,9 GB |
+| soubory jsou od | 2019 (starší články odkazují na 7 obrázků ze starého CMS, které už nefungují) |
+| DB | 3 397 článků, 21 stránek, 30 920 příloh, ~1 840 galerií, 69 zaměstnanců, 107 dokumentů, 28 Guťáků |
+| DNS | Hukot (ns1.hukot.cz), web → Vercel (76.76.21.21), **e-mail → Microsoft 365** (MX outlook) |
+
+Nové pořadí:
+1. **Export** – data z dumpu DB (přesně, včetně ACF a seznamu originálů `_wp_attached_file`), soubory přes FTP po dávkách (jednorázově ~9 GB, šetrně, přes noc).
+2. **Web bez WP** – média do R2 (`media.zskostelec.cz`, stejné cesty `uploads/RRRR/MM/…`), datová vrstva čte export místo REST API → přepnutí domény na nový web, WP už nikdo nezatěžuje.
+3. **CMS** (níže) – import ze stejného exportu, škola píše do nového adminu, WP se vypne.
+
+### Cloudflare – co je potřeba nastavit (checklist)
+
+1. **Účet** na cloudflare.com (Free) a v Billing **přidat platební kartu** – bez ní nejde R2 zapnout, i když se vejdeme do free tieru.
+2. **Doména do Cloudflare** (kvůli `media.zskostelec.cz` – vlastní doména pro R2 musí být v Cloudflare zóně):
+   - Add a site → `zskostelec.cz` → plán **Free** → Cloudflare načte stávající DNS záznamy.
+   - **Zkontrolovat, že se převzalo všechno pro e-mail (Microsoft 365):** MX `zskostelec-cz.mail.protection.outlook.com`,
+     TXT SPF (`v=spf1 include:spf.protection.outlook.com …`), CNAME `autodiscover`, CNAME `selector1/2._domainkey` (DKIM),
+     TXT `_dmarc`, případně TXT `MS=…`. Porovnat se záznamy u Hukotu **před** přepnutím.
+   - Web záznamy (A `76.76.21.21`, `www`) nechat jako **DNS only (šedý mráček)** – Vercel si certifikáty řeší sám.
+   - U registrátora (Hukot) **změnit nameservery** na ty dva, které ukáže Cloudflare. Propagace minuty až hodiny; e-mail i web jedou dál.
+3. **R2 → Create bucket** `zskostelec-media`, Location: Automatic (nebo jurisdikce EU).
+4. Bucket → Settings → **Custom Domains → Connect** `media.zskostelec.cz` (veřejné čtení přes CDN; r2.dev URL jen na testy).
+5. **R2 → Manage API Tokens → Create**: oprávnění *Object Read & Write*, jen pro bucket `zskostelec-media`.
+   Hodnoty do `app/.env.local` (nikam jinam):
+   ```
+   R2_ACCOUNT_ID=…        # z URL endpointu https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+   R2_ACCESS_KEY_ID=…
+   R2_SECRET_ACCESS_KEY=…
+   R2_BUCKET=zskostelec-media
+   R2_PUBLIC_URL=https://media.zskostelec.cz
+   ```
+6. (Až pro CMS) Bucket → Settings → **CORS**: povolit `PUT` z domény webu (přímé nahrávání fotek z adminu do R2).
+
+Náklady: R2 10 GB zdarma, egress zdarma. Originály + naše 2 zmenšeniny ≈ 12–14 GB → **≈ 0,05 $/měs.**
+Videa (2,8 GB) časem zvážit přesunout na YouTube / zmenšit.
+
+### CMS – vlastní admin, nebo Payload?
+
+Co admin musí umět: **článek** (titulek, kategorie, text s obrázky/odkazy/soubory, připnout na úvod, koncept/publikovat),
+**galerie** (název, datum, hromadně přetáhnout desítky fotek z mobilu, seřadit, titulní fotka, napojit na článek),
+přihlášení pro pár učitelů, role (admin / editor).
+
+| | **A) Payload CMS v `app/` (doporučeno)** | **B) Vlastní admin na míru** |
+|---|---|---|
+| Co to je | hotový open-source headless CMS běžící přímo v Next.js na `/admin` | vlastní stránky `/admin` v našem designu, Drizzle + Neon, editor Tiptap |
+| Přihlášení, role, reset hesla | hotové | psát a zabezpečit sami (Auth.js / magic link) |
+| Editor textu | hotový (Lexical), přizpůsobitelné bloky | Tiptap – hezký, ale napojení na obrázky/soubory sami |
+| Koncepty, verze, náhled | hotové | sami |
+| Galerie | **vlastní komponenta** do Payloadu: drag&drop, zmenšení v prohlížeči, přímý upload do R2 | to samé, jen v našem adminu |
+| Vzhled | Payload admin s logem, barvami a češtinou (dá se přebarvit, ne „hravý web“) | 100 % ve stylu webu, jen to nejnutnější – nejjednodušší pro učitele |
+| Práce | ~4–6 dní | ~8–12 dní |
+| Údržba | aktualizace Payloadu (vazba na verzi Next.js – nutno ověřit Next 16) | vše naše, žádné cizí závislosti navíc, ale i všechny chyby a bezpečnost |
+
+**Doporučení: A – Payload jako „motor“, ale s naším rozhraním tam, kde na tom záleží.** Přihlášení, oprávnění,
+editor, verze a media pipeline jsou 60 % práce a největší bezpečnostní riziko – to je hotové a prověřené.
+Na míru uděláme jen to, co učitelé používají nejvíc: **nahrávání galerie** (přetáhni složku z mobilu → hotovo)
+a zjednodušený formulář článku. Admin dostane logo, barvy a češtinu školy.
+První krok je **½denní spike**: Payload + Next 16.3 + Neon + R2 – pokud by kompatibilita drhla, přepneme na B
+(nic z exportu ani frontendu se tím nezahodí).
+
+Volba B dává smysl, pokud chceš admin, který vypadá přesně jako web, a nevadí delší vývoj.
+
+---
+
 ## Fáze 0 – statické stránky (HOTOVO v této větvi)
 
 | Stránka | Co je nového |
