@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Camera } from 'lucide-react'
-import { getGalleryPreviewImages, type WpGallery } from '@/lib/wp'
+import type { WpGallery } from '@/lib/wp'
+import { getGalleryPreviewImages } from '@/lib/wp/gallery-preview'
 import { WpImage } from '@/components/image/wp-image'
 import { tiltAt } from '@/components/ui/accent'
 import { cn } from '@/lib/utils'

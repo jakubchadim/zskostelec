@@ -4,7 +4,6 @@ import { getCategoryById, getGalleryPreviewImages, getPostById, getPostPreviews,
 import { Container } from '@/components/ui/container'
 import { PageHero } from '@/components/ui/page-hero'
 import { Reveal } from '@/components/ui/reveal'
-import { BlockContent } from '@/components/block/content'
 import { ArticleRow, formatArticleDate, isExternalHref } from '@/components/article/article'
 import { GalleryPreview } from '@/components/article/gallery-preview'
 import { Pencil } from '@/components/ui/doodles'
@@ -68,11 +67,7 @@ export async function PostTemplate({ data }: TemplateProps) {
             <article className="sticker relative p-5 sm:p-10">
               <Pencil className="absolute -top-8 -right-4 hidden w-14 rotate-12 text-sun sm:block" />
               {hasBody ? (
-                post.blocks.length > 0 ? (
-                  <BlockContent blocks={post.blocks} inline />
-                ) : (
-                  <div className="wp-prose" dangerouslySetInnerHTML={{ __html: post.content }} />
-                )
+                <div className="wp-prose" dangerouslySetInnerHTML={{ __html: post.content }} />
               ) : (
                 fallbackLink && (
                   <a

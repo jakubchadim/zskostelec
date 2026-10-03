@@ -2,20 +2,23 @@ import 'server-only'
 import { cache } from 'react'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
-import {
-  asId,
-  PageTemplateType,
-  resolvePostLink,
-  type ID,
-  type PostPreview,
-  type ResolvedRoute,
-  type WpCategory,
-  type WpDocument,
-  type WpDocumentCategory,
-  type WpGallery,
-  type WpMediaLike,
-  type WpPage,
-  type WpPost
+// Runtime values only from dependency-free modules: the `@/lib/wp` barrel pulls in the old
+// Gutenberg normalizers (jsdom), which crash on Vercel's Node (ERR_REQUIRE_ESM).
+import { asId } from '@/lib/wp/types'
+import { PageTemplateType } from '@/lib/wp/page-template'
+import { resolvePostLink } from '@/lib/wp/post-link'
+import { GALLERY_PAGE_SIZE } from '@/lib/wp/gallery-preview'
+import type {
+  ID,
+  PostPreview,
+  ResolvedRoute,
+  WpCategory,
+  WpDocument,
+  WpDocumentCategory,
+  WpGallery,
+  WpMediaLike,
+  WpPage,
+  WpPost
 } from '@/lib/wp'
 import type { Where } from 'payload'
 import type { Category, Gallery, Media, Post } from '@/payload-types'
@@ -34,10 +37,11 @@ import { mediaUrl, toMediaLike } from './media'
  *   /, /fotogalerie/, /dokumenty/, /zamestnanci/, /gutak/, /pracoviste/   fixed pages
  */
 
-export { PageTemplateType, getGalleryPreviewImages, CATEGORY_PAGE_SIZE, GALLERY_PAGE_SIZE } from '@/lib/wp'
+export { PageTemplateType } from '@/lib/wp/page-template'
+export { getGalleryPreviewImages, GALLERY_PAGE_SIZE } from '@/lib/wp/gallery-preview'
+export { CATEGORY_PAGE_SIZE } from '@/lib/wp/post-link'
 export type { ResolvedRoute, WpCategory, WpGallery, WpPage, WpPost, PostPreview } from '@/lib/wp'
 
-import { GALLERY_PAGE_SIZE } from '@/lib/wp'
 
 const PUBLISHED = { _status: { equals: 'published' } } as const
 

@@ -11,14 +11,8 @@ import { asId, type ID, type Nullable, type RawHTML, type WpAcfLink } from '../t
  * a page. Adding a new WP page template requires adding both the PHP
  * template in `admin/theme/` and an entry here.
  */
-export enum PageTemplateType {
-  HOME = 'page-home',
-  GALLERIES = 'page-galleries',
-  DOCUMENTS = 'page-documents',
-  GUTAKY = 'page-gutak',
-  EMPLOYEES = 'page-employees',
-  DEFAULT = 'default'
-}
+import { PageTemplateType } from '../page-template'
+export { PageTemplateType }
 
 const TEMPLATE_TYPE_BY_FILENAME: Record<string, PageTemplateType> = {
   'page-home.php': PageTemplateType.HOME,

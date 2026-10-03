@@ -3,6 +3,8 @@ import { getUrlRewriteConfig } from '../env'
 import { rewriteAdminUrls } from '../blocks/urls'
 import { asId, type DateString, type ID, type Nullable, type RawHTML, type WpMediaLike } from '../types'
 import { normalizeAcfImage } from './media'
+import { GALLERY_PAGE_SIZE, getGalleryPreviewImages } from '../gallery-preview'
+export { GALLERY_PAGE_SIZE, getGalleryPreviewImages }
 
 type RawWpGallery = {
   id: number
@@ -27,13 +29,6 @@ export type WpGallery = {
   acf: WpGalleryAcf
 }
 
-/**
- * Galleries per page on the galleries index. Legacy rendered every gallery
- * on one page; with ~900 of them that's a huge document and a huge image
- * payload, so the index paginates on the same `strana-N` scheme as
- * categories. 12 divides evenly into the 1/2/3-column grid.
- */
-export const GALLERY_PAGE_SIZE = 12
 
 const GALLERY_FIELDS = ['id', 'slug', 'link', 'title', 'date', 'acf']
 /** Trims the (potentially huge) `acf.gallery` image repeater - for listing fetches that only ever read `acf.preview`. */
@@ -158,21 +153,3 @@ export async function getGalleryRouteEntries(): Promise<GalleryRouteEntry[]> {
   }))
 }
 
-/** Ported from web/src/components/gallery/normalizer.ts: preview image first, then the gallery array, deduped, capped at `limit`. */
-export function getGalleryPreviewImages(gallery: WpGallery, limit = 4): WpMediaLike[] {
-  const candidates = [gallery.acf.preview, ...gallery.acf.gallery].filter(
-    (image): image is WpMediaLike => image != null
-  )
-
-  const seen = new Set<string>()
-  const unique: WpMediaLike[] = []
-
-  for (const image of candidates) {
-    if (!seen.has(image.id)) {
-      seen.add(image.id)
-      unique.push(image)
-    }
-  }
-
-  return unique.slice(0, limit)
-}

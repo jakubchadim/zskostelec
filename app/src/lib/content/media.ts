@@ -1,4 +1,4 @@
-import { asId, type WpImageSize, type WpMediaLike } from '@/lib/wp'
+import { asId, type WpImageSize, type WpMediaLike } from '@/lib/wp/types'
 import type { Media } from '@/payload-types'
 
 type SizeKey = 'thumb' | 'medium' | 'large'

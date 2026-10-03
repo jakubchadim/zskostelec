@@ -1,4 +1,5 @@
-import { PageTemplateType, type ResolvedRoute } from '@/lib/wp'
+import type { ResolvedRoute } from '@/lib/wp'
+import { PageTemplateType } from '@/lib/wp/page-template'
 import type { TemplateKey } from './registry'
 
 const TEMPLATE_KEY_BY_PAGE_TYPE: Record<PageTemplateType, TemplateKey> = {

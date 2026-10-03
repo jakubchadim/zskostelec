@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { ACCENT_HEX, WORKPLACES, type WorkplaceKey } from './data'
 import { INDUSTRY, LANDMARKS, MAP_H, MAP_W, PARKS, RAILWAY, RIVER, ROADS, SQUARE, SQUARE_DECOR, type Vec2 } from './town'
 
@@ -64,6 +65,9 @@ function LandmarkIcon({ kind, at: [x, y] }: { kind: string; at: Vec2 }) {
 }
 
 export function TownMiniMap({ active }: { active: WorkplaceKey }) {
+  // Unique per map: the same building can be on a page several times (Palackého náměstí:
+  // sídlo, podatelna, footer) and a shared clipPath id would make every copy clip to the first one.
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   const [ax, ay] = workplacePx(active)
   const activeColor = ACCENT_HEX[WORKPLACES.find((w) => w.key === active)!.accent]
   const [sx, sy] = SQUARE_CENTER
@@ -72,16 +76,16 @@ export function TownMiniMap({ active }: { active: WorkplaceKey }) {
   return (
     <svg viewBox={`-20 -20 ${MAP_W + 40} ${MAP_H + 40}`} className="block w-full" aria-hidden focusable={false}>
       <defs>
-        <clipPath id={`mini-town-clip-${active}`}>
+        <clipPath id={`mini-town-clip-${uid}`}>
           <rect x="-20" y="-20" width={MAP_W + 40} height={MAP_H + 40} rx="70" />
         </clipPath>
-        <pattern id={`mini-town-dots-${active}`} width="44" height="44" patternUnits="userSpaceOnUse">
+        <pattern id={`mini-town-dots-${uid}`} width="44" height="44" patternUnits="userSpaceOnUse">
           <circle cx="6" cy="6" r="4" fill={ink} opacity=".08" />
         </pattern>
       </defs>
-      <g clipPath={`url(#mini-town-clip-${active})`}>
+      <g clipPath={`url(#mini-town-clip-${uid})`}>
         <rect x="-20" y="-20" width={MAP_W + 40} height={MAP_H + 40} fill="#fffaf0" />
-        <rect x="-20" y="-20" width={MAP_W + 40} height={MAP_H + 40} fill={`url(#mini-town-dots-${active})`} />
+        <rect x="-20" y="-20" width={MAP_W + 40} height={MAP_H + 40} fill={`url(#mini-town-dots-${uid})`} />
 
         {PARKS.map((park, i) => (
           <polygon key={i} points={pts(park.points)} fill={park.color} stroke={ink} strokeWidth={6} strokeLinejoin="round" opacity={0.9} />
