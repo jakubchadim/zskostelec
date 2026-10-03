@@ -1,7 +1,29 @@
-import { BookOpenCheck, HeartHandshake, Lightbulb, Puzzle } from 'lucide-react'
+import {
+  Backpack,
+  BookOpenCheck,
+  Building2,
+  ClipboardList,
+  Eye,
+  FolderOpen,
+  GraduationCap,
+  HeartHandshake,
+  Lightbulb,
+  MapPinned,
+  MessagesSquare,
+  Package,
+  Presentation,
+  Puzzle,
+  RefreshCw,
+  Search,
+  Sparkles,
+  Users
+} from 'lucide-react'
 import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
-import { Callout, DocList, IconCard, LinkList, PersonCard, Section } from '@/components/static/kit'
+import { Callout, DocList, LinkList, PersonCard, Section } from '@/components/static/kit'
+import { StepPath } from '@/components/static/step-path'
+import { AudienceTabs } from '@/components/static/audience-tabs'
+import { ActivityGrid, Glossary } from '@/components/static/activity-grid'
 import { staticPageMetadata } from '@/components/static/meta'
 import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 
@@ -39,44 +61,188 @@ export default function VychovnePoradenstviPage() {
             }}
           />
           <Callout icon={HeartHandshake} accent={accentAt(3)} title="Kdy se ozvat?">
-            Když má vaše dítě potíže s učením nebo chováním, potřebuje podpůrná opatření či individuální plán, je mimořádně
-            nadané – nebo jen nevíte, na koho se obrátit. Rádi poradíme.
+            Když má vaše dítě potíže s učením nebo chováním, potřebuje podpůrná opatření či individuální plán, je
+            mimořádně nadané – nebo jen nevíte, na koho se obrátit. Rádi poradíme.
           </Callout>
         </div>
       </Section>
 
-      <Section eyebrow="Co děláme" title="Činnosti výchovné poradkyně" tinted accent={accentAt(1)}>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <IconCard icon={Puzzle} title="Poradenské činnosti" accent={accentAt(0)}>
-            <ul>
-              <li>vyhledávání a orientační šetření žáků, jejichž vývoj a vzdělávání vyžadují zvláštní pozornost</li>
-              <li>péče o tyto žáky, včetně přípravy, kontroly a evidence plánu pedagogické podpory</li>
-              <li>zprostředkování diagnostiky speciálních vzdělávacích potřeb a mimořádného nadání v PPP nebo SPC</li>
-              <li>spolupráce s poradnami při zajišťování podpůrných opatření</li>
-              <li>příprava podmínek pro vzdělávání žáků se SVP ve škole</li>
-              <li>koordinace poradenských služeb a vzdělávacích opatření u těchto žáků</li>
-            </ul>
-          </IconCard>
-          <IconCard icon={Lightbulb} title="Metodické a informační činnosti" accent={accentAt(2)}>
-            <ul>
-              <li>příprava a vyhodnocování plánu pedagogické podpory</li>
-              <li>tvorba a vyhodnocování individuálních vzdělávacích plánů</li>
-              <li>práce s nadanými a mimořádně nadanými žáky</li>
-              <li>nové metody pedagogické diagnostiky a intervence pro učitele</li>
-              <li>metodická pomoc učitelům v otázkách integrace, IVP a práce s nadanými žáky</li>
-              <li>informace o poradenských zařízeních v regionu pro žáky a rodiče</li>
-              <li>shromažďování odborných zpráv o žácích v poradenské péči</li>
-              <li>písemné záznamy o činnosti a realizovaných opatřeních</li>
-            </ul>
-          </IconCard>
-          <IconCard icon={BookOpenCheck} title="Další činnosti" accent={accentAt(4)}>
-            <ul>
-              <li>nákup kompenzačních pomůcek a učebních materiálů pro žáky se SVP</li>
-              <li>spolupráce s mateřskými školami (zápis nanečisto)</li>
-              <li>účast na zápisu dětí do 1. tříd</li>
-            </ul>
-          </IconCard>
-        </div>
+      <Section eyebrow="Krok za krokem" title="Jak podpora probíhá" tinted accent={accentAt(1)}>
+        <StepPath
+          steps={[
+            {
+              icon: Eye,
+              title: 'Všimneme si',
+              tag: 'učitel, rodič i žák',
+              text: 'Něco nejde – v učení nebo v chování. Nebo dítě naopak výrazně předbíhá a potřebuje víc výzvy.'
+            },
+            {
+              icon: Search,
+              title: 'Podíváme se, kde je potíž',
+              text: 'Výchovná poradkyně udělá orientační šetření: pozorování, rozhovor s učiteli i s vámi.'
+            },
+            {
+              icon: ClipboardList,
+              title: 'Plán pedagogické podpory',
+              tag: 'škola sama',
+              text: 'První úpravy výuky nastavíme hned ve škole – plán připravíme, hlídáme a vyhodnocujeme.'
+            },
+            {
+              icon: Building2,
+              title: 'Vyšetření v poradně',
+              tag: 's vaším souhlasem',
+              text: 'Když to nestačí, zprostředkujeme diagnostiku v PPP nebo SPC – u obtíží i u mimořádného nadání.'
+            },
+            {
+              icon: Puzzle,
+              title: 'Podpůrná opatření',
+              text: 'Podle doporučení poradny připravíme podmínky: individuální plán, pomůcky, úpravy výuky.'
+            },
+            {
+              icon: RefreshCw,
+              title: 'Průběžně vyhodnocujeme',
+              text: 'Jak se daří? Plány pravidelně upravujeme spolu s učiteli i s vámi.'
+            }
+          ]}
+        />
+      </Section>
+
+      <Section eyebrow="Co děláme" title="Činnosti výchovné poradkyně">
+        <AudienceTabs
+          label="Pro koho"
+          tabs={[
+            {
+              key: 'rodice',
+              label: 'Rodičům',
+              icon: <Users aria-hidden />,
+              panel: (
+                <ActivityGrid
+                  items={[
+                    {
+                      icon: MessagesSquare,
+                      title: 'Konzultace',
+                      text: 'denně po předchozí domluvě'
+                    },
+                    {
+                      icon: Building2,
+                      title: 'Cesta do poradny',
+                      text: 'zprostředkujeme vyšetření v PPP nebo SPC'
+                    },
+                    {
+                      icon: MapPinned,
+                      title: 'Kam se obrátit',
+                      text: 'přehled poradenských zařízení v regionu'
+                    },
+                    {
+                      icon: Backpack,
+                      title: 'Zápis do 1. tříd',
+                      text: 'zápis nanečisto s mateřskými školami i samotný zápis'
+                    }
+                  ]}
+                />
+              )
+            },
+            {
+              key: 'zaci',
+              label: 'Žákům',
+              icon: <GraduationCap aria-hidden />,
+              panel: (
+                <ActivityGrid
+                  items={[
+                    {
+                      icon: Puzzle,
+                      title: 'Podpora při potížích',
+                      text: 'péče o žáky se speciálními vzdělávacími potřebami'
+                    },
+                    {
+                      icon: Sparkles,
+                      title: 'Výzvy pro nadané',
+                      text: 'práce s nadanými a mimořádně nadanými žáky'
+                    },
+                    {
+                      icon: ClipboardList,
+                      title: 'Plán na míru',
+                      text: 'individuální vzdělávací plán, když je potřeba'
+                    },
+                    {
+                      icon: Package,
+                      title: 'Pomůcky',
+                      text: 'kompenzační pomůcky a učební materiály'
+                    }
+                  ]}
+                />
+              )
+            },
+            {
+              key: 'ucitele',
+              label: 'Učitelům',
+              icon: <Presentation aria-hidden />,
+              panel: (
+                <ActivityGrid
+                  items={[
+                    {
+                      icon: Lightbulb,
+                      title: 'Metodická pomoc',
+                      text: 'integrace, IVP, práce s nadanými žáky'
+                    },
+                    {
+                      icon: BookOpenCheck,
+                      title: 'Nové metody',
+                      text: 'pedagogická diagnostika a intervence'
+                    },
+                    {
+                      icon: ClipboardList,
+                      title: 'Plány podpory',
+                      text: 'příprava a vyhodnocování PLPP a IVP'
+                    },
+                    {
+                      icon: FolderOpen,
+                      title: 'Evidence',
+                      text: 'odborné zprávy a záznamy o přijatých opatřeních'
+                    }
+                  ]}
+                />
+              )
+            }
+          ]}
+        />
+      </Section>
+
+      <Section eyebrow="Slovníček" title="Zkratky, na které narazíte" tinted accent={accentAt(4)}>
+        <Glossary
+          terms={[
+            {
+              term: 'SVP',
+              full: 'Speciální vzdělávací potřeby',
+              text: 'Dítě potřebuje k učení nějakou formu podpory.'
+            },
+            {
+              term: 'PO',
+              full: 'Podpůrná opatření',
+              text: 'Úpravy výuky v 5 stupních – první nastavuje škola sama, vyšší doporučuje poradna.'
+            },
+            {
+              term: 'PLPP',
+              full: 'Plán pedagogické podpory',
+              text: 'První krok – úpravy, které škola nastaví sama.'
+            },
+            {
+              term: 'IVP',
+              full: 'Individuální vzdělávací plán',
+              text: 'Výuka upravená na míru konkrétnímu žákovi.'
+            },
+            {
+              term: 'PPP',
+              full: 'Pedagogicko-psychologická poradna',
+              text: 'Vyšetří obtíže v učení, chování i nadání.'
+            },
+            {
+              term: 'SPC',
+              full: 'Speciálně pedagogické centrum',
+              text: 'Pro děti se zdravotním postižením.'
+            }
+          ]}
+        />
       </Section>
 
       <Section eyebrow="Budoucí prvňáčci" title="Zápis do 1. tříd">
@@ -87,7 +253,11 @@ export default function VychovnePoradenstviPage() {
               href: '/soubory/vychovne-poradenstvi/Desatero-pro-budouci-prvnacky-a-jejich-rodice.pdf',
               note: 'PDF'
             },
-            { title: 'Vše o zápisu do 1. tříd', href: '/soubory/vychovne-poradenstvi/Vse-o-zapisu-do-1.-trid.pdf', note: 'PDF' }
+            {
+              title: 'Vše o zápisu do 1. tříd',
+              href: '/soubory/vychovne-poradenstvi/Vse-o-zapisu-do-1.-trid.pdf',
+              note: 'PDF'
+            }
           ]}
         />
       </Section>
@@ -110,7 +280,11 @@ export default function VychovnePoradenstviPage() {
               href: 'http://www.poradenstvikhk.cz/ppp/ppp-hradec-kralove/',
               note: 'Pedagogicko-psychologická poradna'
             },
-            { title: 'PPP Ústí nad Orlicí', href: 'http://www.pppuo.cz', note: 'pppuo.cz' }
+            {
+              title: 'PPP Ústí nad Orlicí',
+              href: 'http://www.pppuo.cz',
+              note: 'pppuo.cz'
+            }
           ]}
         />
       </Section>

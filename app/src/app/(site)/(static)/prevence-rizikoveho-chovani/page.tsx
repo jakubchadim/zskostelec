@@ -1,9 +1,30 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Coins, HandHelping, LifeBuoy, Megaphone, MessagesSquare, ShieldCheck, Users } from 'lucide-react'
+import {
+  Building2,
+  Coins,
+  Ear,
+  Eye,
+  GraduationCap,
+  HandHelping,
+  Handshake,
+  LifeBuoy,
+  Lightbulb,
+  Megaphone,
+  MessagesSquare,
+  Presentation,
+  Search,
+  ShieldCheck,
+  Siren,
+  Sparkles,
+  Users
+} from 'lucide-react'
 import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
-import { Callout, DocList, FactGrid, IconCard, JumpNav, PersonCard, Section } from '@/components/static/kit'
+import { Callout, DocList, FactGrid, JumpNav, PersonCard, Section } from '@/components/static/kit'
+import { StepPath } from '@/components/static/step-path'
+import { AudienceTabs } from '@/components/static/audience-tabs'
+import { ActivityGrid } from '@/components/static/activity-grid'
 import { ProgramFilter, type Program } from '@/components/static/program-filter'
 import { staticPageMetadata } from '@/components/static/meta'
 import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
@@ -106,8 +127,8 @@ export default function PrevencePage() {
       <Section id="pomoc" eyebrow="Děje se něco?" title="Nebojte se ozvat">
         <div className="grid gap-4 md:grid-cols-2">
           <Callout icon={LifeBuoy} accent={accentAt(2)} title="Pro žáky">
-            Ubližuje ti někdo, posmívá se ti nebo tě vylučuje z party – ve škole nebo na internetu? Řekni to třídnímu učiteli,
-            metodičce prevence nebo komukoli z dospělých ve škole. Nejsi v tom sám.
+            Ubližuje ti někdo, posmívá se ti nebo tě vylučuje z party – ve škole nebo na internetu? Řekni to třídnímu
+            učiteli, metodičce prevence nebo komukoli z dospělých ve škole. Nejsi v tom sám.
             <a
               href="/soubory/prevence-rizikoveho-chovani/Informace-pro-zaky-sikanovani.pdf"
               target="_blank"
@@ -118,8 +139,8 @@ export default function PrevencePage() {
             </a>
           </Callout>
           <Callout icon={HandHelping} accent={accentAt(1)} title="Pro rodiče">
-            Všimli jste si změny v chování dítěte, nebo máte podezření na šikanu? Kontaktujte metodičku prevence – poradíme a
-            domluvíme další postup.
+            Všimli jste si změny v chování dítěte, nebo máte podezření na šikanu? Kontaktujte metodičku prevence –
+            poradíme a domluvíme další postup.
             <a
               href="/soubory/prevence-rizikoveho-chovani/Informace-pro-rodice-sikanovani.pdf"
               target="_blank"
@@ -130,6 +151,48 @@ export default function PrevencePage() {
             </a>
           </Callout>
         </div>
+        <h3 className="mt-10 mb-5 font-display text-2xl">Co se stane, když se ozveš</h3>
+        <StepPath
+          columns={5}
+          steps={[
+            {
+              icon: Megaphone,
+              title: 'Řekneš to',
+              text: 'Třídnímu učiteli, metodičce prevence nebo komukoli z dospělých ve škole.'
+            },
+            {
+              icon: Ear,
+              title: 'Vyslechneme tě',
+              text: 'V klidu a v soukromí. Bereme vážně každou zprávu.'
+            },
+            {
+              icon: Search,
+              title: 'Zjistíme, co se děje',
+              text: 'Promluvíme si se všemi, kterých se to týká.'
+            },
+            {
+              icon: Handshake,
+              title: 'Domluvíme řešení',
+              text: 'Se třídou, s rodiči a když je potřeba i s odborníky.'
+            },
+            {
+              icon: ShieldCheck,
+              title: 'Hlídáme, že to skončilo',
+              text: 'Ozveme se znovu a sledujeme, jestli je klid.'
+            }
+          ]}
+        />
+        <p className="mt-4 text-sm text-gray-6">
+          Přesný postup školy popisuje{' '}
+          <a
+            href="/soubory/prevence-rizikoveho-chovani/KRIZOVY-PLAN-graficky.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            krizový plán
+          </a>
+          .
+        </p>
       </Section>
 
       <Section id="kontakt" eyebrow="Školní metodička prevence" title="Kontakt" tinted accent={accentAt(3)}>
@@ -150,30 +213,107 @@ export default function PrevencePage() {
               email: 'pavla.rehakova@zskostelec.cz'
             }}
           />
-          <div className="grid gap-4 sm:grid-cols-3">
-            <IconCard icon={ShieldCheck} title="Metodika a koordinace" accent={accentAt(0)}>
-              <ul>
-                <li>preventivní plán školy</li>
-                <li>metodická pomoc učitelům i rodičům</li>
-                <li>koordinace prevence ve škole i s externími organizacemi</li>
-                <li>diagnostika třídních kolektivů</li>
-              </ul>
-            </IconCard>
-            <IconCard icon={Megaphone} title="Informace" accent={accentAt(1)}>
-              <ul>
-                <li>sledování změn v legislativě</li>
-                <li>předávání informací učitelům</li>
-                <li>spolupráce s rodiči při podezření na rizikové chování</li>
-              </ul>
-            </IconCard>
-            <IconCard icon={MessagesSquare} title="Poradenství" accent={accentAt(2)}>
-              <ul>
-                <li>pedagogům – postupy, práce se třídou</li>
-                <li>rodičům – změny chování, spolupráce se SVP, PPP, OSPOD</li>
-                <li>žákům – jak chránit své bezpečí a na koho se obrátit</li>
-              </ul>
-            </IconCard>
-          </div>
+          <AudienceTabs
+            label="Pro koho"
+            tabs={[
+              {
+                key: 'zaci',
+                label: 'Žákům',
+                icon: <GraduationCap aria-hidden />,
+                panel: (
+                  <ActivityGrid
+                    className="lg:grid-cols-2"
+                    items={[
+                      {
+                        icon: Ear,
+                        title: 'Vyslechne tě',
+                        text: 'když tě někdo zraňuje – ve škole i na internetu'
+                      },
+                      {
+                        icon: ShieldCheck,
+                        title: 'Tvoje bezpečí',
+                        text: 'jak se chránit a na koho se obrátit'
+                      },
+                      {
+                        icon: Users,
+                        title: 'Dobrá parta ve třídě',
+                        text: 'zjišťuje, jak se ve třídě máte, a pomáhá vztahům'
+                      },
+                      {
+                        icon: Sparkles,
+                        title: 'Programy pro třídy',
+                        text: 'domlouvá preventivní programy a lektory'
+                      }
+                    ]}
+                  />
+                )
+              },
+              {
+                key: 'rodice',
+                label: 'Rodičům',
+                icon: <Users aria-hidden />,
+                panel: (
+                  <ActivityGrid
+                    className="lg:grid-cols-2"
+                    items={[
+                      {
+                        icon: Eye,
+                        title: 'Změna v chování dítěte',
+                        text: 'poradí, čeho si všímat a co dělat'
+                      },
+                      {
+                        icon: Siren,
+                        title: 'Podezření na šikanu',
+                        text: 'společně domluvíme další postup'
+                      },
+                      {
+                        icon: Building2,
+                        title: 'Odborná pomoc',
+                        text: 'spolupráce s PPP, SVP a OSPOD'
+                      },
+                      {
+                        icon: MessagesSquare,
+                        title: 'Konzultace',
+                        text: 'po domluvě telefonem nebo e-mailem'
+                      }
+                    ]}
+                  />
+                )
+              },
+              {
+                key: 'ucitele',
+                label: 'Učitelům',
+                icon: <Presentation aria-hidden />,
+                panel: (
+                  <ActivityGrid
+                    className="lg:grid-cols-2"
+                    items={[
+                      {
+                        icon: Lightbulb,
+                        title: 'Metodická pomoc',
+                        text: 'postupy při rizikovém chování, práce se třídou'
+                      },
+                      {
+                        icon: Search,
+                        title: 'Diagnostika tříd',
+                        text: 'mapování vztahů v třídních kolektivech'
+                      },
+                      {
+                        icon: Megaphone,
+                        title: 'Novinky',
+                        text: 'sleduje legislativu a předává informace'
+                      },
+                      {
+                        icon: ShieldCheck,
+                        title: 'Preventivní plán',
+                        text: 'koordinace prevence ve škole i s organizacemi'
+                      }
+                    ]}
+                  />
+                )
+              }
+            ]}
+          />
         </div>
         <p className="mt-4 text-sm text-gray-6">
           Činnost metodika prevence stanovuje vyhláška č. 72/2005 Sb., o poskytování poradenských služeb ve školách.
@@ -189,7 +329,11 @@ export default function PrevencePage() {
           className="mb-10"
           facts={[
             { icon: Coins, label: 'Dotace KHK – prevence', value: '36 000 Kč' },
-            { icon: Users, label: 'Dotace KHK – etická výchova', value: '20 000 Kč' },
+            {
+              icon: Users,
+              label: 'Dotace KHK – etická výchova',
+              value: '20 000 Kč'
+            },
             { icon: HandHelping, label: 'Nadace Kinský', value: '100 000 Kč' }
           ]}
         />
@@ -201,7 +345,12 @@ export default function PrevencePage() {
             width={175}
             height={77}
           />
-          <Image src="/soubory/prevence-rizikoveho-chovani/Fond-Kinsky.jpg" alt="Nadace Kinský" width={221} height={120} />
+          <Image
+            src="/soubory/prevence-rizikoveho-chovani/Fond-Kinsky.jpg"
+            alt="Nadace Kinský"
+            width={221}
+            height={120}
+          />
         </div>
         <p className="mt-4 text-gray-7">
           Termíny všech aktivit jsou v plánu práce v aplikaci EduPage, fotky z programů ve{' '}
@@ -212,16 +361,34 @@ export default function PrevencePage() {
       <Section id="dokumenty" eyebrow="Ke stažení" title="Dokumenty" tinted accent={accentAt(4)}>
         <DocList
           docs={[
-            { title: 'Preventivní program', href: '/soubory/prevence-rizikoveho-chovani/Preventivni-program.pdf' },
-            { title: 'Školní program proti šikanování', href: '/soubory/prevence-rizikoveho-chovani/Skolni-program-proti-sikanovani.pdf' },
+            {
+              title: 'Preventivní program',
+              href: '/soubory/prevence-rizikoveho-chovani/Preventivni-program.pdf'
+            },
+            {
+              title: 'Školní program proti šikanování',
+              href: '/soubory/prevence-rizikoveho-chovani/Skolni-program-proti-sikanovani.pdf'
+            },
             {
               title: 'Strategie prevence a řešení školní neúspěšnosti',
               href: '/soubory/prevence-rizikoveho-chovani/Strategie-prevence-a-reseni-skolni-neuspesnosti.pdf'
             },
-            { title: 'Krizový plán', href: '/soubory/prevence-rizikoveho-chovani/Krizovy-plan.pdf' },
-            { title: 'Krizový plán graficky', href: '/soubory/prevence-rizikoveho-chovani/KRIZOVY-PLAN-graficky.pdf' },
-            { title: 'Informace pro rodiče – šikanování', href: '/soubory/prevence-rizikoveho-chovani/Informace-pro-rodice-sikanovani.pdf' },
-            { title: 'Informace pro žáky – šikanování', href: '/soubory/prevence-rizikoveho-chovani/Informace-pro-zaky-sikanovani.pdf' }
+            {
+              title: 'Krizový plán',
+              href: '/soubory/prevence-rizikoveho-chovani/Krizovy-plan.pdf'
+            },
+            {
+              title: 'Krizový plán graficky',
+              href: '/soubory/prevence-rizikoveho-chovani/KRIZOVY-PLAN-graficky.pdf'
+            },
+            {
+              title: 'Informace pro rodiče – šikanování',
+              href: '/soubory/prevence-rizikoveho-chovani/Informace-pro-rodice-sikanovani.pdf'
+            },
+            {
+              title: 'Informace pro žáky – šikanování',
+              href: '/soubory/prevence-rizikoveho-chovani/Informace-pro-zaky-sikanovani.pdf'
+            }
           ]}
         />
       </Section>

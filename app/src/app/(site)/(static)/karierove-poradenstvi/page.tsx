@@ -1,14 +1,16 @@
-import { Briefcase, Brain, Compass, School } from 'lucide-react'
+import { Brain, Briefcase, Compass, MessagesSquare, PenLine, School, Search, Send } from 'lucide-react'
 import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
-import { DocList, IconCard, LinkList, PersonCard, Section } from '@/components/static/kit'
+import { Callout, DocList, IconCard, LinkList, PersonCard, Section } from '@/components/static/kit'
+import { StepPath } from '@/components/static/step-path'
 import { Countdown } from '@/components/static/countdown'
 import { staticPageMetadata } from '@/components/static/meta'
 import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 
 export const metadata = staticPageMetadata({
   title: 'Kariérové poradenství',
-  description: 'Pomoc s volbou střední školy a povolání: kontakt na kariérového poradce, termíny přihlášek a přijímacích zkoušek, užitečné odkazy.',
+  description:
+    'Pomoc s volbou střední školy a povolání: kontakt na kariérového poradce, termíny přihlášek a přijímacích zkoušek, užitečné odkazy.',
   path: '/karierove-poradenstvi/'
 })
 
@@ -25,8 +27,18 @@ export default function KarierovePoradenstviPage() {
       <Section eyebrow="Důležité termíny" title="Přijímačky na střední školy">
         <Countdown
           milestones={[
-            { label: 'Odevzdání přihlášek na SŠ', when: '1. – 22. 2. 2027', start: '2027-02-01', end: '2027-02-22' },
-            { label: 'Přijímací zkoušky', when: '12. – 13. 4. 2027', start: '2027-04-12', end: '2027-04-13' }
+            {
+              label: 'Odevzdání přihlášek na SŠ',
+              when: '1. – 22. 2. 2027',
+              start: '2027-02-01',
+              end: '2027-02-22'
+            },
+            {
+              label: 'Přijímací zkoušky',
+              when: '12. – 13. 4. 2027',
+              start: '2027-04-12',
+              end: '2027-04-13'
+            }
           ]}
         />
       </Section>
@@ -46,18 +58,52 @@ export default function KarierovePoradenstviPage() {
               phones: ['775902746']
             }}
           />
-          <IconCard icon={Compass} title="S čím pomůžeme" accent={accentAt(2)}>
-            <ul>
-              <li>volba dalšího vzdělávání – SŠ a SOU</li>
-              <li>spolupráce s Úřadem práce v Rychnově nad Kněžnou</li>
-              <li>informační servis – studijní obory, dny otevřených dveří, školské výstavy</li>
-              <li>spolupráce s PPP – testy studijních předpokladů a prostorové orientace</li>
-            </ul>
-          </IconCard>
+          <Callout icon={Compass} accent={accentAt(2)} title="Nevíš, kam po deváté?">
+            Zastav se – nejlépe už v osmé třídě. Pomůžeme s výběrem oboru, najdeme dny otevřených dveří, poradíme s
+            přihláškou a domluvíme testy v poradně nebo na Úřadu práce.
+          </Callout>
         </div>
       </Section>
 
-      <Section eyebrow="Pomoc zvenku" title="Kam dál pro radu">
+      <Section eyebrow="Krok za krokem" title="Cesta na střední školu">
+        <StepPath
+          columns={5}
+          steps={[
+            {
+              icon: Brain,
+              title: 'Poznej sám sebe',
+              tag: '8.–9. třída',
+              text: 'Testy studijních předpokladů v PPP, profesní šetření COMDI na Úřadu práce.'
+            },
+            {
+              icon: Search,
+              title: 'Rozhlédni se',
+              tag: 'podzim 9. třídy',
+              text: 'Obory na InfoAbsolvent.cz, dny otevřených dveří, výstavy středních škol.'
+            },
+            {
+              icon: MessagesSquare,
+              title: 'Poraď se',
+              tag: 'kdykoli',
+              text: 'S kariérovým poradcem, třídním učitelem i doma. Informace i z Úřadu práce.'
+            },
+            {
+              icon: Send,
+              title: 'Podej přihlášky',
+              tag: '1.–22. 2. 2027',
+              text: 'Přihlášky na střední školy a učiliště.'
+            },
+            {
+              icon: PenLine,
+              title: 'Přijímačky',
+              tag: '12.–13. 4. 2027',
+              text: 'Jednotné přijímací zkoušky. Držíme palce!'
+            }
+          ]}
+        />
+      </Section>
+
+      <Section eyebrow="Pomoc zvenku" title="Kam dál pro radu" tinted accent={accentAt(3)}>
         <div className="grid gap-4 md:grid-cols-2">
           <IconCard icon={Briefcase} title="Úřad práce RK – informační a poradenské středisko" accent={accentAt(3)}>
             <ul>
@@ -83,14 +129,26 @@ export default function KarierovePoradenstviPage() {
             </ul>
             <PersonCard
               className="mt-4 h-auto border-2 shadow-none"
-              person={{ name: 'PPP Rychnov nad Kněžnou', place: 'Javornická 1501, Rychnov nad Kněžnou', phones: ['494535476'] }}
+              person={{
+                name: 'PPP Rychnov nad Kněžnou',
+                place: 'Javornická 1501, Rychnov nad Kněžnou',
+                phones: ['494535476']
+              }}
             />
           </IconCard>
         </div>
       </Section>
 
-      <Section eyebrow="Ke stažení a odkazy" title="Užitečné materiály" tinted accent={accentAt(0)}>
-        <DocList docs={[{ title: 'Desatero vycházejícího žáka', href: '/soubory/karierove-poradenstvi/desatero.pdf', note: 'PDF' }]} />
+      <Section eyebrow="Ke stažení a odkazy" title="Užitečné materiály">
+        <DocList
+          docs={[
+            {
+              title: 'Desatero vycházejícího žáka',
+              href: '/soubory/karierove-poradenstvi/desatero.pdf',
+              note: 'PDF'
+            }
+          ]}
+        />
         <LinkList
           className="mt-4"
           links={[
@@ -99,12 +157,16 @@ export default function KarierovePoradenstviPage() {
               href: 'https://www.infoabsolvent.cz/',
               note: 'Všechny střední školy v ČR, obory, kontakty, požadavky k přijímačkám'
             },
-            { title: 'PPP Rychnov nad Kněžnou', href: 'http://www.ppprychnov.cz/', note: 'Pedagogicko-psychologická poradna' }
+            {
+              title: 'PPP Rychnov nad Kněžnou',
+              href: 'http://www.ppprychnov.cz/',
+              note: 'Pedagogicko-psychologická poradna'
+            }
           ]}
         />
         <p className="mt-6 flex items-center gap-2 text-gray-7">
-          <School className="size-5" aria-hidden /> Kariérové poradenství patří k metodické a informační činnosti školního
-          poradenského pracoviště.
+          <School className="size-5" aria-hidden /> Kariérové poradenství patří k metodické a informační činnosti
+          školního poradenského pracoviště.
         </p>
       </Section>
     </>
