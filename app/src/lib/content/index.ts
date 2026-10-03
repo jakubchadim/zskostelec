@@ -344,6 +344,23 @@ const pageRoute = (page: FixedPage, pageNumber = 1, basePath = page.path): Resol
   basePath
 })
 
+/** Catch-all categories: only used as an article's "home" when it has no more specific one. */
+const GENERAL_CATEGORY_SLUGS = ['aktuality']
+
+/**
+ * The category an article belongs to for its back link and "more from…" box.
+ * Many notices are in both Upozornění and Aktuality (WP lists Aktuality first),
+ * so the specific category wins over the general one.
+ */
+async function primaryCategoryId(categories: (number | Category)[]): Promise<number | string> {
+  const all = await allCategories()
+  const cats = categories
+    .map((c) => (typeof c === 'number' ? all.find((x) => x.id === c) : c))
+    .filter((c): c is Category => Boolean(c))
+  const specific = cats.find((c) => !GENERAL_CATEGORY_SLUGS.includes(c.slug ?? ''))
+  return (specific ?? cats[0])?.id ?? ''
+}
+
 /** URL path segments -> what to render (null = 404). */
 export async function resolveRoute(segments: string[]): Promise<ResolvedRoute | null> {
   const path = `/${segments.map(decodeURIComponent).join('/')}${segments.length ? '/' : ''}`
@@ -388,8 +405,7 @@ export async function resolveRoute(segments: string[]): Promise<ResolvedRoute | 
     })
     const post = res.docs[0]
     if (!post) return null
-    const firstCat = post.categories?.[0]
-    return { kind: 'post', id: asId(String(post.id)), categoryId: asId(String(typeof firstCat === 'number' ? firstCat : (firstCat?.id ?? ''))) }
+    return { kind: 'post', id: asId(String(post.id)), categoryId: asId(String(await primaryCategoryId(post.categories ?? []))) }
   }
 
   return null
