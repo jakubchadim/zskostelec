@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { Baloo_2, Nunito } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import Header from '@/components/nav/header'
 import Footer from '@/components/footer/footer'
 import { getNavData } from '@/components/nav/data'
@@ -58,6 +59,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           {children}
         </main>
         <Footer fastFirst={menus.fastFirst} fastSecond={menus.fastSecond} />
+        <Analytics />
       </body>
     </html>
   )
