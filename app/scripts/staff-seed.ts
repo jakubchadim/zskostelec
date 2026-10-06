@@ -1,11 +1,19 @@
 /*
- * Staff list, positions and school buildings (shown on /zamestnanci/ and
- * used for the staff counts on /pracoviste/). Exported once from WordPress
- * (scripts/export-staff.ts); edit this file directly from now on.
- *
- * priority: lower = higher in the list (vedení školy first), default 50.
+ * Staff list as it was in code (exported from WordPress on 2026-10-02),
+ * the source for the one-time import into the CMS (scripts/import-staff.ts).
+ * Staff are edited in the admin now - don't edit this file.
  */
-import type { StaffBuilding, StaffMember, StaffPosition } from './staff-types'
+type StaffBuilding = { id: string; name: string }
+type StaffPosition = { id: string; name: string }
+type StaffMember = {
+  id: string
+  name: string
+  positionIds: string[]
+  buildingIds: string[]
+  priority: number
+  email: string
+  phone: string
+}
 
 export const BUILDINGS: StaffBuilding[] = [
   {

@@ -2,13 +2,16 @@ import { Mail, MapPin, Phone } from 'lucide-react'
 import { WpImage, type WpMediaLike } from '@/components/image/wp-image'
 import { accentFor } from '@/components/ui/accent'
 import { cn } from '@/lib/utils'
+import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
+import type { WorkplaceKey } from '@/components/workplaces/data'
 import { formatPhoneNumber } from './format-phone'
 
 type EmployeeCardProps = {
   name: string
   photo: WpMediaLike | null
   positions?: string[]
-  location?: string
+  /** Buildings; those on the town map open the building popover. */
+  locations?: { name: string; workplace?: WorkplaceKey | null }[]
   phone?: string
   email?: string
 }
@@ -25,7 +28,7 @@ export function initialsOf(name: string): string {
 }
 
 /** One staff member: round photo (or colourful initials), name, role chips and tap-to-call/mail buttons. */
-export function EmployeeCard({ name, photo, positions = [], location, phone, email }: EmployeeCardProps) {
+export function EmployeeCard({ name, photo, positions = [], locations = [], phone, email }: EmployeeCardProps) {
   const accent = accentFor(name)
   const [surnameFirst, titles] = name.split(/,(.+)/)
 
@@ -61,10 +64,17 @@ export function EmployeeCard({ name, photo, positions = [], location, phone, ema
         </ul>
       )}
 
-      {location && (
+      {locations.length > 0 && (
         <p className="mt-3 mb-0 flex gap-2 text-sm text-gray-7">
           <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden />
-          {location}
+          <span>
+            {locations.map((place, i) => (
+              <span key={place.name}>
+                {i > 0 && ', '}
+                {place.workplace ? <WorkplacePopover place={place.workplace}>{place.name}</WorkplacePopover> : place.name}
+              </span>
+            ))}
+          </span>
         </p>
       )}
 

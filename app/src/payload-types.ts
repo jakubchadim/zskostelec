@@ -71,9 +71,12 @@ export interface Config {
     galleries: Gallery;
     documents: Document;
     gutak: Gutak;
+    staff: Staff;
     media: Media;
     categories: Category;
     'document-categories': DocumentCategory;
+    'staff-positions': StaffPosition;
+    'staff-buildings': StaffBuilding;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -86,9 +89,12 @@ export interface Config {
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
     gutak: GutakSelect<false> | GutakSelect<true>;
+    staff: StaffSelect<false> | StaffSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     'document-categories': DocumentCategoriesSelect<false> | DocumentCategoriesSelect<true>;
+    'staff-positions': StaffPositionsSelect<false> | StaffPositionsSelect<true>;
+    'staff-buildings': StaffBuildingsSelect<false> | StaffBuildingsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -352,6 +358,69 @@ export interface Gutak {
   createdAt: string;
 }
 /**
+ * Seznam na stránce Zaměstnanci. Řadí se podle pořadí, pak podle jména.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff".
+ */
+export interface Staff {
+  id: number;
+  /**
+   * Ve tvaru „Příjmení Jméno, titul“, např. „Novák Jan, Mgr.“
+   */
+  name: string;
+  positions?: (number | StaffPosition)[] | null;
+  buildings?: (number | StaffBuilding)[] | null;
+  email?: string | null;
+  phone?: string | null;
+  /**
+   * Nepovinné – bez fotky se ukážou barevné iniciály.
+   */
+  photo?: (number | null) | Media;
+  /**
+   * Menší číslo = výš v seznamu (vedení školy má 1–10). Běžně 50.
+   */
+  priority: number;
+  /**
+   * ID z původního WordPressu (import).
+   */
+  wpId?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff-positions".
+ */
+export interface StaffPosition {
+  id: number;
+  name: string;
+  /**
+   * ID z původního WordPressu (import).
+   */
+  wpId?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff-buildings".
+ */
+export interface StaffBuilding {
+  id: number;
+  name: string;
+  /**
+   * Propojí pracoviště s mapou města (/pracoviste/) a s okénkem o budově u učitelů.
+   */
+  workplace?: ('palackeho' | 'komenskeho' | 'drtinova' | 'erbenova') | null;
+  /**
+   * ID z původního WordPressu (import).
+   */
+  wpId?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -423,6 +492,10 @@ export interface PayloadLockedDocument {
         value: number | Gutak;
       } | null)
     | ({
+        relationTo: 'staff';
+        value: number | Staff;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -433,6 +506,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'document-categories';
         value: number | DocumentCategory;
+      } | null)
+    | ({
+        relationTo: 'staff-positions';
+        value: number | StaffPosition;
+      } | null)
+    | ({
+        relationTo: 'staff-buildings';
+        value: number | StaffBuilding;
       } | null)
     | ({
         relationTo: 'users';
@@ -543,6 +624,22 @@ export interface GutakSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff_select".
+ */
+export interface StaffSelect<T extends boolean = true> {
+  name?: T;
+  positions?: T;
+  buildings?: T;
+  email?: T;
+  phone?: T;
+  photo?: T;
+  priority?: T;
+  wpId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -619,6 +716,27 @@ export interface DocumentCategoriesSelect<T extends boolean = true> {
   parent?: T;
   order?: T;
   slug?: T;
+  wpId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff-positions_select".
+ */
+export interface StaffPositionsSelect<T extends boolean = true> {
+  name?: T;
+  wpId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "staff-buildings_select".
+ */
+export interface StaffBuildingsSelect<T extends boolean = true> {
+  name?: T;
+  workplace?: T;
   wpId?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -7,7 +7,7 @@
  * Facts come from the school's own pages (Historie, Úřední deska, Školní
  * družina, Výchovné/Kariérové poradenství, Klub rodičů) - keep them in sync
  * when those pages change. Photos and staff counts are filled in at request
- * time from WordPress (see templates/workplaces.tsx).
+ * time from the CMS (see templates/workplaces.tsx).
  */
 export type WorkplaceKey = 'palackeho' | 'komenskeho' | 'drtinova' | 'erbenova'
 
@@ -56,8 +56,6 @@ export type Workplace = {
   facts: string[]
   /** Optional opening hours line (school club buildings). */
   hours?: string
-  /** Matches the WP "building" taxonomy name, for staff counts and the staff filter link. */
-  buildingMatch: string
   /** Accent colour for pin, chips and panel. */
   accent: 'berry' | 'sky' | 'grass' | 'grape'
   shape: WorkplaceShape
@@ -83,7 +81,6 @@ export const WORKPLACES: Workplace[] = [
       'Sídlí tu výchovná poradkyně i kariérový poradce a každý čtvrtek sem za žáky 2. stupně chodí pracovnice NZDM Klídek.',
       'Podatelna: tel. 775 598 553'
     ],
-    buildingMatch: 'Palackého',
     accent: 'berry',
     shape: {
       // Two buildings joined by a flat-roofed link: the main one faces the square,
@@ -132,7 +129,6 @@ export const WORKPLACES: Workplace[] = [
       'Má vlastní podatelnu: tel. 775 751 229',
       'Sídlí tu i Klub rodičů při naší škole.'
     ],
-    buildingMatch: 'Komenského',
     accent: 'sky',
     shape: {
       width: 1.3,
@@ -161,7 +157,6 @@ export const WORKPLACES: Workplace[] = [
       'Družina tu má dvě vychovatelky.'
     ],
     hours: 'Družina: 6:15–16:00',
-    buildingMatch: 'Drtinova',
     accent: 'grass',
     shape: {
       width: 1.4,
@@ -187,7 +182,6 @@ export const WORKPLACES: Workplace[] = [
       'Vedoucí vychovatelka: Jitka Bezdíčková.'
     ],
     hours: 'Družina: 6:00–16:00',
-    buildingMatch: 'Erbenova',
     accent: 'grape',
     shape: {
       width: 0.75,
@@ -210,11 +204,11 @@ export const ACCENT_HEX: Record<Workplace['accent'], string> = {
   grape: '#8a5cf6'
 }
 
-/** Data that only exists at request time (from WordPress). */
+/** Data that only exists at request time (photo, staff count from the CMS). */
 export type WorkplaceLive = {
   photo: string | null
   staffCount: number
-  /** WP building term id, for `/zamestnanci/?pracoviste=<id>`. */
+  /** CMS building (staff-buildings) id, for `/zamestnanci/?pracoviste=<id>`. */
   buildingId: number | null
 }
 

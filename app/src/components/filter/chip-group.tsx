@@ -27,7 +27,8 @@ export function ChipGroup({ legend, items, selected, onToggle, collapseAfter, ac
     collapsible && !expanded ? items.filter((item, idx) => idx < collapseAfter || selected.includes(item.id)) : items
 
   return (
-    <fieldset className="m-0 min-w-0 border-0 p-0">
+    // No m-0: it would override the parent's space-y-* gap between groups.
+    <fieldset className="min-w-0 border-0 p-0">
       <legend className="mb-2 font-display text-sm font-extrabold tracking-wider text-gray-7 uppercase">{legend}</legend>
       <div ref={chipsRef} className="flex flex-wrap gap-2">
         {visible.map((item) => {

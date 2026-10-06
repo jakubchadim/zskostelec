@@ -13,13 +13,13 @@ const MAP_URL = '/soubory/pracoviste/mapa.jpg'
 
 /**
  * "Pracoviště" page: a 3D model of the town with the four school buildings,
- * their photos, and staff counts from the staff list (src/content/staff.ts).
+ * their photos, and staff counts from the staff list in the CMS.
  */
 export async function WorkplacesTemplate() {
   const [buildings, employees] = await Promise.all([getBuildings(), getEmployees()])
 
   const workplaces: WorkplaceWithLive[] = WORKPLACES.map((workplace) => {
-    const building = buildings.find((b) => b.name.includes(workplace.buildingMatch))
+    const building = buildings.find((b) => b.workplace === workplace.key)
     const staffCount = building ? employees.filter((e) => e.buildingIds.includes(building.id)).length : 0
     return { ...workplace, photo: `/soubory/pracoviste/${workplace.key}.jpg`, staffCount, buildingId: building ? Number(building.id) : null }
   })

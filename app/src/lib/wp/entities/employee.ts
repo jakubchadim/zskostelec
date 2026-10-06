@@ -1,6 +1,7 @@
 import { wpFetchAllPages, WP_CACHE_TAGS } from '../client'
 import { asId, type ID, type WpMediaLike } from '../types'
 import { normalizeAcfImage } from './media'
+import type { WorkplaceKey } from '@/components/workplaces/data'
 
 type RawWpEmployee = {
   id: number
@@ -23,7 +24,8 @@ export type WpEmployee = {
 
 type RawWpTerm = { id: number; name: string }
 export type WpPosition = { id: ID; name: string }
-export type WpBuilding = { id: ID; name: string }
+/** `workplace`: the building on the town map, for the building popover (CMS only). */
+export type WpBuilding = { id: ID; name: string; workplace?: WorkplaceKey | null }
 
 const EMPLOYEE_FIELDS = ['id', 'title', 'positions', 'building', 'acf']
 

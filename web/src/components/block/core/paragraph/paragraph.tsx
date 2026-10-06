@@ -14,7 +14,10 @@ type BlockCoreParagraphAttrs = {
   align: string
 }
 
-const BlockCoreParagraph: BlockFC<BlockCoreParagraphAttrs> = ({ block, nested }) => {
+const BlockCoreParagraph: BlockFC<BlockCoreParagraphAttrs> = ({
+  block,
+  nested
+}) => {
   const paragraph = (
     <BlockParagraph align={block.attrs.align}>
       <Content content={block.content} />

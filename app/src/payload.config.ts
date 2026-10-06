@@ -13,6 +13,7 @@ import { Posts } from './cms/collections/posts'
 import { Galleries } from './cms/collections/galleries'
 import { DocumentCategories, Documents } from './cms/collections/documents'
 import { Gutak } from './cms/collections/gutak'
+import { Staff, StaffBuildings, StaffPositions } from './cms/collections/staff'
 import { migrations } from './migrations'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -45,7 +46,7 @@ export default buildConfig({
     theme: 'light'
   },
   i18n: { supportedLanguages: { cs }, fallbackLanguage: 'cs' },
-  collections: [Posts, Galleries, Documents, Gutak, Media, Categories, DocumentCategories, Users],
+  collections: [Posts, Galleries, Documents, Gutak, Staff, Media, Categories, DocumentCategories, StaffPositions, StaffBuildings, Users],
   editor: lexicalEditor({ features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()] }),
   db: postgresAdapter({
     // keepAlive: Neon drops idle TCP connections, which surfaced as 'Connection terminated unexpectedly'.

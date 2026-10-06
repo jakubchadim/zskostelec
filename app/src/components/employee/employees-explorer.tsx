@@ -8,7 +8,7 @@ import { ChipGroup } from '@/components/filter/chip-group'
 import { SearchField } from '@/components/filter/search-field'
 import { ArticleEmptyState } from '@/components/article/empty-state'
 import { EmployeeCard } from './employee-card'
-import { filterEmployees, resolveNameList, resolveNames } from './filter'
+import { filterEmployees, resolveNameList } from './filter'
 
 type EmployeesExplorerProps = {
   employees: WpEmployee[]
@@ -98,7 +98,7 @@ export function EmployeesExplorer({ employees, positions, buildings }: Employees
                 name={employee.name}
                 photo={employee.photo}
                 positions={resolveNameList(employee.positionIds, positions)}
-                location={resolveNames(employee.buildingIds, buildings)}
+                locations={buildings.filter((building) => employee.buildingIds.includes(building.id))}
                 phone={employee.phone}
                 email={employee.email}
               />

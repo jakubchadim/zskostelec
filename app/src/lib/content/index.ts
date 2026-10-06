@@ -22,7 +22,6 @@ import type {
 } from '@/lib/wp'
 import type { Where } from 'payload'
 import type { Category, Gallery, Media, Post } from '@/payload-types'
-import { BUILDINGS, POSITIONS, STAFF } from '@/content/staff'
 import type { WpBuilding, WpEmployee, WpGutak, WpPosition } from '@/lib/wp'
 import { cms } from './payload'
 import { mediaUrl, toMediaLike } from './media'
@@ -435,30 +434,40 @@ export async function getSitemapRoutes(): Promise<{ path: string; lastModified?:
   ]
 }
 
-// ------------------------------------------------------------------ staff (static) & Guťák
+// ------------------------------------------------------------------ staff & Guťák
 
+const relIds = (rels: (number | { id: number })[] | null | undefined): ID[] =>
+  (rels ?? []).map((rel) => asId(String(typeof rel === 'number' ? rel : rel.id)))
 
-/** Staff live in code (src/content/staff.ts) - they change about once a year. */
-export async function getEmployees(): Promise<WpEmployee[]> {
-  return STAFF.map((s) => ({
-    id: asId(s.id),
-    name: s.name,
-    positionIds: s.positionIds.map(asId),
-    buildingIds: s.buildingIds.map(asId),
-    priority: s.priority,
-    email: s.email,
-    phone: s.phone,
-    photo: null
-  }))
-}
+/** Sorted by priority (vedení školy first), then name. */
+export const getEmployees = cache(async (): Promise<WpEmployee[]> => {
+  const payload = await cms()
+  const res = await payload.find({ collection: 'staff', pagination: false, depth: 1 })
+  return res.docs
+    .map((s) => ({
+      id: asId(String(s.id)),
+      name: s.name,
+      positionIds: relIds(s.positions),
+      buildingIds: relIds(s.buildings),
+      priority: s.priority,
+      email: s.email ?? '',
+      phone: s.phone ?? '',
+      photo: toMediaLike(s.photo as Media | number | null)
+    }))
+    .sort((a, b) => a.priority - b.priority || a.name.localeCompare(b.name, 'cs'))
+})
 
-export async function getBuildings(): Promise<WpBuilding[]> {
-  return BUILDINGS.map((b) => ({ id: asId(b.id), name: b.name }))
-}
+export const getBuildings = cache(async (): Promise<WpBuilding[]> => {
+  const payload = await cms()
+  const res = await payload.find({ collection: 'staff-buildings', pagination: false, depth: 0, sort: 'id' })
+  return res.docs.map((b) => ({ id: asId(String(b.id)), name: b.name, workplace: b.workplace ?? null }))
+})
 
-export async function getPositions(): Promise<WpPosition[]> {
-  return POSITIONS.map((p) => ({ id: asId(p.id), name: p.name }))
-}
+export const getPositions = cache(async (): Promise<WpPosition[]> => {
+  const payload = await cms()
+  const res = await payload.find({ collection: 'staff-positions', pagination: false, depth: 0, sort: 'id' })
+  return res.docs.map((p) => ({ id: asId(String(p.id)), name: p.name }))
+})
 
 export async function getGutaky(): Promise<WpGutak[]> {
   const payload = await cms()
