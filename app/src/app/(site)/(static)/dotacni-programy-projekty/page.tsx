@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 export const metadata = staticPageMetadata({
   title: 'Dotační programy, projekty',
-  description: 'Projekty školy financované z dotací: Operační program Jan Amos Komenský, Etické dílny II, Bezpečné klima školy.',
+  description: 'Projekty školy financované z dotací: Operační program Jan Amos Komenský, Etické dílny pro první stupeň, Bezpečné klima školy.',
   path: '/dotacni-programy-projekty/'
 })
 
@@ -21,14 +21,13 @@ const PROJECTS = [
     logo: { src: '/soubory/dotacni-programy-projekty/logo-eu-msmt.png', width: 2326, height: 332, alt: 'Spolufinancováno Evropskou unií, MŠMT' }
   },
   {
-    title: 'Etické dílny II',
-    text: 'Projekt etické výchovy podpořený Královéhradeckým krajem.',
+    title: 'Etické dílny pro první stupeň',
+    text: 'Projekt etické výchovy. Realizováno za finanční podpory Královéhradeckého kraje.',
     logo: { src: '/soubory/dotacni-programy-projekty/logo-khk.png', width: 3239, height: 842, alt: 'Královéhradecký kraj' }
   },
   {
-    title: 'Bezpečné klima školy VI. – Spolu a bezpečně',
-    text: 'Královéhradecký kraj je poskytovatelem dotace na realizaci projektu v době od 1. 8. 2024 do 31. 7. 2025.',
-    period: '1. 8. 2024 – 31. 7. 2025',
+    title: 'Bezpečné klima školy VIII. – Spolu a bezpečně',
+    text: 'Realizováno za finanční podpory Královéhradeckého kraje.',
     logo: { src: '/soubory/dotacni-programy-projekty/logo-khk.png', width: 3239, height: 842, alt: 'Královéhradecký kraj' }
   }
 ]
@@ -49,9 +48,6 @@ export default function DotacniProgramyPage() {
               <Reveal delay={idx * 80}>
                 <article className="sticker grid gap-5 overflow-hidden p-0 md:grid-cols-[1fr_1.2fr]">
                   <div className={cn('flex flex-col justify-center gap-2 p-6', accentAt(idx).tint)}>
-                    {p.period && (
-                      <span className="w-fit rounded-full border-2 border-ink bg-paper px-3 py-0.5 text-sm font-extrabold">{p.period}</span>
-                    )}
                     <h2 className="text-2xl sm:text-3xl">{p.title}</h2>
                     <p className="m-0 text-gray-8">{p.text}</p>
                   </div>
