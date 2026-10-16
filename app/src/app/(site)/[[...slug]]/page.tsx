@@ -194,5 +194,7 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true
-// Pages are cached; saving in the admin revalidates them immediately (cms/revalidate.ts).
-export const revalidate = 86400
+// Pages are cached until saving in the admin revalidates them (cms/revalidate.ts).
+// No time-based revalidation: it only re-rendered unchanged pages for crawlers
+// and burned ISR write units.
+export const revalidate = false
