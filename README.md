@@ -1,7 +1,7 @@
 # ZS Kostelec nad Orlicí Website #
 
-New site builded on JAM stack. We are using headless WP on backend and
-React, Gatsby JS, TypeScript on frontend. 
+- [`app/`](./app/README.md) — Next.js site with the Payload CMS admin, deployed on Vercel.
+- [`media-worker/`](./media-worker/) — Cloudflare Worker serving media from the R2 bucket.
+- `design/` — logo assets.
 
-### [Admin](./admin/README.md)
-### [Web](./web/README.md)
+The previous Gatsby frontend (`web/`) and headless WordPress backend (`admin/`) were removed; they live on in git history.
