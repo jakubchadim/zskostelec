@@ -157,10 +157,10 @@ export default function UredniDeskaPage() {
           />
           <PersonCard
             person={{
-              name: 'Mgr. Martina Kalousková',
+              name: 'Mgr. Tomáš Malík',
               role: 'pověřenec pro ochranu osobních údajů',
-              phones: ['773838404'],
-              email: 'martina.kalouskova@zskostelec.cz'
+              phones: ['774237341'],
+              email: 'tomas.malik@zskostelec.cz'
             }}
           />
         </div>
