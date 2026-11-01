@@ -74,6 +74,7 @@ export interface Config {
     staff: Staff;
     media: Media;
     categories: Category;
+    tags: Tag;
     'document-categories': DocumentCategory;
     'staff-positions': StaffPosition;
     'staff-buildings': StaffBuilding;
@@ -92,6 +93,7 @@ export interface Config {
     staff: StaffSelect<false> | StaffSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     'document-categories': DocumentCategoriesSelect<false> | DocumentCategoriesSelect<true>;
     'staff-positions': StaffPositionsSelect<false> | StaffPositionsSelect<true>;
     'staff-buildings': StaffBuildingsSelect<false> | StaffBuildingsSelect<true>;
@@ -145,6 +147,10 @@ export interface Post {
   categories: (number | Category)[];
   publishedAt: string;
   /**
+   * Podle štítků si návštěvníci filtrují výpis (např. 1. stupeň, Školní družina). Štítky spravujete v Nastavení › Štítky.
+   */
+  tags?: (number | Tag)[] | null;
+  /**
    * Jedna dvě věty do výpisu článků. Když necháte prázdné, vezme se začátek textu.
    */
   excerpt?: string | null;
@@ -181,6 +187,7 @@ export interface Post {
    * ID z původního WordPressu (import).
    */
   wpId?: number | null;
+  searchText?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -208,6 +215,26 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * Štítky (např. 1. stupeň, 2. stupeň, Školní družina) přidáváte k článkům a fotogaleriím. Nad výpisy se z nich stane filtr – ukáže se jen štítek, který má aspoň jeden článek nebo galerie v daném výpisu.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  title: string;
+  /**
+   * Pořadí ve filtru: menší číslo je dřív.
+   */
+  order: number;
+  /**
+   * Část adresy stránky. Když necháte prázdné, vytvoří se z názvu.
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "galleries".
  */
@@ -215,6 +242,10 @@ export interface Gallery {
   id: number;
   title: string;
   publishedAt: string;
+  /**
+   * Podle štítků si návštěvníci filtrují výpis (např. 1. stupeň, Školní družina). Štítky spravujete v Nastavení › Štítky.
+   */
+  tags?: (number | Tag)[] | null;
   /**
    * Přetáhněte sem fotky (klidně celou složku najednou). Pořadí změníte přetažením.
    */
@@ -231,6 +262,7 @@ export interface Gallery {
    * ID z původního WordPressu (import).
    */
   wpId?: number | null;
+  searchText?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -504,6 +536,10 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
         relationTo: 'document-categories';
         value: number | DocumentCategory;
       } | null)
@@ -569,6 +605,7 @@ export interface PostsSelect<T extends boolean = true> {
   title?: T;
   categories?: T;
   publishedAt?: T;
+  tags?: T;
   excerpt?: T;
   content?: T;
   galleries?: T;
@@ -577,6 +614,7 @@ export interface PostsSelect<T extends boolean = true> {
   pinned?: T;
   slug?: T;
   wpId?: T;
+  searchText?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -588,10 +626,12 @@ export interface PostsSelect<T extends boolean = true> {
 export interface GalleriesSelect<T extends boolean = true> {
   title?: T;
   publishedAt?: T;
+  tags?: T;
   photos?: T;
   cover?: T;
   slug?: T;
   wpId?: T;
+  searchText?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -704,6 +744,17 @@ export interface CategoriesSelect<T extends boolean = true> {
   description?: T;
   slug?: T;
   wpId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  title?: T;
+  order?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

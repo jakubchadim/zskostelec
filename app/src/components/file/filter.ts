@@ -17,6 +17,9 @@ export const EMPTY_DOCUMENT_FILTERS: DocumentFilters = { name: '', categoryIds: 
 /** Query parameter of `/dokumenty/` that pre-selects categories by slug (comma-separated). */
 export const DOCUMENT_CATEGORY_PARAM = 'kategorie'
 
+/** Query parameter of `/dokumenty/` that fills in the search field. */
+export const DOCUMENT_SEARCH_PARAM = 'hledat'
+
 /** Link to the documents page with the given categories pre-selected, e.g. from a static page's "Dokumenty" button. */
 export function documentsHref(...categorySlugs: string[]): string {
   return categorySlugs.length ? `/dokumenty/?${DOCUMENT_CATEGORY_PARAM}=${categorySlugs.join(',')}` : '/dokumenty/'

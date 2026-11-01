@@ -5,6 +5,7 @@ import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical
 // Runtime values only from dependency-free modules: the `@/lib/wp` barrel pulls in the old
 // Gutenberg normalizers (jsdom), which crash on Vercel's Node (ERR_REQUIRE_ESM).
 import { asId } from '@/lib/wp/types'
+import { foldText } from '@/lib/utils'
 import { PageTemplateType } from '@/lib/wp/page-template'
 import { resolvePostLink } from '@/lib/wp/post-link'
 import { GALLERY_PAGE_SIZE } from '@/lib/wp/gallery-preview'
@@ -22,7 +23,7 @@ import type {
   WpPost
 } from '@/lib/wp'
 import type { Where } from 'payload'
-import type { Category, Gallery, Media, Post } from '@/payload-types'
+import type { Category, Gallery, Media, Post, Tag } from '@/payload-types'
 import type { WpBuilding, WpEmployee, WpGutak, WpPosition } from '@/lib/wp'
 import { cms } from './payload'
 import { mediaUrl, toMediaLike } from './media'
@@ -35,6 +36,7 @@ import { mediaUrl, toMediaLike } from './media'
  *   /clanky/<parent>/<category>/        category (+ strana-N/)
  *   /fotogalerie/<slug>/                gallery
  *   /fotogalerie/rok-YYYY-YYYY/         galleries of one school year (+ strana-N/)
+ *   <listing>/stitek-<slug>/            a category or galleries listing narrowed to one tag (+ strana-N/)
  *   /, /fotogalerie/, /dokumenty/, /zamestnanci/, /gutak/, /pracoviste/   fixed pages
  */
 
@@ -157,6 +159,33 @@ async function categoryWithChildren(id: ID): Promise<number[]> {
   return [root, ...all.filter((c) => (typeof c.parent === 'number' ? c.parent : c.parent?.id) === root).map((c) => c.id)]
 }
 
+// ------------------------------------------------------------------ tags
+
+/** A label the school attaches to articles and galleries (1. stupeň, ŠD…); listings filter by it. */
+export type SiteTag = { id: ID; slug: string; name: string }
+
+const allTags = cache(async (): Promise<SiteTag[]> => {
+  const payload = await cms()
+  const res = await payload.find({ collection: 'tags', pagination: false, depth: 0, sort: 'order' })
+  return res.docs.map((t: Tag) => ({ id: asId(String(t.id)), slug: t.slug ?? '', name: t.title }))
+})
+
+export async function getTagById(id: ID): Promise<SiteTag | null> {
+  return (await allTags()).find((t) => t.id === id) ?? null
+}
+
+/** Tags carried by at least one published item matching `where` - the chips worth offering above that listing. */
+async function tagsInUse(collection: 'posts' | 'galleries', where: Where): Promise<SiteTag[]> {
+  const payload = await cms()
+  const tags = await allTags()
+  const counts = await Promise.all(
+    tags.map((tag) => payload.count({ collection, where: { and: [where, { tags: { in: [Number(tag.id)] } }] } }))
+  )
+  return tags.filter((_, idx) => counts[idx].totalDocs > 0)
+}
+
+const tagFilter = (tagId?: ID): Where[] => (tagId ? [{ tags: { in: [Number(tagId)] } }] : [])
+
 // ------------------------------------------------------------------ posts
 
 function lexicalToHtml(content: Post['content']): string {
@@ -244,7 +273,7 @@ function toPreview(post: Post): PostPreview {
 
 export async function getPostPreviews(
   categoryId: ID,
-  opts: { offset?: number; limit: number; excludePostId?: ID }
+  opts: { offset?: number; limit: number; excludePostId?: ID; tagId?: ID }
 ): Promise<{ posts: PostPreview[]; totalCount: number }> {
   const payload = await cms()
   const ids = await categoryWithChildren(categoryId)
@@ -253,6 +282,7 @@ export async function getPostPreviews(
     and: [
       PUBLISHED,
       { categories: { in: ids } },
+      ...tagFilter(opts.tagId),
       ...(opts.excludePostId ? [{ id: { not_equals: Number(opts.excludePostId) } }] : [])
     ]
   }
@@ -269,6 +299,11 @@ export async function getPostPreviews(
   return { posts: res.docs.map((doc) => toPreview(doc as Post)), totalCount: res.totalDocs }
 }
 
+/** Tags used by the articles of a category (and its sub-categories). */
+export async function getCategoryTags(categoryId: ID): Promise<SiteTag[]> {
+  return tagsInUse('posts', { and: [PUBLISHED, { categories: { in: await categoryWithChildren(categoryId) } }] })
+}
+
 /** Newest articles of a category for the homepage blocks (only id/title/excerpt/date/link are read there). */
 export async function getPostsByCategory(categorySlug: string, opts: { limit: number; excludePostId?: ID }): Promise<WpPost[]> {
   const category = await getCategoryBySlug(categorySlug)
@@ -278,6 +313,54 @@ export async function getPostsByCategory(categorySlug: string, opts: { limit: nu
     (p) =>
       ({ ...p, slug: '', content: '', blocks: [], categories: [category.id], acf: { link: null, file: null, gallery: [] } }) as unknown as WpPost
   )
+}
+
+// ------------------------------------------------------------------ search
+
+/**
+ * A search query folded like the stored `searchText` (lower-case, no
+ * diacritics), without LIKE wildcards; '' when too short to search.
+ */
+export function searchQuery(query: string): string {
+  const folded = foldText(query.replace(/[%_\\]/g, ' ')).replace(/\s+/g, ' ')
+  return folded.length >= 2 ? folded : ''
+}
+
+/** Published articles whose title, perex or text contain every word of the query, newest first. */
+export async function searchPosts(query: string, opts: { page: number; limit: number }): Promise<{ posts: PostPreview[]; totalCount: number }> {
+  const folded = searchQuery(query)
+  if (!folded) return { posts: [], totalCount: 0 }
+  const payload = await cms()
+  const res = await payload.find({
+    collection: 'posts',
+    where: { and: [PUBLISHED, { searchText: { like: folded } }] },
+    sort: '-publishedAt',
+    limit: opts.limit,
+    page: opts.page,
+    depth: 1,
+    select: { title: true, slug: true, excerpt: true, content: true, publishedAt: true, link: true, file: true }
+  })
+  return { posts: res.docs.map((doc) => toPreview(doc as Post)), totalCount: res.totalDocs }
+}
+
+/** Published galleries whose name contains every word of the query, newest first. */
+export async function searchGalleries(
+  query: string,
+  opts: { page: number; limit: number }
+): Promise<{ galleries: WpGallery[]; totalCount: number }> {
+  const folded = searchQuery(query)
+  if (!folded) return { galleries: [], totalCount: 0 }
+  const payload = await cms()
+  const res = await payload.find({
+    collection: 'galleries',
+    where: { and: [PUBLISHED, { searchText: { like: folded } }] },
+    sort: '-publishedAt',
+    limit: opts.limit,
+    page: opts.page,
+    depth: 1,
+    select: { title: true, slug: true, publishedAt: true, cover: true, photos: true }
+  })
+  return { galleries: res.docs.map((g) => toGallery(g as Gallery)), totalCount: res.totalDocs }
 }
 
 // ------------------------------------------------------------------ galleries
@@ -292,18 +375,21 @@ export async function getGalleryById(id: ID): Promise<WpGallery | null> {
   }
 }
 
-/** One page of the galleries index (newest first, optionally one school year only) + how many pages there are. */
+/** Published galleries, optionally of one school year only. */
+function galleriesWhere(schoolYear?: number): Where {
+  const range = schoolYear == null ? null : schoolYearRange(schoolYear)
+  return range ? { and: [PUBLISHED, { publishedAt: { greater_than_equal: range.from } }, { publishedAt: { less_than: range.to } }] } : PUBLISHED
+}
+
+/** One page of the galleries index (newest first, optionally one school year and/or tag only) + how many pages there are. */
 export async function getGalleryPage(
   page: number,
-  schoolYear?: number
+  filters: { schoolYear?: number; tagId?: ID } = {}
 ): Promise<{ galleries: WpGallery[]; totalPages: number; totalCount: number }> {
   const payload = await cms()
-  const range = schoolYear == null ? null : schoolYearRange(schoolYear)
   const res = await payload.find({
     collection: 'galleries',
-    where: range
-      ? { and: [PUBLISHED, { publishedAt: { greater_than_equal: range.from } }, { publishedAt: { less_than: range.to } }] }
-      : PUBLISHED,
+    where: { and: [galleriesWhere(filters.schoolYear), ...tagFilter(filters.tagId)] },
     sort: '-publishedAt',
     limit: GALLERY_PAGE_SIZE,
     page,
@@ -312,6 +398,11 @@ export async function getGalleryPage(
     select: { title: true, slug: true, publishedAt: true, cover: true, photos: true }
   })
   return { galleries: res.docs.map((g) => toGallery(g as Gallery)), totalPages: Math.max(res.totalPages, 1), totalCount: res.totalDocs }
+}
+
+/** Tags used by the galleries (of one school year, when given). */
+export async function getGalleryTags(schoolYear?: number): Promise<SiteTag[]> {
+  return tagsInUse('galleries', galleriesWhere(schoolYear))
 }
 
 export async function getLatestGalleries(limit: number): Promise<WpGallery[]> {
@@ -380,31 +471,38 @@ export async function resolveRoute(segments: string[]): Promise<ResolvedRoute | 
   const pageNumber = pageMatch ? Number(pageMatch[2]) : 1
   if (pageMatch && pageNumber < 2) return null
 
-  const fixed = FIXED_PAGES.find((p) => p.path === basePath)
+  // <listing>/stitek-<slug>/: a listing narrowed to one tag; `listingPath` is the listing itself
+  const tagMatch = basePath.match(/^(.*\/)stitek-([^/]+)\/$/)
+  const listingPath = tagMatch ? tagMatch[1] : basePath
+  const tag = tagMatch ? (await allTags()).find((t) => t.slug === tagMatch[2]) : undefined
+  if (tagMatch && !tag) return null
+  const tagged = tag ? { tagId: tag.id } : {}
+
+  const fixed = FIXED_PAGES.find((p) => p.path === listingPath)
   if (fixed) {
-    if (pageNumber > 1 && fixed.template !== PageTemplateType.GALLERIES) return null
-    return pageRoute(fixed, pageNumber, basePath)
+    if ((pageNumber > 1 || tag) && fixed.template !== PageTemplateType.GALLERIES) return null
+    return { ...pageRoute(fixed, pageNumber, basePath), ...tagged }
   }
 
   // /fotogalerie/rok-2025-2026/ (+ strana-N/): the galleries index narrowed to one school year
-  const yearMatch = basePath.match(/^\/fotogalerie\/([^/]+)\/$/)
+  const yearMatch = listingPath.match(/^\/fotogalerie\/([^/]+)\/$/)
   const schoolYear = yearMatch ? parseSchoolYearSlug(yearMatch[1]) : null
   if (schoolYear != null) {
     if (schoolYear < FIRST_SCHOOL_YEAR || schoolYear > schoolYearOf(new Date())) return null
-    return { ...pageRoute(GALLERIES_PAGE, pageNumber, basePath), schoolYear }
+    return { ...pageRoute(GALLERIES_PAGE, pageNumber, basePath), schoolYear, ...tagged }
   }
 
-  const parts = basePath.split('/').filter(Boolean)
+  const parts = listingPath.split('/').filter(Boolean)
 
   if (parts[0] === 'clanky' && parts.length >= 2 && parts.length <= 3) {
     const all = await allCategories()
-    const cat = all.find((c) => categoryLink(c, all) === basePath)
+    const cat = all.find((c) => categoryLink(c, all) === listingPath)
     if (!cat) return null
     const parentId = typeof cat.parent === 'number' ? cat.parent : cat.parent?.id
-    return { kind: 'category', id: asId(String(cat.id)), rootCategoryId: asId(String(parentId ?? cat.id)), pageNumber, basePath }
+    return { kind: 'category', id: asId(String(cat.id)), rootCategoryId: asId(String(parentId ?? cat.id)), pageNumber, basePath, ...tagged }
   }
 
-  if (pageMatch) return null
+  if (pageMatch || tagMatch) return null
   const payload = await cms()
 
   if (parts[0] === 'fotogalerie' && parts.length === 2) {

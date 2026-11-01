@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { loggedIn, publishedOrLoggedIn } from '../access'
 import { slugField, wpIdField } from '../fields'
 import { revalidateAfterChange, revalidateAfterDelete } from '../revalidate'
+import { searchTextField } from '../search-text'
 
 /** Photo galleries. URL: /fotogalerie/<slug>/. */
 export const Galleries: CollectionConfig = {
@@ -9,7 +10,7 @@ export const Galleries: CollectionConfig = {
   labels: { singular: 'Fotogalerie', plural: 'Fotogalerie' },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'publishedAt', '_status'],
+    defaultColumns: ['title', 'tags', 'publishedAt', '_status'],
     group: 'Obsah',
     listSearchableFields: ['title', 'slug'],
     preview: (doc) => (doc?.slug ? `/fotogalerie/${doc.slug}/` : null)
@@ -33,6 +34,14 @@ export const Galleries: CollectionConfig = {
       admin: { date: { pickerAppearance: 'dayOnly', displayFormat: 'd. M. yyyy' } }
     },
     {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
+      label: 'Štítky',
+      admin: { description: 'Podle štítků si návštěvníci filtrují výpis (např. 1. stupeň, Školní družina). Štítky spravujete v Nastavení › Štítky.' }
+    },
+    {
       name: 'photos',
       type: 'upload',
       relationTo: 'media',
@@ -50,7 +59,8 @@ export const Galleries: CollectionConfig = {
       admin: { position: 'sidebar', description: 'Když nevyberete, použije se první fotka.' }
     },
     slugField(),
-    wpIdField
+    wpIdField,
+    searchTextField
   ],
   hooks: {
     afterChange: [revalidateAfterChange],

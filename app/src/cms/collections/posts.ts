@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { loggedIn, publishedOrLoggedIn } from '../access'
 import { slugField, wpIdField } from '../fields'
 import { revalidateAfterChange, revalidateAfterDelete } from '../revalidate'
+import { searchTextField } from '../search-text'
 
 /** Articles (WP posts). URL: /<slug>/ - same as on the WordPress site. */
 export const Posts: CollectionConfig = {
@@ -9,7 +10,7 @@ export const Posts: CollectionConfig = {
   labels: { singular: 'Článek', plural: 'Články' },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'categories', 'publishedAt', '_status'],
+    defaultColumns: ['title', 'categories', 'tags', 'publishedAt', '_status'],
     group: 'Obsah',
     listSearchableFields: ['title', 'slug'],
     preview: (doc) => (doc?.slug ? `/${doc.slug}/` : null)
@@ -47,6 +48,14 @@ export const Posts: CollectionConfig = {
       ]
     },
     {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
+      label: 'Štítky',
+      admin: { description: 'Podle štítků si návštěvníci filtrují výpis (např. 1. stupeň, Školní družina). Štítky spravujete v Nastavení › Štítky.' }
+    },
+    {
       name: 'excerpt',
       type: 'textarea',
       label: 'Perex',
@@ -75,7 +84,8 @@ export const Posts: CollectionConfig = {
       admin: { position: 'sidebar', description: 'Zobrazí se velký nahoře na úvodní stránce (platí nejnovější připnutý).' }
     },
     slugField(),
-    wpIdField
+    wpIdField,
+    searchTextField
   ],
   hooks: {
     afterChange: [revalidateAfterChange],

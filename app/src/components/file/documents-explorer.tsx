@@ -11,7 +11,7 @@ import { ArticleEmptyState } from '@/components/article/empty-state'
 import { accentAt } from '@/components/ui/accent'
 import { cn } from '@/lib/utils'
 import { FileCard } from './file-card'
-import { categoryIdsFromParam, DOCUMENT_CATEGORY_PARAM, filterDocumentGroups, groupDocumentsByCategory } from './filter'
+import { categoryIdsFromParam, DOCUMENT_CATEGORY_PARAM, DOCUMENT_SEARCH_PARAM, filterDocumentGroups, groupDocumentsByCategory } from './filter'
 
 type DocumentsExplorerProps = {
   documents: WpDocument[]
@@ -44,9 +44,10 @@ function DocumentList({ documents }: { documents: WpDocument[] }) {
  * documents within each remaining section.
  */
 export function DocumentsExplorer({ documents, categories }: DocumentsExplorerProps) {
-  const [name, setName] = useState('')
-  // `?kategorie=<slug>` (linked from the menu and static pages) pre-selects categories.
+  // `?kategorie=<slug>` (linked from the menu and static pages) pre-selects categories,
+  // `?hledat=` (from the site search) fills in the search.
   const searchParams = useSearchParams()
+  const [name, setName] = useState(() => searchParams.get(DOCUMENT_SEARCH_PARAM) ?? '')
   const [categoryIds, setCategoryIds] = useState<ID[]>(() => categoryIdsFromParam(categories, searchParams.get(DOCUMENT_CATEGORY_PARAM)))
 
   // Sections and rows animate in and out as the filters change (respects reduced motion).
@@ -87,7 +88,15 @@ export function DocumentsExplorer({ documents, categories }: DocumentsExplorerPr
       </div>
 
       {filteredGroups.length === 0 ? (
-        <ArticleEmptyState parentCategoryLink={null} title="Žádný dokument" text="Zkuste jiné slovo nebo zrušte filtr kategorií." />
+        <ArticleEmptyState
+          parentCategoryLink={null}
+          title="Žádný dokument"
+          text={
+            name.trim() === '' && categoryIds.length > 0
+              ? 'Ve vybrané kategorii zatím nejsou žádné dokumenty. Zrušte filtr a podívejte se do ostatních.'
+              : 'Zkuste jiné slovo nebo zrušte filtr kategorií.'
+          }
+        />
       ) : (
         <div ref={groupsRef} className="space-y-10">
           {filteredGroups.map((group, idx) => {

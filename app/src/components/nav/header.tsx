@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import * as NavigationMenu from '@radix-ui/react-navigation-menu'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ArrowUpRight, ChevronDown, GraduationCap, Menu, X } from 'lucide-react'
+import { ArrowUpRight, ChevronDown, GraduationCap, Menu, Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { accentAt } from '@/components/ui/accent'
 import { Container } from '@/components/ui/container'
@@ -13,6 +13,7 @@ import { SchoolLogo } from '@/components/ui/school-logo'
 import { NavLink } from './nav-link'
 import { MobileMenuItem } from './mobile-menu-item'
 import { EDUPAGE_URL } from './menu'
+import { SearchForm } from '@/components/search/search-form'
 import type { NavItem } from './types'
 
 // Scroll position via useSyncExternalStore: SSR-safe (the server snapshot
@@ -70,18 +71,19 @@ export default function Header({ menu }: HeaderProps) {
         scrolled ? 'border-ink bg-paper/95 backdrop-blur' : 'border-transparent bg-cream/80 backdrop-blur-sm'
       )}
     >
-      <Container>
-        <div className="flex h-16 items-center gap-2 xs:gap-4 md:h-18">
+      {/* Wider than the page content: seven menu items, search and EduPage need the room. */}
+      <Container className="max-w-[86rem]!">
+        <div className="flex h-16 items-center gap-2 xs:gap-4 md:h-18 nav:gap-3">
           <Logo compact={scrolled} />
 
           <NavigationMenu.Root className="relative ml-auto hidden nav:block" delayDuration={80}>
-            <NavigationMenu.List className="m-0 flex list-none items-center gap-0 p-0">
-              {menu.map((item, idx) => {
-                const accent = accentAt(idx)
+            <NavigationMenu.List className="m-0 flex list-none items-center gap-0 p-0 lg:gap-1">
+              {/* "Úvod" only in the mobile menu: on desktop the logo next to the menu leads home. */}
+              {menu.filter((item) => item.url !== '/').map((item, idx) => {
+                const accent = accentAt(idx + 1)
                 const active = isActive(item, pathname)
                 const pill = cn(
-                  // Seven items + EduPage only just fit the 1140px container, so the pills stay this size on wide screens too.
-                  'flex items-center gap-0.5 rounded-full px-[7px] py-2 font-display text-[0.98rem] font-bold whitespace-nowrap transition-colors outline-none focus-visible:ring-4 focus-visible:ring-sky',
+                  'flex items-center gap-0.5 rounded-full px-2 py-2 font-display text-[0.98rem] font-bold whitespace-nowrap transition-colors outline-none focus-visible:ring-4 focus-visible:ring-sky',
                   active ? cn(accent.tint, 'ring-2 ring-ink') : 'hover:bg-white-1'
                 )
 
@@ -126,7 +128,7 @@ export default function Header({ menu }: HeaderProps) {
                                       <NavLink
                                         item={child}
                                         className="group/link flex items-center gap-3 rounded-xl px-3 py-2 font-semibold whitespace-nowrap transition-colors hover:bg-cream"
-                                        dotClassName={accentAt(idx + childIdx).bg}
+                                        dotClassName={accentAt(idx + 1 + childIdx).bg}
                                       />
                                     </NavigationMenu.Link>
                                   </li>
@@ -147,17 +149,42 @@ export default function Header({ menu }: HeaderProps) {
             </NavigationMenu.List>
           </NavigationMenu.Root>
 
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              {/* Phones search from the top of the menu instead - four buttons don't fit next to the logo. */}
+              <button type="button" className="btn ml-auto hidden shrink-0 bg-paper p-2 text-base sm:inline-flex nav:ml-1" aria-label="Hledat na webu">
+                <Search className="size-5" aria-hidden />
+              </button>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-sm data-[state=open]:animate-[fade-in_0.2s_ease]" />
+              <Dialog.Content className="fixed inset-x-0 top-0 z-50 border-b-[2.5px] border-ink bg-cream px-4 pt-[calc(env(safe-area-inset-top,0px)+1.25rem)] pb-6 shadow-large data-[state=open]:animate-[fade-in_0.2s_ease]">
+                <div className="mx-auto max-w-2xl">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <Dialog.Title className="font-display text-2xl">Hledat na webu</Dialog.Title>
+                    <Dialog.Close asChild>
+                      <button type="button" aria-label="Zavřít hledání" className="btn bg-paper p-2">
+                        <X className="size-5" aria-hidden />
+                      </button>
+                    </Dialog.Close>
+                  </div>
+                  <Dialog.Description className="mb-4 text-gray-7">Články, fotogalerie, dokumenty i stránky školy.</Dialog.Description>
+                  <SearchForm autoFocus />
+                </div>
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
+
           {/* EduPage (timetable, grades, messages) is where parents and pupils go daily - always one click away. */}
           <a
             href={EDUPAGE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn ml-auto shrink-0 bg-grass p-2 text-base text-ink sm:px-3 nav:ml-1 lg:px-4"
+            className="btn ml-auto shrink-0 bg-grass p-2 text-base text-ink sm:ml-0 sm:px-3 lg:px-4"
             aria-label="EduPage – rozvrh, známky, zprávy (otevře se v novém okně)"
           >
             <GraduationCap className="size-5" aria-hidden />
             <span className="hidden sm:inline">EduPage</span>
-            <ArrowUpRight className="hidden size-4 opacity-70 lg:block" aria-hidden />
           </a>
 
           <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -190,6 +217,7 @@ export default function Header({ menu }: HeaderProps) {
                   </Dialog.Close>
                 </div>
                 <nav aria-label="Hlavní menu" className="flex-1 px-5 py-6">
+                  <SearchForm className="mb-5" />
                   <a
                     href={EDUPAGE_URL}
                     target="_blank"

@@ -22,7 +22,7 @@
   --breakpoint-xs: 26em; /* 416px */
   --breakpoint-sm: 41.75em; /* 668px */
   --breakpoint-md: 55.125em; /* 882px */
-  --breakpoint-nav: 75em; /* 1200px - full desktop nav (7 items + EduPage) fits from here */
+  --breakpoint-nav: 80em; /* 1280px - full desktop nav (6 items, search, EduPage) fits with room to spare from here */
   --breakpoint-lg: 81.9375em; /* 1311px */
 
   --spacing: 0.3125rem; /* 5px */

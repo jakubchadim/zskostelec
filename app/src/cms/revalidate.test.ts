@@ -12,9 +12,11 @@ const CATEGORIES = [
   { id: 3, slug: 'uspechy-zaku', parent: 2 }
 ]
 
+const TAGS = [{ id: 9, slug: '1-stupen' }]
+
 function fakeReq(postsWithGallery: { slug: string }[] = [], context: Record<string, unknown> = {}) {
   const find = vi.fn(async ({ collection }: { collection: string }) => ({
-    docs: collection === 'categories' ? CATEGORIES : postsWithGallery
+    docs: collection === 'categories' ? CATEGORIES : collection === 'tags' ? TAGS : postsWithGallery
   }))
   return { req: { payload: { find }, context } as unknown as PayloadRequest, find }
 }
@@ -62,6 +64,15 @@ describe('pathsFor', () => {
       ])
     )
     expect(paths).not.toContain('/clanky/')
+  })
+
+  it('tagged post and gallery: also the listings filtered by their tags', async () => {
+    const { req } = fakeReq()
+    const post = await pathsFor('posts', [{ id: 7, slug: 'vylet', categories: [1], tags: [{ id: 9 }] }], req)
+    expect(post).toEqual(expect.arrayContaining(['/clanky/aktuality/stitek-1-stupen/', '/clanky/aktuality/stitek-1-stupen/strana-2/']))
+
+    const gallery = await pathsFor('galleries', [{ id: 4, slug: 'praha', tags: [9], publishedAt: '2025-10-03T00:00:00.000Z' }], req)
+    expect(gallery).toEqual(expect.arrayContaining(['/fotogalerie/stitek-1-stupen/', '/fotogalerie/rok-2025-2026/stitek-1-stupen/']))
   })
 
   it('gallery: its page, the galleries index, home and the articles that embed it', async () => {

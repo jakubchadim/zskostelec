@@ -35,7 +35,8 @@ export default async function SvpPage() {
       )}
 
       {groups.map((group, idx) => (
-        <Section key={group.eyebrow} eyebrow={group.eyebrow} title={group.title} tinted={idx % 2 === 0} accent={accentAt(idx + 1)}>
+        // Plain first, so the section under the (tinted) hero doesn't run into it.
+        <Section key={group.eyebrow} eyebrow={group.eyebrow} title={group.title} tinted={idx % 2 === 1} accent={accentAt(idx + 1)}>
           <DocList docs={group.docs} />
         </Section>
       ))}

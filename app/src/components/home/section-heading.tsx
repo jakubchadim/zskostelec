@@ -5,10 +5,10 @@ import { cn } from '@/lib/utils'
 import type { Accent } from '@/components/ui/accent'
 import { Squiggle } from '@/components/ui/doodles'
 
-/** "Všechna upozornění" vs "Všechny aktuality" - Czech plural gender for the see-all link. */
+/** "Všechna oznámení školy" vs "Všechny aktuality" - Czech plural gender (of the first word) for the see-all link. */
 export function allLabel(categoryName: string): string {
   const name = categoryName.toLowerCase()
-  return `${name.endsWith('í') ? 'Všechna' : 'Všechny'} ${name}`
+  return `${name.split(' ')[0].endsWith('í') ? 'Všechna' : 'Všechny'} ${name}`
 }
 
 type SectionHeadingProps = {

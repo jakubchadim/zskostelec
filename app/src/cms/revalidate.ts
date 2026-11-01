@@ -14,7 +14,14 @@ import { schoolYearOf, schoolYearSlug } from '../components/gallery/school-year'
  * Skipped for bulk imports (`req.context.skipRevalidate`) and outside Next (scripts).
  */
 
-type Doc = { id?: number | string; slug?: string | null; _status?: string | null; categories?: unknown[] | null; publishedAt?: string | null }
+type Doc = {
+  id?: number | string
+  slug?: string | null
+  _status?: string | null
+  categories?: unknown[] | null
+  tags?: unknown[] | null
+  publishedAt?: string | null
+}
 
 /** Listing pages refreshed after a change: the first one plus a few `strana-N/`. */
 const LISTING_PAGES = 5
@@ -28,8 +35,19 @@ const relId = (value: unknown) => (value && typeof value === 'object' ? (value a
 
 const unique = <T>(values: (T | null | undefined)[]) => [...new Set(values.filter((v): v is T => v != null && v !== ''))]
 
-/** Listings of the given categories and of their parents (a parent lists its children's articles too). */
-async function categoryPaths(refs: unknown[], req: PayloadRequest): Promise<string[]> {
+/** A listing and its tag-filtered variants (`<listing>/stitek-<slug>/`) for the changed items' tags. */
+const withTags = (basePath: string, tagSlugs: string[]) => [basePath, ...tagSlugs.map((slug) => `${basePath}stitek-${slug}/`)].flatMap(listingPaths)
+
+/** Slugs of the tags the changed documents carry (or carried). */
+async function tagSlugs(docs: Doc[], req: PayloadRequest): Promise<string[]> {
+  const ids = unique(docs.flatMap((d) => d.tags ?? []).map((ref) => Number(relId(ref))))
+  if (!ids.length) return []
+  const { docs: tags } = await req.payload.find({ collection: 'tags', where: { id: { in: ids } }, pagination: false, depth: 0, select: { slug: true }, req })
+  return unique(tags.map((t) => t.slug))
+}
+
+/** Listings of the given categories and of their parents (a parent lists its children's articles too), with their tag filters. */
+async function categoryPaths(refs: unknown[], tags: string[], req: PayloadRequest): Promise<string[]> {
   const ids = unique(refs.map((ref) => String(relId(ref) ?? '')))
   if (!ids.length) return []
 
@@ -46,7 +64,7 @@ async function categoryPaths(refs: unknown[], req: PayloadRequest): Promise<stri
     const cat = byId.get(id)
     if (!cat) return []
     const parent = parentOf(cat)
-    return [...listingPaths(linkOf(cat)), ...(parent ? listingPaths(linkOf(parent)) : [])]
+    return [...withTags(linkOf(cat), tags), ...(parent ? withTags(linkOf(parent), tags) : [])]
   })
 }
 
@@ -56,19 +74,20 @@ export async function pathsFor(collection: string, docs: Doc[], req: PayloadRequ
 
   switch (collection) {
     case 'posts':
-      return ['/', ...slugs.map((s) => `/${s}/`), ...(await categoryPaths(docs.flatMap((d) => d.categories ?? []), req))]
+      return ['/', ...slugs.map((s) => `/${s}/`), ...(await categoryPaths(docs.flatMap((d) => d.categories ?? []), await tagSlugs(docs, req), req))]
     case 'galleries': {
       // Articles show their galleries under the text.
       const ids = unique(docs.map((d) => d.id))
       const posts = ids.length
         ? (await req.payload.find({ collection: 'posts', where: { galleries: { in: ids } }, pagination: false, depth: 0, select: { slug: true }, req })).docs
         : []
-      // The school-year listings the gallery is (or was, before a date change) in.
+      // The school-year listings the gallery is (or was, before a date change) in, each also filtered by its tags.
       const years = unique(docs.map((d) => (d.publishedAt ? schoolYearOf(d.publishedAt) : null)))
+      const tags = await tagSlugs(docs, req)
       return [
         '/',
-        ...listingPaths('/fotogalerie/'),
-        ...years.flatMap((year) => listingPaths(`/fotogalerie/${schoolYearSlug(year)}/`)),
+        ...withTags('/fotogalerie/', tags),
+        ...years.flatMap((year) => withTags(`/fotogalerie/${schoolYearSlug(year)}/`, tags)),
         ...slugs.map((s) => `/fotogalerie/${s}/`),
         ...unique(posts.map((p) => p.slug)).map((s) => `/${s}/`)
       ]

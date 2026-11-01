@@ -6,6 +6,7 @@ import {
   getPageById,
   getPostById,
   getStaticRoutes,
+  getTagById,
   resolveRoute,
   PageTemplateType,
   type ResolvedRoute
@@ -78,12 +79,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         notFound()
       }
 
+      const tag = resolved.tagId ? await getTagById(resolved.tagId) : null
       const title =
         resolved.templateType === PageTemplateType.HOME
           ? 'Vítejte'
-          : resolved.schoolYear != null
-            ? `${decodeEntities(page.title)} – školní rok ${schoolYearLabel(resolved.schoolYear)}`
-            : decodeEntities(page.title)
+          : [
+              decodeEntities(page.title),
+              resolved.schoolYear != null ? `školní rok ${schoolYearLabel(resolved.schoolYear)}` : null,
+              tag?.name
+            ]
+              .filter(Boolean)
+              .join(' – ')
       const fullTitle = buildTitle(title)
 
       return {
@@ -135,7 +141,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         notFound()
       }
 
-      const name = decodeEntities(category.name)
+      const tag = resolved.tagId ? await getTagById(resolved.tagId) : null
+      const name = [decodeEntities(category.name), tag?.name].filter(Boolean).join(' – ')
       const title = resolved.pageNumber > 1 ? `${name} – strana ${resolved.pageNumber}` : name
       const fullTitle = buildTitle(title)
 

@@ -155,7 +155,7 @@ export default function SkolniDruzinaPage() {
       </Section>
 
       <Section eyebrow="Kde a kdy" title="Tři pracoviště" tinted accent={accentAt(3)}>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           {WORKPLACES.map((w, idx) => (
             <article key={w.name} className="sticker flex flex-col gap-4 p-5 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">

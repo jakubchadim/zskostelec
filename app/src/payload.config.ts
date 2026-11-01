@@ -9,6 +9,7 @@ import sharp from 'sharp'
 import { Users } from './cms/collections/users'
 import { Media } from './cms/collections/media'
 import { Categories } from './cms/collections/categories'
+import { Tags } from './cms/collections/tags'
 import { Posts } from './cms/collections/posts'
 import { Galleries } from './cms/collections/galleries'
 import { DocumentCategories, Documents } from './cms/collections/documents'
@@ -46,7 +47,7 @@ export default buildConfig({
     theme: 'light'
   },
   i18n: { supportedLanguages: { cs }, fallbackLanguage: 'cs' },
-  collections: [Posts, Galleries, Documents, Gutak, Staff, Media, Categories, DocumentCategories, StaffPositions, StaffBuildings, Users],
+  collections: [Posts, Galleries, Documents, Gutak, Staff, Media, Categories, Tags, DocumentCategories, StaffPositions, StaffBuildings, Users],
   editor: lexicalEditor({ features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()] }),
   db: postgresAdapter({
     // keepAlive: Neon drops idle TCP connections, which surfaced as 'Connection terminated unexpectedly'.

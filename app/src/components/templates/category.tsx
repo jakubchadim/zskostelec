@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { CATEGORY_PAGE_SIZE, getCategories, getCategoryById, getPostPreviews, type ResolvedRoute } from '@/lib/content'
+import { CATEGORY_PAGE_SIZE, getCategories, getCategoryById, getCategoryTags, getPostPreviews, getTagById, type ResolvedRoute } from '@/lib/content'
 import { Container } from '@/components/ui/container'
 import { PageHero } from '@/components/ui/page-hero'
 import { Reveal } from '@/components/ui/reveal'
@@ -7,9 +7,10 @@ import { Article } from '@/components/article/article'
 import { ArticlePagination } from '@/components/article/pagination'
 import { ArticleEmptyState } from '@/components/article/empty-state'
 import { CategorySwitcher } from '@/components/filter/category-switcher'
+import { TagSwitcher } from '@/components/filter/tag-switcher'
 import type { TemplateProps } from '@/components/templates/registry'
 
-/** Paginated category listing: hero (+ sub-category chips), card grid or empty state, `strana-N` pagination. */
+/** Paginated category listing: hero (+ sub-category and tag chips), card grid or empty state, `strana-N` pagination. */
 export async function CategoryTemplate({ data }: TemplateProps) {
   const route = data as Extract<ResolvedRoute, { kind: 'category' }>
   const category = await getCategoryById(route.id)
@@ -18,13 +19,17 @@ export async function CategoryTemplate({ data }: TemplateProps) {
     notFound()
   }
 
-  const [{ posts, totalCount }, allCategories] = await Promise.all([
+  const [{ posts, totalCount }, allCategories, tags] = await Promise.all([
     getPostPreviews(route.id, {
       offset: (route.pageNumber - 1) * CATEGORY_PAGE_SIZE,
-      limit: CATEGORY_PAGE_SIZE
+      limit: CATEGORY_PAGE_SIZE,
+      tagId: route.tagId
     }),
-    getCategories()
+    getCategories(),
+    getCategoryTags(route.id)
   ])
+  // Looked up among all tags: one no article uses (any more) still names the empty listing.
+  const currentTag = route.tagId ? await getTagById(route.tagId) : null
 
   const siblings = allCategories.filter((sibling) => sibling.parent?.id === route.rootCategoryId)
   const heading = category.parent ? category.parent.name : category.name
@@ -36,9 +41,17 @@ export async function CategoryTemplate({ data }: TemplateProps) {
       <PageHero
         title={heading}
         colorKey={heading}
-        eyebrow={route.pageNumber > 1 ? `Strana ${route.pageNumber} z ${totalPages}` : `${totalCount} ${totalCount === 1 ? 'článek' : totalCount < 5 && totalCount > 0 ? 'články' : 'článků'}`}
+        eyebrow={[
+          currentTag?.name,
+          route.pageNumber > 1
+            ? `Strana ${route.pageNumber} z ${totalPages}`
+            : `${totalCount} ${totalCount === 1 ? 'článek' : totalCount < 5 && totalCount > 0 ? 'články' : 'článků'}`
+        ]
+          .filter(Boolean)
+          .join(' · ')}
       >
         {siblings.length > 0 && <CategorySwitcher current={category} siblings={siblings} rootLink={rootLink} />}
+        <TagSwitcher tags={tags} current={currentTag} listingLink={category.link} />
       </PageHero>
       <Container className="pt-4">
         {posts.length === 0 ? (
