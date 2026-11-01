@@ -20,6 +20,7 @@ import { Container } from '@/components/ui/container'
 import { accentAt } from '@/components/ui/accent'
 import { Accordion, Callout, DocList, FactGrid, JumpNav, PersonCard, Section } from '@/components/static/kit'
 import { DeadlineHelper, PricePicker } from '@/components/static/canteen-widgets'
+import { DocumentsButton } from '@/components/static/documents-button'
 import { staticPageMetadata } from '@/components/static/meta'
 import { cn } from '@/lib/utils'
 
@@ -98,6 +99,7 @@ export default function SkolniStravovaniPage() {
             <Smartphone className="size-5" aria-hidden />
             Objednat v PrimiApp
           </a>
+          <DocumentsButton category="stravovani" />
         </div>
         <div className="mt-5">
           <JumpNav

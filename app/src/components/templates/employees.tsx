@@ -23,6 +23,9 @@ export async function EmployeesTemplate({ data }: TemplateProps) {
     notFound()
   }
 
+  // A position nobody holds (left over after staff changes) would only filter down to "Nikoho jsme nenašli".
+  const heldPositions = positions.filter((position) => employees.some((employee) => employee.positionIds.includes(position.id)))
+
   return (
     <>
       <PageHero
@@ -36,7 +39,7 @@ export async function EmployeesTemplate({ data }: TemplateProps) {
       <Container className="pt-4">
         {/* Suspense: the explorer reads `?pracoviste=` via useSearchParams. */}
         <Suspense>
-          <EmployeesExplorer employees={employees} positions={positions} buildings={buildings} />
+          <EmployeesExplorer employees={employees} positions={heldPositions} buildings={buildings} />
         </Suspense>
       </Container>
     </>

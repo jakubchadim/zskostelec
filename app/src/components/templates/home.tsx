@@ -58,7 +58,12 @@ export async function HomeTemplate({ data }: TemplateProps) {
 
   return (
     <>
-      <Hero mainPost={mainPost} photos={photos.slice(0, 3)} newsAnchor={news || achievements ? '#aktuality' : null} />
+      <Hero
+        mainPost={mainPost}
+        photos={photos.slice(0, 3)}
+        noticesAnchor={notices && notices.articles.length > 0 ? '#nastenka' : null}
+        newsAnchor={news || achievements ? '#aktuality' : null}
+      />
 
       <section aria-labelledby="rychle" className="relative -mt-6 pb-16">
         <Container>

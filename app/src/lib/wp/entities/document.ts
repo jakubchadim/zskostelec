@@ -17,8 +17,8 @@ export type WpDocument = {
   fileUrl: string
 }
 
-type RawWpTerm = { id: number; name: string }
-export type WpDocumentCategory = { id: ID; name: string }
+type RawWpTerm = { id: number; name: string; slug: string }
+export type WpDocumentCategory = { id: ID; name: string; slug: string }
 
 const DOCUMENT_FIELDS = ['id', 'title', 'documentCategories', 'acf']
 
@@ -43,9 +43,9 @@ export async function getDocuments(): Promise<WpDocument[]> {
 
 export async function getDocumentCategories(): Promise<WpDocumentCategory[]> {
   const raw = await wpFetchAllPages<RawWpTerm>('wp/v2/documentCategories', {
-    fields: ['id', 'name'],
+    fields: ['id', 'name', 'slug'],
     tags: [WP_CACHE_TAGS.document]
   })
 
-  return raw.map((term) => ({ id: asId(term.id), name: term.name }))
+  return raw.map((term) => ({ id: asId(term.id), name: term.name, slug: term.slug }))
 }

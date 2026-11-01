@@ -19,8 +19,8 @@ function document(overrides: Partial<WpDocument>): WpDocument {
   }
 }
 
-const categoryA: WpDocumentCategory = { id: asId(1), name: 'Dokumenty školy' }
-const categoryB: WpDocumentCategory = { id: asId(2), name: 'Formuláře' }
+const categoryA: WpDocumentCategory = { id: asId(1), name: 'Dokumenty školy', slug: 'dokumenty-skoly' }
+const categoryB: WpDocumentCategory = { id: asId(2), name: 'Formuláře', slug: 'formulare' }
 
 describe('matchesDocumentName', () => {
   const doc = document({ title: 'Školní řád', filename: 'skolni-rad.pdf' })

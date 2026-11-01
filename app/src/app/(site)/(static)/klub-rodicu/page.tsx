@@ -2,6 +2,7 @@ import { HandCoins, MessagesSquare, Users } from 'lucide-react'
 import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
 import { Callout, DocList, PersonCard, Section } from '@/components/static/kit'
+import { DocumentsButton } from '@/components/static/documents-button'
 import { staticPageMetadata } from '@/components/static/meta'
 import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 
@@ -19,7 +20,9 @@ export default function KlubRodicuPage() {
         colorKey="klub-rodicu"
         eyebrow="Pro rodiče"
         lead="Každá třída má ve výboru svého zástupce z řad rodičů. Klub úzce spolupracuje se školou a řeší náměty a připomínky rodičů."
-      />
+      >
+        <DocumentsButton category="klub-rodicu" />
+      </PageHero>
 
       <Section eyebrow="Jak to funguje" title="Rodiče pro školu">
         <div className="grid gap-4 md:grid-cols-3">

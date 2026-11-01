@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { FolderOpen } from 'lucide-react'
 import type { ID, WpDocument, WpDocumentCategory } from '@/lib/wp'
@@ -10,7 +11,7 @@ import { ArticleEmptyState } from '@/components/article/empty-state'
 import { accentAt } from '@/components/ui/accent'
 import { cn } from '@/lib/utils'
 import { FileCard } from './file-card'
-import { filterDocumentGroups, groupDocumentsByCategory } from './filter'
+import { categoryIdsFromParam, DOCUMENT_CATEGORY_PARAM, filterDocumentGroups, groupDocumentsByCategory } from './filter'
 
 type DocumentsExplorerProps = {
   documents: WpDocument[]
@@ -44,7 +45,9 @@ function DocumentList({ documents }: { documents: WpDocument[] }) {
  */
 export function DocumentsExplorer({ documents, categories }: DocumentsExplorerProps) {
   const [name, setName] = useState('')
-  const [categoryIds, setCategoryIds] = useState<ID[]>([])
+  // `?kategorie=<slug>` (linked from the menu and static pages) pre-selects categories.
+  const searchParams = useSearchParams()
+  const [categoryIds, setCategoryIds] = useState<ID[]>(() => categoryIdsFromParam(categories, searchParams.get(DOCUMENT_CATEGORY_PARAM)))
 
   // Sections and rows animate in and out as the filters change (respects reduced motion).
   const [groupsRef] = useAutoAnimate<HTMLDivElement>({ duration: 260 })

@@ -8,6 +8,7 @@ import { asId } from '@/lib/wp/types'
 import { PageTemplateType } from '@/lib/wp/page-template'
 import { resolvePostLink } from '@/lib/wp/post-link'
 import { GALLERY_PAGE_SIZE } from '@/lib/wp/gallery-preview'
+import { FIRST_SCHOOL_YEAR, parseSchoolYearSlug, schoolYearOf, schoolYearRange } from '@/components/gallery/school-year'
 import type {
   ID,
   PostPreview,
@@ -33,6 +34,7 @@ import { mediaUrl, toMediaLike } from './media'
  *   /<post-slug>/                       article
  *   /clanky/<parent>/<category>/        category (+ strana-N/)
  *   /fotogalerie/<slug>/                gallery
+ *   /fotogalerie/rok-YYYY-YYYY/         galleries of one school year (+ strana-N/)
  *   /, /fotogalerie/, /dokumenty/, /zamestnanci/, /gutak/, /pracoviste/   fixed pages
  */
 
@@ -57,6 +59,8 @@ const FIXED_PAGES: FixedPage[] = [
   { slug: 'gutak', path: '/gutak/', title: 'Školní časopis Guťák', template: PageTemplateType.GUTAKY },
   { slug: 'pracoviste', path: '/pracoviste/', title: 'Pracoviště školy', template: PageTemplateType.DEFAULT }
 ]
+
+const GALLERIES_PAGE = FIXED_PAGES.find((p) => p.template === PageTemplateType.GALLERIES)!
 
 /** Homepage settings that used to be ACF fields on the WP home page. */
 const HOME_ACF = {
@@ -288,12 +292,18 @@ export async function getGalleryById(id: ID): Promise<WpGallery | null> {
   }
 }
 
-/** One page of the galleries index (newest first) + how many pages there are. */
-export async function getGalleryPage(page: number): Promise<{ galleries: WpGallery[]; totalPages: number; totalCount: number }> {
+/** One page of the galleries index (newest first, optionally one school year only) + how many pages there are. */
+export async function getGalleryPage(
+  page: number,
+  schoolYear?: number
+): Promise<{ galleries: WpGallery[]; totalPages: number; totalCount: number }> {
   const payload = await cms()
+  const range = schoolYear == null ? null : schoolYearRange(schoolYear)
   const res = await payload.find({
     collection: 'galleries',
-    where: PUBLISHED,
+    where: range
+      ? { and: [PUBLISHED, { publishedAt: { greater_than_equal: range.from } }, { publishedAt: { less_than: range.to } }] }
+      : PUBLISHED,
     sort: '-publishedAt',
     limit: GALLERY_PAGE_SIZE,
     page,
@@ -330,12 +340,12 @@ export async function getDocuments(): Promise<WpDocument[]> {
 export async function getDocumentCategories(): Promise<WpDocumentCategory[]> {
   const payload = await cms()
   const res = await payload.find({ collection: 'document-categories', pagination: false, depth: 0, sort: 'order' })
-  return res.docs.map((c) => ({ id: asId(String(c.id)), name: c.title }))
+  return res.docs.map((c) => ({ id: asId(String(c.id)), name: c.title, slug: c.slug ?? '' }))
 }
 
 // ------------------------------------------------------------------ routing
 
-const pageRoute = (page: FixedPage, pageNumber = 1, basePath = page.path): ResolvedRoute => ({
+const pageRoute = (page: FixedPage, pageNumber = 1, basePath = page.path): Extract<ResolvedRoute, { kind: 'page' }> => ({
   kind: 'page',
   id: asId(`page:${page.slug}`),
   templateType: page.template,
@@ -374,6 +384,14 @@ export async function resolveRoute(segments: string[]): Promise<ResolvedRoute | 
   if (fixed) {
     if (pageNumber > 1 && fixed.template !== PageTemplateType.GALLERIES) return null
     return pageRoute(fixed, pageNumber, basePath)
+  }
+
+  // /fotogalerie/rok-2025-2026/ (+ strana-N/): the galleries index narrowed to one school year
+  const yearMatch = basePath.match(/^\/fotogalerie\/([^/]+)\/$/)
+  const schoolYear = yearMatch ? parseSchoolYearSlug(yearMatch[1]) : null
+  if (schoolYear != null) {
+    if (schoolYear < FIRST_SCHOOL_YEAR || schoolYear > schoolYearOf(new Date())) return null
+    return { ...pageRoute(GALLERIES_PAGE, pageNumber, basePath), schoolYear }
   }
 
   const parts = basePath.split('/').filter(Boolean)

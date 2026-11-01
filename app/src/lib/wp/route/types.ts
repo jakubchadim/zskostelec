@@ -8,7 +8,7 @@ import type { PageTemplateType } from '../entities/page'
 export type ResolvedRoute =
   /** `pageNumber`/`basePath` only vary for paginated page templates (the
    * galleries index); every other page template gets page 1 and ignores them. */
-  | { kind: 'page'; id: ID; templateType: PageTemplateType; pageNumber: number; basePath: string }
+  | { kind: 'page'; id: ID; templateType: PageTemplateType; pageNumber: number; basePath: string; schoolYear?: number }
   | { kind: 'post'; id: ID; categoryId: ID }
   | { kind: 'category'; id: ID; rootCategoryId: ID; pageNumber: number; basePath: string }
   | { kind: 'gallery'; id: ID; allGalleryLink: Nullable<string> }

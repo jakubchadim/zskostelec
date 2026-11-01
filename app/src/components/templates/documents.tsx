@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { DocumentsExplorer } from '@/components/file/documents-explorer'
 import { Container } from '@/components/ui/container'
@@ -26,7 +27,10 @@ export async function DocumentsTemplate({ data }: TemplateProps) {
       <PageHero title={null} titleHtml={page.title} colorKey="dokumenty" eyebrow="Ke stažení" />
       <PageBody page={page} intro />
       <Container className="pt-4">
-        <DocumentsExplorer documents={documents} categories={categories} />
+        {/* Suspense: the explorer reads `?kategorie=` via useSearchParams. */}
+        <Suspense>
+          <DocumentsExplorer documents={documents} categories={categories} />
+        </Suspense>
       </Container>
     </>
   )

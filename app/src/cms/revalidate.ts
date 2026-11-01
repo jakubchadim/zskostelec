@@ -1,4 +1,5 @@
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, PayloadRequest, SanitizedCollectionConfig } from 'payload'
+import { schoolYearOf, schoolYearSlug } from '../components/gallery/school-year'
 
 /*
  * Content changed in the admin -> refresh the pages that show it. Pages are
@@ -13,7 +14,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, PayloadReque
  * Skipped for bulk imports (`req.context.skipRevalidate`) and outside Next (scripts).
  */
 
-type Doc = { id?: number | string; slug?: string | null; _status?: string | null; categories?: unknown[] | null }
+type Doc = { id?: number | string; slug?: string | null; _status?: string | null; categories?: unknown[] | null; publishedAt?: string | null }
 
 /** Listing pages refreshed after a change: the first one plus a few `strana-N/`. */
 const LISTING_PAGES = 5
@@ -62,11 +63,20 @@ export async function pathsFor(collection: string, docs: Doc[], req: PayloadRequ
       const posts = ids.length
         ? (await req.payload.find({ collection: 'posts', where: { galleries: { in: ids } }, pagination: false, depth: 0, select: { slug: true }, req })).docs
         : []
-      return ['/', ...listingPaths('/fotogalerie/'), ...slugs.map((s) => `/fotogalerie/${s}/`), ...unique(posts.map((p) => p.slug)).map((s) => `/${s}/`)]
+      // The school-year listings the gallery is (or was, before a date change) in.
+      const years = unique(docs.map((d) => (d.publishedAt ? schoolYearOf(d.publishedAt) : null)))
+      return [
+        '/',
+        ...listingPaths('/fotogalerie/'),
+        ...years.flatMap((year) => listingPaths(`/fotogalerie/${schoolYearSlug(year)}/`)),
+        ...slugs.map((s) => `/fotogalerie/${s}/`),
+        ...unique(posts.map((p) => p.slug)).map((s) => `/${s}/`)
+      ]
     }
     case 'documents':
     case 'document-categories':
-      return ['/dokumenty/']
+      // The ŠVP page lists its chapters from the documents.
+      return ['/dokumenty/', '/skolni-vzdelavaci-program/']
     case 'gutak':
       return ['/gutak/']
     case 'staff':

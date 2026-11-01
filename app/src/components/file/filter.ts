@@ -14,6 +14,20 @@ export type DocumentFilters = {
 
 export const EMPTY_DOCUMENT_FILTERS: DocumentFilters = { name: '', categoryIds: [] }
 
+/** Query parameter of `/dokumenty/` that pre-selects categories by slug (comma-separated). */
+export const DOCUMENT_CATEGORY_PARAM = 'kategorie'
+
+/** Link to the documents page with the given categories pre-selected, e.g. from a static page's "Dokumenty" button. */
+export function documentsHref(...categorySlugs: string[]): string {
+  return categorySlugs.length ? `/dokumenty/?${DOCUMENT_CATEGORY_PARAM}=${categorySlugs.join(',')}` : '/dokumenty/'
+}
+
+/** Ids of the categories named by the `?kategorie=` value; unknown slugs are ignored. */
+export function categoryIdsFromParam(categories: WpDocumentCategory[], param: string | null): ID[] {
+  const slugs = new Set((param ?? '').split(',').map((slug) => slug.trim()).filter(Boolean))
+  return categories.filter((category) => slugs.has(category.slug)).map((category) => category.id)
+}
+
 /** Case- and diacritics-insensitive substring match against `${title}||${filename}`. */
 export function matchesDocumentName(document: WpDocument, name: string): boolean {
   const query = foldText(name)

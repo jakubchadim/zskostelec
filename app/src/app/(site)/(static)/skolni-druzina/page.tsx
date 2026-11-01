@@ -34,6 +34,7 @@ import {
 import { PageHero } from '@/components/ui/page-hero'
 import { accentAt } from '@/components/ui/accent'
 import { Callout, FactGrid, IconCard, Section } from '@/components/static/kit'
+import { DocumentsButton } from '@/components/static/documents-button'
 import { staticPageMetadata } from '@/components/static/meta'
 import { WorkplacePopover } from '@/components/workplaces/workplace-popover'
 import { YearCalendar, type CalendarEvent, type CalendarMonth } from '@/components/static/year-calendar'
@@ -41,7 +42,7 @@ import { cn } from '@/lib/utils'
 
 export const metadata = staticPageMetadata({
   title: 'Školní družina',
-  description: 'Školní družina na pracovištích Erbenova a Drtinova: provozní doba, vychovatelky, poplatky, pravidla a akce během roku.',
+  description: 'Školní družina na pracovištích Erbenova, Drtinova a Komenského: provozní doba, vychovatelky, poplatky, pravidla a akce během roku.',
   path: '/skolni-druzina/'
 })
 
@@ -52,7 +53,8 @@ const WORKPLACES = [
     hours: '6:00 – 16:00',
     staff: ['Jitka Bezdíčková – vedoucí vychovatelka', 'Marcela Bělobrádková', 'Mgr. Jitka Šveidlerová']
   },
-  { key: 'drtinova' as const, name: 'Drtinova 662', hours: '6:15 – 16:00', staff: ['Eva Jelínková', 'Bc. Veronika Špačková'] }
+  { key: 'drtinova' as const, name: 'Drtinova 662', hours: '6:15 – 16:00', staff: ['Eva Jelínková', 'Bc. et Bc. Michaela Nováková'] },
+  { key: 'komenskeho' as const, name: 'Komenského 80', hours: '12:45 – 15:00', staff: ['Yvona Černá'] }
 ]
 
 /**
@@ -122,6 +124,7 @@ export default function SkolniDruzinaPage() {
         eyebrow="Pro rodiče"
         lead="Mezistupeň mezi výukou ve škole a výchovou v rodině. Tady se odpočívá, tvoří, sportuje a hlavně si hraje."
       >
+        <DocumentsButton category="skolni-druzina" className="mb-6" />
         <figure className="sticker m-0 max-w-md -rotate-1 bg-paper p-5">
           <blockquote className="m-0 font-display text-xl leading-snug">
             Ať je léto nebo zima,
@@ -151,8 +154,8 @@ export default function SkolniDruzinaPage() {
         </div>
       </Section>
 
-      <Section eyebrow="Kde a kdy" title="Dvě pracoviště" tinted accent={accentAt(3)}>
-        <div className="grid gap-4 md:grid-cols-2">
+      <Section eyebrow="Kde a kdy" title="Tři pracoviště" tinted accent={accentAt(3)}>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {WORKPLACES.map((w, idx) => (
             <article key={w.name} className="sticker flex flex-col gap-4 p-5 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">

@@ -123,12 +123,13 @@ export const WORKPLACES: Workplace[] = [
     address: 'Komenského 80',
     mapX: 53,
     mapY: 20.8,
-    roles: ['1. stupeň', 'Vzdělávání cizinců'],
+    roles: ['1. stupeň', 'Školní družina', 'Vzdělávání cizinců'],
     facts: [
       'Prostorná budova s velkými okny, kterou obklopují vysoké smrky.',
       'Má vlastní podatelnu: tel. 775 751 229',
       'Sídlí tu i Klub rodičů při naší škole.'
     ],
+    hours: 'Družina: 12:45–15:00',
     accent: 'sky',
     shape: {
       width: 1.3,

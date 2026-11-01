@@ -24,7 +24,7 @@ export default function KarierovePoradenstviPage() {
         lead="Kam po deváté třídě? Pomůžeme vybrat střední školu nebo učiliště a pohlídat všechny termíny."
       />
 
-      <Section eyebrow="Důležité termíny" title="Přijímačky na střední školy">
+      <Section id="prijimaci-rizeni" eyebrow="Důležité termíny" title="Přijímačky na střední školy">
         <Countdown
           milestones={[
             {

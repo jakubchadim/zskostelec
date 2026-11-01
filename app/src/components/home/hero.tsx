@@ -14,6 +14,8 @@ export type HeroPhoto = { media: WpMediaLike; title: string; link: string }
 type HeroProps = {
   mainPost: WpPost | null
   photos: HeroPhoto[]
+  /** In-page anchor of the notices board, or null when the homepage has none. */
+  noticesAnchor: string | null
   /** In-page anchor of the news section, or null when the homepage has none. */
   newsAnchor: string | null
 }
@@ -56,7 +58,7 @@ function Polaroid({ photo, className, priority }: { photo: HeroPhoto; className:
  * with the main post, and a polaroid collage of the latest gallery photos,
  * surrounded by floating doodles.
  */
-export function Hero({ mainPost, photos, newsAnchor }: HeroProps) {
+export function Hero({ mainPost, photos, noticesAnchor, newsAnchor }: HeroProps) {
   const mainLink = mainPost?.link ?? null
 
   return (
@@ -90,20 +92,17 @@ export function Hero({ mainPost, photos, newsAnchor }: HeroProps) {
               výletů, dokumenty i kontakty na naše učitele.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              {newsAnchor && (
-                <Link href={newsAnchor} className="btn bg-tangerine text-lg text-ink">
-                  Co je nového
+              {noticesAnchor && (
+                <Link href={noticesAnchor} className="btn bg-tangerine text-lg text-ink">
+                  Oznámení školy
                   <ArrowRight className="size-5" aria-hidden />
                 </Link>
               )}
-              <a
-                href="https://zsgjkno.edupage.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn bg-paper text-lg"
-              >
-                EduPage
-              </a>
+              {newsAnchor && (
+                <Link href={newsAnchor} className="btn bg-paper text-lg">
+                  Aktuální dění na škole
+                </Link>
+              )}
             </div>
 
             {mainPost && mainLink && (

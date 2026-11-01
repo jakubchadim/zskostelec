@@ -66,15 +66,17 @@ describe('pathsFor', () => {
 
   it('gallery: its page, the galleries index, home and the articles that embed it', async () => {
     const { req, find } = fakeReq([{ slug: 'vylet-do-prahy' }])
-    const paths = await pathsFor('galleries', [{ id: 4, slug: 'praha' }], req)
-    expect(paths).toEqual(expect.arrayContaining(['/', '/fotogalerie/', '/fotogalerie/strana-2/', '/fotogalerie/praha/', '/vylet-do-prahy/']))
+    const paths = await pathsFor('galleries', [{ id: 4, slug: 'praha', publishedAt: '2025-10-03T00:00:00.000Z' }], req)
+    expect(paths).toEqual(
+      expect.arrayContaining(['/', '/fotogalerie/', '/fotogalerie/strana-2/', '/fotogalerie/rok-2025-2026/', '/fotogalerie/praha/', '/vylet-do-prahy/'])
+    )
     expect(find).toHaveBeenCalledWith(expect.objectContaining({ collection: 'posts', where: { galleries: { in: [4] } } }))
   })
 
   it('staff, documents, Guťák: only their own pages', async () => {
     const { req } = fakeReq()
     expect(await pathsFor('staff-buildings', [{ id: 1 }], req)).toEqual(['/zamestnanci/', '/pracoviste/'])
-    expect(await pathsFor('document-categories', [{ id: 1 }], req)).toEqual(['/dokumenty/'])
+    expect(await pathsFor('document-categories', [{ id: 1 }], req)).toEqual(['/dokumenty/', '/skolni-vzdelavaci-program/'])
     expect(await pathsFor('gutak', [{ id: 1 }], req)).toEqual(['/gutak/'])
   })
 

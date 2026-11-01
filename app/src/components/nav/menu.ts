@@ -1,3 +1,4 @@
+import { documentsHref } from '@/components/file/filter'
 import type { NavItem, NavMenus } from './types'
 
 /*
@@ -19,32 +20,36 @@ function group(title: string, items: NavItem[]): NavItem {
 
 export const MAIN_MENU: NavItem[] = [
   link('Úvod', '/'),
-  group('Aktuality', [link('Aktuality', '/clanky/aktuality/'), link('Upozornění', '/clanky/upozorneni/')]),
+  group('Aktuality', [link('Aktuality', '/clanky/aktuality/'), link('Oznámení školy', '/clanky/upozorneni/')]),
   group('O škole', [
     link('Úřední deska', '/uredni-deska/'),
     link('Dokumenty', '/dokumenty/'),
     link('Zaměstnanci', '/zamestnanci/'),
     link('Pracoviště školy', '/pracoviste/'),
     link('Historie', '/historie/'),
-    link('Dotační programy a projekty', '/dotacni-programy-projekty/'),
+    link('Dotační projekty a dary', '/dotacni-programy-projekty/'),
     link('Pomáháme', '/clanky/pomahame/'),
-    link('Školská rada', 'https://www.kostelecno.cz/skolska-rada')
+    link('Školská rada', 'https://www.kostelecno.cz/skolska-rada'),
+    link('Školní vzdělávací program', '/skolni-vzdelavaci-program/')
   ]),
   group('Pro rodiče', [
     link('Školní stravování', '/skolni-stravovani/'),
-    link('Školní družina', '/skolni-druzina/'),
-    link('Klub rodičů', '/klub-rodicu/')
+    link('Klub rodičů', '/klub-rodicu/'),
+    link('Formuláře', documentsHref('formulare'))
   ]),
+  link('Školní družina', '/skolni-druzina/'),
   group('Poradenství', [
     link('Výchovné poradenství', '/vychovne-poradenstvi/'),
     link('Prevence rizikového chování', '/prevence-rizikoveho-chovani/'),
-    link('Kariérové poradenství', '/karierove-poradenstvi/')
+    link('Kariérové poradenství', '/karierove-poradenstvi/'),
+    link('Přijímací řízení na SŠ', '/karierove-poradenstvi/#prijimaci-rizeni')
   ]),
   group('Prezentace', [
     link('Fotogalerie', '/fotogalerie/'),
-    link('Úspěchy žáků', '/clanky/uspechy-zaku/'),
+    link('Žákovský web', 'https://www.zakovskyweb.cz/'),
     link('Školní časopis Guťák', '/gutak/'),
-    link('Žákovský web', 'https://www.zakovskyweb.cz/')
+    link('Úspěchy žáků', '/clanky/uspechy-zaku/'),
+    link('Školní parlament', '/clanky/zakovsky-parlament/')
   ])
 ]
 

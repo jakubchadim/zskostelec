@@ -27,7 +27,7 @@ describe('getNavData', () => {
   it('only uses trailing-slash internal urls, matching `trailingSlash: true`', async () => {
     const menus = await getNavData()
     const internal = flatten([...menus.main, ...menus.fastFirst, ...menus.fastSecond])
-      .map((item) => item.url)
+      .map((item) => item.url.replace(/[?#].*$/, ''))
       .filter((url) => url.startsWith('/'))
 
     for (const url of internal) {

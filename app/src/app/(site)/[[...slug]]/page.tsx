@@ -13,6 +13,7 @@ import {
 import { templateRegistry } from '@/components/templates/registry'
 import { templateKeyForRoute } from '@/components/templates/route-mapping'
 import { STATIC_PAGE_SLUGS } from '@/components/static/meta'
+import { schoolYearLabel } from '@/components/gallery/school-year'
 import { buildTitle, decodeEntities, getSiteUrl, htmlToPlainText, pathFromSlug, SITE_DEFAULT_DESCRIPTION, SITE_NAME } from '@/lib/seo'
 
 type PageProps = {
@@ -77,7 +78,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         notFound()
       }
 
-      const title = resolved.templateType === PageTemplateType.HOME ? 'Vítejte' : decodeEntities(page.title)
+      const title =
+        resolved.templateType === PageTemplateType.HOME
+          ? 'Vítejte'
+          : resolved.schoolYear != null
+            ? `${decodeEntities(page.title)} – školní rok ${schoolYearLabel(resolved.schoolYear)}`
+            : decodeEntities(page.title)
       const fullTitle = buildTitle(title)
 
       return {

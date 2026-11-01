@@ -30,6 +30,7 @@ export const STATIC_PAGE_SLUGS = [
   'karierove-poradenstvi',
   'prevence-rizikoveho-chovani',
   'dotacni-programy-projekty',
+  'skolni-vzdelavaci-program',
   'prohlaseni-o-pristupnosti',
   'skolska-rada'
 ] as const

@@ -75,12 +75,13 @@ export default function Header({ menu }: HeaderProps) {
           <Logo compact={scrolled} />
 
           <NavigationMenu.Root className="relative ml-auto hidden nav:block" delayDuration={80}>
-            <NavigationMenu.List className="m-0 flex list-none items-center gap-0 p-0 lg:gap-1">
+            <NavigationMenu.List className="m-0 flex list-none items-center gap-0 p-0">
               {menu.map((item, idx) => {
                 const accent = accentAt(idx)
                 const active = isActive(item, pathname)
                 const pill = cn(
-                  'flex items-center gap-0.5 rounded-full px-[7px] py-2 font-display text-[0.98rem] font-bold whitespace-nowrap lg:gap-1 lg:px-3 lg:text-[1.05rem] transition-colors outline-none focus-visible:ring-4 focus-visible:ring-sky',
+                  // Seven items + EduPage only just fit the 1140px container, so the pills stay this size on wide screens too.
+                  'flex items-center gap-0.5 rounded-full px-[7px] py-2 font-display text-[0.98rem] font-bold whitespace-nowrap transition-colors outline-none focus-visible:ring-4 focus-visible:ring-sky',
                   active ? cn(accent.tint, 'ring-2 ring-ink') : 'hover:bg-white-1'
                 )
 
