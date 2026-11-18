@@ -51,7 +51,13 @@ export default buildConfig({
   editor: lexicalEditor({ features: ({ defaultFeatures }) => [...defaultFeatures, EXPERIMENTAL_TableFeature()] }),
   db: postgresAdapter({
     // keepAlive: Neon drops idle TCP connections, which surfaced as 'Connection terminated unexpectedly'.
-    pool: { connectionString: process.env.DATABASE_URL || '', keepAlive: true, idleTimeoutMillis: 20_000 },
+    // Neon's (Marketplace-managed) URL says sslmode=require, which pg already treats as verify-full but warns
+    // about on every start; spell out verify-full so the behaviour stays the same once pg v9 weakens 'require'.
+    pool: {
+      connectionString: (process.env.DATABASE_URL || '').replace(/\bsslmode=(prefer|require|verify-ca)\b/, 'sslmode=verify-full'),
+      keepAlive: true,
+      idleTimeoutMillis: 20_000
+    },
     // Production (Neon) gets its schema from migrations (src/migrations, `payload migrate:create`),
     // applied when the server starts; local development keeps Payload's automatic schema push.
     prodMigrations: migrations
