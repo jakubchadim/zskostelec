@@ -4,7 +4,7 @@ import type { PayloadRequest, SanitizedCollectionConfig } from 'payload'
 const revalidatePath = vi.fn()
 vi.mock('next/cache', () => ({ revalidatePath }))
 
-const { listingPaths, pathsFor, revalidateAfterChange, revalidateAfterDelete } = await import('./revalidate')
+const { listingPaths, pathsFor, rememberPathsBeforeDelete, revalidateAfterChange, revalidateAfterDelete } = await import('./revalidate')
 
 const CATEGORIES = [
   { id: 1, slug: 'aktuality', parent: null },
@@ -14,11 +14,13 @@ const CATEGORIES = [
 
 const TAGS = [{ id: 9, slug: '1-stupen' }]
 
-function fakeReq(postsWithGallery: { slug: string }[] = [], context: Record<string, unknown> = {}) {
+/** `found`: what a lookup in other collections returns (by default nothing, posts: `postsWithGallery`). */
+function fakeReq(postsWithGallery: { slug: string }[] = [], context: Record<string, unknown> = {}, found: Record<string, object[]> = {}) {
   const find = vi.fn(async ({ collection }: { collection: string }) => ({
-    docs: collection === 'categories' ? CATEGORIES : collection === 'tags' ? TAGS : postsWithGallery
+    docs: found[collection] ?? (collection === 'categories' ? CATEGORIES : collection === 'tags' ? TAGS : collection === 'posts' ? postsWithGallery : [])
   }))
-  return { req: { payload: { find }, context } as unknown as PayloadRequest, find }
+  const findByID = vi.fn(async ({ id }: { id: number }) => ({ id, slug: 'smazana' }))
+  return { req: { payload: { find, findByID }, context } as unknown as PayloadRequest, find }
 }
 
 const collection = (slug: string, drafts = false) => ({ slug, versions: drafts ? { drafts: true } : false }) as unknown as SanitizedCollectionConfig
@@ -91,10 +93,40 @@ describe('pathsFor', () => {
     expect(await pathsFor('gutak', [{ id: 1 }], req)).toEqual(['/gutak/'])
   })
 
-  it('categories and media: the whole site', async () => {
+  it('tag: every listing with its chips and its filtered variants, not the articles', async () => {
     const { req } = fakeReq()
-    expect(await pathsFor('categories', [{ id: 1 }], req)).toBe('all')
-    expect(await pathsFor('media', [{ id: 1 }], req)).toBe('all')
+    const paths = await pathsFor('tags', [{ id: 9, slug: '1-stupen' }, { id: 9, slug: 'prvni-stupen' }], req)
+    expect(paths).toEqual(
+      expect.arrayContaining([
+        '/clanky/aktuality/',
+        '/clanky/aktuality/strana-2/',
+        '/clanky/skola/uspechy-zaku/stitek-1-stupen/',
+        '/clanky/skola/uspechy-zaku/stitek-prvni-stupen/',
+        '/fotogalerie/stitek-prvni-stupen/',
+        '/fotogalerie/rok-2025-2026/stitek-1-stupen/strana-3/'
+      ])
+    )
+    expect(paths).not.toContain('/')
+  })
+
+  it('category: home, its listings under the old and new slug, all sub-category chips, its articles', async () => {
+    const { req } = fakeReq([], {}, { posts: [{ slug: 'zavody' }] })
+    const paths = await pathsFor('categories', [{ id: 3, slug: 'uspechy', parent: 2 }, { id: 3, slug: 'uspechy-zaku', parent: 2 }], req)
+    expect(paths).toEqual(
+      expect.arrayContaining(['/', '/clanky/skola/uspechy/', '/clanky/skola/uspechy-zaku/stitek-1-stupen/', '/clanky/skola/', '/clanky/aktuality/', '/zavody/'])
+    )
+  })
+
+  it('media: the galleries, articles and pages that use the file', async () => {
+    const { req } = fakeReq([], {}, { galleries: [{ id: 4, slug: 'praha', publishedAt: '2025-10-03T00:00:00.000Z' }], gutak: [{ id: 2 }] })
+    const paths = await pathsFor('media', [{ id: 50 }], req)
+    expect(paths).toEqual(expect.arrayContaining(['/fotogalerie/praha/', '/fotogalerie/rok-2025-2026/', '/gutak/']))
+    expect(paths).not.toContain('/zamestnanci/')
+  })
+
+  it('media used nowhere: nothing', async () => {
+    const { req } = fakeReq()
+    expect(await pathsFor('media', [{ id: 50 }], req)).toEqual([])
   })
 })
 
@@ -116,10 +148,29 @@ describe('hooks', () => {
     expect(revalidatePath).not.toHaveBeenCalledWith('/', 'layout')
   })
 
-  it('flush the whole site for a category change', async () => {
+  it('never flush the whole site', async () => {
     const { req } = fakeReq()
-    await revalidateAfterChange(changeArgs({ collection: collection('categories'), doc: { id: 1 }, previousDoc: { id: 1 }, req }))
-    expect(revalidatePath).toHaveBeenCalledWith('/', 'layout')
+    await revalidateAfterChange(changeArgs({ collection: collection('categories'), doc: { id: 1, slug: 'aktuality' }, previousDoc: { id: 1, slug: 'aktuality' }, req }))
+    expect(revalidatePath).toHaveBeenCalledWith('/clanky/aktuality/')
+    expect(revalidatePath).not.toHaveBeenCalledWith('/', 'layout')
+  })
+
+  it('skip a new tag or an uploaded file - nothing shows them yet', async () => {
+    const { req } = fakeReq()
+    await revalidateAfterChange(changeArgs({ collection: collection('tags'), doc: { id: 9, slug: 'novy' }, operation: 'create', req }))
+    await revalidateAfterChange(changeArgs({ collection: collection('media'), doc: { id: 50 }, operation: 'create', req }))
+    expect(revalidatePath).not.toHaveBeenCalled()
+  })
+
+  it('delete: refresh the pages found before the references were gone', async () => {
+    const { req } = fakeReq([{ slug: 'vylet-do-prahy' }])
+    const deleteArgs = { collection: collection('galleries'), id: 4, req }
+    await rememberPathsBeforeDelete(deleteArgs as Parameters<typeof rememberPathsBeforeDelete>[0])
+    // After the delete nothing references the gallery any more.
+    ;(req.payload.find as ReturnType<typeof vi.fn>).mockResolvedValue({ docs: [] })
+    await revalidateAfterDelete({ ...deleteArgs, doc: { id: 4, slug: 'smazana' } } as Parameters<typeof revalidateAfterDelete>[0])
+    expect(revalidatePath).toHaveBeenCalledWith('/fotogalerie/smazana/')
+    expect(revalidatePath).toHaveBeenCalledWith('/vylet-do-prahy/')
   })
 
   it('respect skipRevalidate (bulk imports)', async () => {

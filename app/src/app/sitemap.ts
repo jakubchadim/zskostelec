@@ -25,5 +25,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 }
 
-// Rebuilt once a day so new articles and galleries show up without a deploy.
-export const revalidate = 86400
+// Rebuilt when an article or gallery is saved (cms/revalidate.ts), not on a timer.
+export const revalidate = false

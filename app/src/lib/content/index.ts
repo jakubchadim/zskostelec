@@ -527,24 +527,27 @@ export async function resolveRoute(segments: string[]): Promise<ResolvedRoute | 
 }
 
 /**
- * Paths prerendered at build: the fixed pages, category listings and the
- * first galleries pages. Articles and galleries render on first visit
- * (ISR) - prerendering ~5 000 of them would make every build slow.
+ * Paths prerendered at build: every public URL in the sitemap - fixed pages,
+ * category listings and every published article and gallery. Old content then
+ * never renders at runtime (no Vercel CPU, ISR writes or Neon wake-ups when
+ * crawlers walk it after a deploy); new articles and galleries, pagination and
+ * tag/school-year filters render on first visit (ISR).
  */
 export async function getStaticRoutes(): Promise<{ path: string }[]> {
-  const all = await allCategories()
-  return [...FIXED_PAGES.map((p) => ({ path: p.path })), ...all.map((c) => ({ path: categoryLink(c, all) }))]
+  return getSitemapRoutes()
 }
 
 /** Every public URL, for sitemap.xml. */
 export async function getSitemapRoutes(): Promise<{ path: string; lastModified?: string }[]> {
   const payload = await cms()
-  const [posts, galleries] = await Promise.all([
+  const [all, posts, galleries] = await Promise.all([
+    allCategories(),
     payload.find({ collection: 'posts', where: PUBLISHED, pagination: false, depth: 0, select: { slug: true, updatedAt: true } }),
     payload.find({ collection: 'galleries', where: PUBLISHED, pagination: false, depth: 0, select: { slug: true, updatedAt: true } })
   ])
   return [
-    ...(await getStaticRoutes()),
+    ...FIXED_PAGES.map((p) => ({ path: p.path })),
+    ...all.map((c) => ({ path: categoryLink(c, all) })),
     ...posts.docs.map((p) => ({ path: `/${p.slug}/`, lastModified: p.updatedAt })),
     ...galleries.docs.map((g) => ({ path: `/fotogalerie/${g.slug}/`, lastModified: g.updatedAt }))
   ]

@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { adminsOnly } from '../access'
 import { slugField, wpIdField } from '../fields'
-import { revalidateAfterChange, revalidateAfterDelete } from '../revalidate'
+import { rememberPathsBeforeDelete, revalidateAfterChange, revalidateAfterDelete } from '../revalidate'
 
 /** Article categories (Aktuality, Upozornění, Projekty › Dotace…). URL: /clanky/<parent>/<slug>/. */
 export const Categories: CollectionConfig = {
@@ -29,6 +29,7 @@ export const Categories: CollectionConfig = {
   ],
   hooks: {
     afterChange: [revalidateAfterChange],
+    beforeDelete: [rememberPathsBeforeDelete],
     afterDelete: [revalidateAfterDelete]
   }
 }

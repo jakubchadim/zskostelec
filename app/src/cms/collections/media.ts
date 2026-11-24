@@ -3,7 +3,7 @@ import path from 'node:path'
 import type { CollectionConfig } from 'payload'
 import { loggedIn } from '../access'
 import { wpIdField } from '../fields'
-import { revalidateAfterDelete } from '../revalidate'
+import { rememberPathsBeforeDelete, revalidateAfterChange, revalidateAfterDelete } from '../revalidate'
 
 /**
  * Every uploaded file: photos (resized on upload), PDFs, Word/Excel
@@ -70,10 +70,12 @@ export const Media: CollectionConfig = {
     },
     wpIdField
   ],
-  // No revalidation on upload/edit: every revalidation flushes the whole site
-  // (and a gallery upload is dozens of saves), while new media only shows up
-  // once the post or gallery using it is saved - which revalidates anyway.
+  // An upload revalidates nothing (a gallery upload is dozens of saves, and new
+  // media only shows up once the post or gallery using it is saved). Editing or
+  // deleting a file refreshes the galleries, articles and pages that use it.
   hooks: {
+    afterChange: [revalidateAfterChange],
+    beforeDelete: [rememberPathsBeforeDelete],
     afterDelete: [revalidateAfterDelete]
   }
 }

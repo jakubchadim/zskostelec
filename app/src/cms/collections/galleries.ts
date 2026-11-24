@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { loggedIn, publishedOrLoggedIn } from '../access'
 import { slugField, wpIdField } from '../fields'
-import { revalidateAfterChange, revalidateAfterDelete } from '../revalidate'
+import { rememberPathsBeforeDelete, revalidateAfterChange, revalidateAfterDelete } from '../revalidate'
 import { searchTextField } from '../search-text'
 
 /** Photo galleries. URL: /fotogalerie/<slug>/. */
@@ -64,6 +64,8 @@ export const Galleries: CollectionConfig = {
   ],
   hooks: {
     afterChange: [revalidateAfterChange],
+    // The articles embedding a gallery lose the reference on delete - find them first.
+    beforeDelete: [rememberPathsBeforeDelete],
     afterDelete: [revalidateAfterDelete]
   }
 }

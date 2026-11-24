@@ -189,9 +189,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  // Fixed pages + category listings only; articles and galleries render on
-  // first visit (ISR). Without a reachable database (e.g. CI), build nothing
-  // statically - every route is then rendered on demand.
+  // Every URL of the sitemap, articles and galleries included (see getStaticRoutes);
+  // anything newer renders on first visit (ISR). Without a reachable database
+  // (e.g. CI), build nothing statically - every route is then rendered on demand.
   try {
     const routes = await getStaticRoutes()
     const handMade = new Set<string>(STATIC_PAGE_SLUGS)
