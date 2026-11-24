@@ -3,8 +3,8 @@
  * to 31 August and is identified by the year it starts in (2025 = 2025/2026).
  */
 
-/** The oldest galleries come from the 2011/2012 school year. */
-export const FIRST_SCHOOL_YEAR = 2011
+/** The oldest galleries with photos come from 2019/2020; the school deleted the empty albums of 2011/2012-2018/2019. */
+export const FIRST_SCHOOL_YEAR = 2019
 
 const PRAGUE_YEAR_MONTH = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Prague', year: 'numeric', month: 'numeric' })
 

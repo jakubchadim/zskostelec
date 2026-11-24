@@ -20,10 +20,10 @@ describe('school years', () => {
     expect(schoolYearRange(2025)).toEqual({ from: '2025-08-31T22:00:00.000Z', to: '2026-08-31T22:00:00.000Z' })
   })
 
-  it('lists the years from now back to 2011/2012', () => {
+  it('lists the years from now back to 2019/2020', () => {
     const years = schoolYearsUntil(new Date('2026-10-29T12:00:00Z'))
     expect(years[0]).toBe(2026)
-    expect(years.at(-1)).toBe(2011)
-    expect(years).toHaveLength(16)
+    expect(years.at(-1)).toBe(2019)
+    expect(years).toHaveLength(8)
   })
 })

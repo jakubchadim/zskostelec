@@ -5,7 +5,7 @@ import { tagLink } from '@/components/filter/tag-switcher'
 import type { SiteTag } from '@/lib/content'
 import { schoolYearLabel, schoolYearSlug, schoolYearsUntil } from './school-year'
 
-/** School-year chips above the galleries grid ("Vše", 2026/2027 … 2011/2012), styled like the category switcher; keeps the chosen tag. */
+/** School-year chips above the galleries grid ("Vše", 2026/2027 … 2019/2020), styled like the category switcher; keeps the chosen tag. */
 export function SchoolYearSwitcher({ current, tag }: { current: number | null; tag: SiteTag | null }) {
   const chip = 'rounded-full border-2 border-ink px-4 py-1.5 font-display font-bold transition-all hover:-translate-y-0.5'
 
